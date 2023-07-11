@@ -1,0 +1,66 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+## front ignoring
+# dependencies
+otbfront/node_modules
+otbfront/.pnp
+otbfront/.pnp.js
+
+# testing
+otbfront/coverage
+
+# production
+otbfront/build
+
+# misc
+otbfront/.DS_Store
+otbfront.env.local
+otbfront.env.development.local
+otbfront/.env.test.local
+otbfront/.env.production.local
+
+otbfront/npm-debug.log*
+otbfront/yarn-debug.log*
+otbfront/yarn-error.log*
+
+#back ignoring
+project/HELP.md
+project/.gradle
+project/build/
+project/!gradle/wrapper/gradle-wrapper.jar
+project/!**/src/main/**/build/
+project/!**/src/test/**/build/
+
+### STS ###
+project/.apt_generated
+project/.classpath
+project/.factorypath
+project/.project
+project/.settings
+project/.springBeans
+project/.sts4-cache
+project/bin/
+project/!**/src/main/**/bin/
+project/!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+project/.idea
+project/*.iws
+project/*.iml
+project/*.ipr
+project/out/
+project/!**/src/main/**/out/
+project/!**/src/test/**/out/
+
+
+### NetBeans ###
+project/nbproject/private/
+project/nbbuild/
+project/dist/
+project/nbdist/
+project/.nb-gradle/
+
+### VS Code ###
+project/.vscode/
+
+project//src/main/resources/
