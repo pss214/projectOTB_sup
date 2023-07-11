@@ -63,4 +63,4 @@ project/.nb-gradle/
 ### VS Code ###
 project/.vscode/
 
-project//src/main/resources/
+project//src/main/resources/application-db.properties
