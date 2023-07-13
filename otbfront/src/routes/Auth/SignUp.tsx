@@ -4,11 +4,11 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
 //import * as D from '../../data'
 
-type SignUpFormType = Record<'email' | 'password' | 'confirmPassword', string>
-const initialFormState = {email: '', password: '', confirmPassword: ''}
+type SignUpFormType = Record<'email' | 'name' | 'password' | 'confirmPassword', string>
+const initialFormState = {email: '', name: '', password: '', confirmPassword: ''}
 
 export default function SignUp() {
-  const [{email, password, confirmPassword}, setForm] =
+  const [{email, name, password, confirmPassword}, setForm] =
     useState<SignUpFormType>(initialFormState)
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +45,10 @@ export default function SignUp() {
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary"
-            name="email"
+            name="name"
             placeholder="사용할 이름을 입력해주세요."
-            value={email}
-            onChange={changed('email')}
+            value={name}
+            onChange={changed('name')}
           />
 
           <input
