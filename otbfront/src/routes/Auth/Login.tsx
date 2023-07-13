@@ -37,11 +37,11 @@ export default function Login() {
     <div className="flex flex-col min-h-screen bg-gray-100 border border-gray-300 shadow-xl rounded-xl">
       <div className="flex flex-col items-center justify-center flex-1 max-w-sm px-2 mx-auto">
         <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
-          <h1 className="mb-8 text-2xl text-center text-primary">로그인</h1>
+          <h1 className="mb-8 text-2xl text-center text-primary text-lime-500">로그인</h1>
 
           <input
             type="text"
-            className="w-full p-3 mb-4 input input-primary"
+            className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="email"
             placeholder="Email을 입력해주세요."
             value={email}
@@ -50,25 +50,25 @@ export default function Login() {
 
           <input
             type="password"
-            className="w-full p-3 mb-4 input input-primary"
+            className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="password"
             placeholder="비밀번호를 입력해주세요."
             value={password}
             onChange={changed('password')}
           />
 
-          <button type="submit" className="w-full btn btn-primary" onClick={loginAccount}>
+          <button type="submit" className="w-full btn btn-primary text-white bg-lime-500 border-lime-500" onClick={loginAccount}>
             로그인
           </button>
         </div>
 
-        <Link to="/" className="btn btn-link">
+        <Link to="/" className="btn btn-link text-lime-500">
           메인 페이지로 이동하기
         </Link>
 
         <div className="mt-6 text-grey-dark">
           계정이 없으시다면 클릭해주세요.
-          <Link className="btn btn-link btn-primary" to="/signup">
+          <Link className="btn btn-link btn-primary text-lime-500" to="/signup">
             회원 가입
           </Link>
         </div>

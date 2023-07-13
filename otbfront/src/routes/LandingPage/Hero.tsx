@@ -8,22 +8,15 @@ export default function Hero() {
     <div className="flex items-center p-4">
       <Div minWidth="30rem" width="30rem" maxWidth="30rem">
         <div className="flex flex-col justify-center p-4 font-bold">
-          <p className="text-3xl italic text-center line-clamp-5">
-            {D.randomSentence(20)}
-          </p>
+          
           <div className="flex items-center justify-center mt-4">
             <Link to="/board">
-              <Button className="btn-primary btn-outline">go to Board</Button>
+              <Button className="btn-primary text-5xl font-bold btn-outline-lime-500 text-white bg-lime-500 border-lime-500">서비스 이용하기</Button>
             </Link>
           </div>
         </div>
       </Div>
-      <Div
-        src={D.randomImage(2000, 1600, 100)}
-        className="w-full ml-4"
-        minHeight="20rem"
-        height="20rem"
-      />
+      
     </div>
   )
 }

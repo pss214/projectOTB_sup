@@ -19,16 +19,11 @@ export default function Promotion() {
         <Div
           width="15%"
           minWidth="15%"
-          className="flex items-center justify-center text-white bg-primary">
+          className="flex items-center justify-center text-white bg-lime-500 border-lime-500">
           여기에
         </Div>
         <div className="flex flex-wrap justify-center p-4 mt-4">{children}</div>
-        <Div
-          width="15%"
-          minWidth="15%"
-          className="flex items-center justify-center text-white bg-primary">
-          뉴스를 넣을까요
-        </Div>
+        
       </div>
     </section>
   )

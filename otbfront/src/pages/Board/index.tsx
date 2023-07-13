@@ -6,6 +6,7 @@ import BoardList from '../BoardList'
 import {ListDroppable} from '../../components'
 
 import {useLists} from '../../store/useLists'
+import { Button } from '../../theme/daisyui'
 
 export default function Board() {
   const {lists, onRemoveList, onCreateList, onMoveList, onDragEnd} = useLists()
@@ -26,13 +27,19 @@ export default function Board() {
 
   return (
     <section className="mt-4">
-      <Title>Board</Title>
+      <Title>원하시는 서비스를 선택하세요.</Title>
       <DragDropContext onDragEnd={onDragEnd}>
         <ListDroppable className="flex flex-row p-2 mt-4">
-          <div className="flex flex-wrap p-2 mt-4">
-            {children}
-            <CreateListForm onCreateList={onCreateList} />
-          </div>
+          <div className="space-x-4">
+          <Button className="text-white border-lime-500 bg-lime-500">
+            지도 보기
+          </Button>
+
+          <Button className="text-white border-lime-500 bg-lime-500">
+            내 주변 버스 탑승하기
+          </Button>
+        
+      </div>
         </ListDroppable>
       </DragDropContext>
     </section>
