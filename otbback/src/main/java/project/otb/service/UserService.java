@@ -1,10 +1,10 @@
-package otb.project.service;
+package project.otb.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import otb.project.entity.User;
-import otb.project.repositiry.UserRepository;
+import project.otb.entity.User;
+import project.otb.repositiry.UserRepository;
 
 @Slf4j
 @Service
