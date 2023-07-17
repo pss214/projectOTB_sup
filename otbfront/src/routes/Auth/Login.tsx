@@ -57,7 +57,10 @@ export default function Login() {
             onChange={changed('password')}
           />
 
-          <button type="submit" className="w-full btn btn-primary text-white bg-lime-500 border-lime-500" onClick={loginAccount}>
+          <button
+            type="submit"
+            className="w-full btn btn-primary text-white bg-lime-500 border-lime-500"
+            onClick={loginAccount}>
             로그인
           </button>
         </div>
@@ -68,6 +71,12 @@ export default function Login() {
 
         <div className="mt-6 text-grey-dark">
           계정이 없으시다면 클릭해주세요.
+          <Link className="btn btn-link btn-primary text-lime-500" to="/signup">
+            회원 가입
+          </Link>
+        </div>
+        <div className="mt-6 text-grey-dark">
+          "버스 기사"님 이시면 클릭해주세요.
           <Link className="btn btn-link btn-primary text-lime-500" to="/signup">
             회원 가입
           </Link>
