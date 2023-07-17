@@ -31,7 +31,6 @@ public class UserService {
                 .password(passwordEncoder.encode(entity.getPassword()))
                 .username(entity.getUsername())
                 .email(entity.getEmail())
-                .nickname(entity.getNickname())
                 .Created_Date(LocalDateTime.now())
                 .build();
 
@@ -45,7 +44,6 @@ public class UserService {
             final UserDTO response = UserDTO.builder()
                     .username(user.getUsername())
                     .email(user.getEmail())
-                    .nickname(user.getNickname())
 //                    .token(token)
                     .build();
 //            log.info(tokenProvider.validateAndGetUserId(token));

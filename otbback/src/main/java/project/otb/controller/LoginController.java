@@ -20,7 +20,6 @@ in data
 {
     "username":"pss",
     "password":"password",
-    "nickname":"pss",
     "email":"username@gmail.com"
 }
 out data
@@ -58,7 +57,6 @@ public class LoginController {
             UserDTO responseUserDTO = UserDTO.builder()
                     .username(createdUser.getUsername())
                     .password(createdUser.getPassword())
-                    .nickname(dto.getNickname())
                     .email(createdUser.getEmail())
                     .CD(createdUser.getCreated_Date())
                     .build();

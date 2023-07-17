@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class UserDTO {
     private String username;
     private String password;
-    private String nickname;
     private String email;
     private String token;
     private LocalDateTime CD;
