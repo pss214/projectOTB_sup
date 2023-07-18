@@ -75,12 +75,6 @@ export default function Login() {
             회원 가입
           </Link>
         </div>
-        <div className="mt-6 text-grey-dark">
-          "버스 기사"님 이시면 클릭해주세요.
-          <Link className="btn btn-link btn-primary text-lime-500" to="/signup">
-            회원 가입
-          </Link>
-        </div>
       </div>
     </div>
   )

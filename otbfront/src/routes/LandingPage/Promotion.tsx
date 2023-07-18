@@ -23,7 +23,6 @@ export default function Promotion() {
           여기에
         </Div>
         <div className="flex flex-wrap justify-center p-4 mt-4">{children}</div>
-        
       </div>
     </section>
   )

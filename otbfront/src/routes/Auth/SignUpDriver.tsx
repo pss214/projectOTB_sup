@@ -1,18 +1,23 @@
 import type {ChangeEvent} from 'react'
 import {useState, useCallback} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import {useAuth} from '../../contexts'
-import {url} from 'inspector'
+import {useAuth} from '../../contexts/AuthContext'
 //import * as D from '../../data'
 
 type SignUpFormType = Record<
-  'email' | 'username' | 'password' | 'confirmPassword',
+  'email' | 'username' | 'password' | 'confirmPassword' | 'busnumber',
   string
 >
-const initialFormState = {email: '', username: '', password: '', confirmPassword: ''}
+const initialFormState = {
+  email: '',
+  username: '',
+  password: '',
+  confirmPassword: '',
+  busnumber: ''
+}
 
-export default function SignUp() {
-  const [{email, username, password, confirmPassword}, setForm] =
+export default function SignUpDriver() {
+  const [{email, username, password, confirmPassword, busnumber}, setForm] =
     useState<SignUpFormType>(initialFormState)
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,14 +27,19 @@ export default function SignUp() {
   )
 
   const navigate = useNavigate()
-  const {signup} = useAuth()
+  const {signupdriver} = useAuth()
 
   const createAccount = useCallback(() => {
     //console.log(email, password, confirmPassword)
     if (password === confirmPassword) {
-      signup(email, password, () => navigate('/'))
+      signupdriver(email, password, busnumber, () => navigate('/'))
     } else alert('비밀번호가 일치하여야 합니다.')
-  }, [email, password, confirmPassword, navigate, signup])
+
+    if (busnumber == '') {
+      alert('버스 번호를 입력해주세요')
+      signupdriver(email, password, busnumber, () => navigate(-1))
+    }
+  }, [email, password, confirmPassword, navigate, busnumber, signupdriver])
 
   return (
     <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
@@ -44,6 +54,15 @@ export default function SignUp() {
             placeholder="Email을 입력해주세요."
             value={email}
             onChange={changed('email')}
+          />
+
+          <input
+            type="Id"
+            className="w-full p-3 mb-4 input input-primary border-lime-500"
+            name="busnumber"
+            placeholder="버스 번호를 입력해주세요."
+            value={busnumber}
+            onChange={changed('busnumber')}
           />
 
           <input

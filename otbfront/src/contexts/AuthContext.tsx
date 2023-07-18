@@ -8,12 +8,24 @@ type Callback = () => void
 type ContextType = {
   loggedUser?: LoggedUser
   signup: (email: string, password: string, callback?: Callback) => void
+  signupdriver: (
+    email: string,
+    password: string,
+    busnumber: string,
+    callback?: Callback
+  ) => void
   login: (email: string, password: string, callback?: Callback) => void
   logout: (callback?: Callback) => void
 }
 
 export const AuthContext = createContext<ContextType>({
   signup: (email: string, password: string, callback?: Callback) => {},
+  signupdriver: (
+    email: string,
+    password: string,
+    busnumber: string,
+    callback?: Callback
+  ) => {},
   login: (email: string, password: string, callback?: Callback) => {},
   logout: (callback?: Callback) => {}
 })
@@ -29,6 +41,15 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     U.writeObjectP('user', user).finally(() => callback && callback())
     // callback && callback()
   }, [])
+  const signupdriver = useCallback(
+    (email: string, password: string, busnumber: string, callback?: Callback) => {
+      const user = {email, password, busnumber}
+      setLoggedUser(notUsed => ({email, password}))
+      U.writeObjectP('user', user).finally(() => callback && callback())
+      // callback && callback()
+    },
+    []
+  )
   const login = useCallback((email: string, password: string, callback?: Callback) => {
     setLoggedUser(notUsed => ({email, password}))
     callback && callback()
@@ -41,6 +62,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const value = {
     loggedUser,
     signup,
+    signupdriver,
     login,
     logout
   }

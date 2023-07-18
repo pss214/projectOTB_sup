@@ -8,13 +8,13 @@ export default function NavigationBar() {
   return (
     <div className="flex justify-between bg-lime-200">
       <div className="flex p-6 navbar ">
-      <Link to="/" className="ml-4">
-  <img
-    src="/img/otblogogogo.png"
-    alt="OTB(우비) 로고"
-    className="w-12.5 h-12.5"
-  />
-</Link>
+        <Link to="/" className="ml-4">
+          <img
+            src="/img/otblogogogo.png"
+            alt="OTB(우비) 로고"
+            className="w-12.5 h-12.5"
+          />
+        </Link>
         {loggedUser && (
           <Link to="/board" className="btn btn-link ml-4 font-bold text-lime-700">
             버스 이용하기
@@ -23,13 +23,24 @@ export default function NavigationBar() {
       </div>
       <div className="flex p-2 items-center">
         {!loggedUser && (
-          <RRLink to="/login" className="btn btn-sm text-white border-lime-600 bg-lime-600">
+          <RRLink
+            to="/login"
+            className="btn btn-sm text-white border-lime-600 bg-lime-600">
             로그인
           </RRLink>
         )}
         {!loggedUser && (
-          <RRLink to="/signup" className="ml-4 btn btn-sm btn-outline text-white border-lime-600 bg-lime-600">
+          <RRLink
+            to="/signup"
+            className="ml-4 btn btn-sm btn-outline text-white border-lime-600 bg-lime-600">
             회원 가입
+          </RRLink>
+        )}
+        {!loggedUser && (
+          <RRLink
+            to="/signupdriver"
+            className="ml-4 btn btn-sm btn-outline  text-white border-lime-600 bg-lime-600">
+            버스 기사 회원 가입
           </RRLink>
         )}
         {loggedUser && (
