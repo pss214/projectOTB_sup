@@ -2,7 +2,6 @@ import type {ChangeEvent} from 'react'
 import {useState, useCallback} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
-import {url} from 'inspector'
 //import * as D from '../../data'
 
 type SignUpFormType = Record<
@@ -12,6 +11,7 @@ type SignUpFormType = Record<
 const initialFormState = {email: '', username: '', password: '', confirmPassword: ''}
 
 export default function SignUp() {
+  
   const [{email, username, password, confirmPassword}, setForm] =
     useState<SignUpFormType>(initialFormState)
   const changed = useCallback(
@@ -27,7 +27,7 @@ export default function SignUp() {
   const createAccount = useCallback(() => {
     //console.log(email, password, confirmPassword)
     if (password === confirmPassword) {
-      signup(email, password, () => navigate('/'))
+      signup(username ,email, password, () => navigate('/'))
     } else alert('비밀번호가 일치하여야 합니다.')
   }, [email, password, confirmPassword, navigate, signup])
 
@@ -40,19 +40,19 @@ export default function SignUp() {
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="email"
-            placeholder="Email을 입력해주세요."
-            value={email}
-            onChange={changed('email')}
+            name="username"
+            placeholder="ID를 입력해주세요."
+            value={username}
+            onChange={changed('username')}
           />
 
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="username"
-            placeholder="사용할 이름을 입력해주세요."
-            value={username}
-            onChange={changed('username')}
+            name="email"
+            placeholder="email을 입력해주세요."
+            value={email}
+            onChange={changed('email')}
           />
 
           <input
