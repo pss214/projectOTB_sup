@@ -48,15 +48,15 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const signup = useCallback(
     (username: string, email: string, password: string, callback?: Callback) => {
       const user = {email, password}
-      fetch(SERVER_URL + '/api/signup', {
-        method: 'POST', // http의 method
+      fetch(SERVER_URL + '/user/signup', {
+        method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          // 기존의 js object를 JSON String의 형태로 변환
           username: username,
-          email: email,
-          password: password
-        })
+          password: password,
+          email: email
+        }),
+        mode: 'no-cors'
       })
         .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
         // .then(result => console.log('결과: ', result))
@@ -73,9 +73,9 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
           console.log('결과: ', result)
         })
         .catch((e: Error) => setErrorMessage(e.message))
-      // setLoggedUser(notUsed => ({username, password}))
-      // U.writeObjectP('user', user).finally(() => callback && callback())
-      // callback && callback()
+      setLoggedUser(notUsed => ({username, password}))
+      U.writeObjectP('user', user).finally(() => callback && callback())
+      callback && callback()
     },
     []
   )
@@ -88,7 +88,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
       callback?: Callback
     ) => {
       const user = {username, password, busnumber}
-      fetch(SERVER_URL + '/api/signupdriver', {
+      fetch(SERVER_URL + '/user/signupdriver', {
         method: 'POST', // http의 method
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -112,7 +112,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     U.readStringP('jwt')
       .then(jwt => {
         setJwt(jwt ?? '')
-        return post('/api/login', user, jwt)
+        return post('/user/login', user, jwt)
       })
       .then(res => res.json())
       .then((result: {ok: boolean; errorMessage?: string}) => {
