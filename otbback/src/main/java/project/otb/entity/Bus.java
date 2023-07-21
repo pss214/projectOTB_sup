@@ -25,7 +25,7 @@ public class Bus {
     @Column(name = "DC",nullable = false)
     private LocalDateTime Created_Date;
     @Column(name = "bu_num",nullable = false)
-    private String BusUniqueNumber;
-    @Column(name = "bu_Personnel", nullable = false)
+    private String BusUniNumber;
+    @Column(name = "b_Personnel", nullable = false)
     private int Personnel;
 }

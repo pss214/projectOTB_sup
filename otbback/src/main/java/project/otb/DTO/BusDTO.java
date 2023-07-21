@@ -7,13 +7,15 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-    public class BusDTO {
-        private String BusNumber;
-        private String password;
-        private LocalDateTime CD;
-        private int Personnel;
+public class BusDTO {
+    private String BusNumber;
+    private String password;
+    private LocalDateTime CD;
+    private int Personnel;
+    private String BusUniNumber;
 
-        public project.otb.DTO.BusDTO form(project.otb.DTO.BusDTO user){
-            return null;
-        }
+    public project.otb.DTO.BusDTO form(project.otb.DTO.BusDTO user){
+        return null;
     }
+}
+
