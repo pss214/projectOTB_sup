@@ -1,21 +1,22 @@
 package project.otb.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import project.otb.DTO.BusDTO;
 import project.otb.DTO.LoginDto;
 import project.otb.DTO.ResponseDTO;
 import project.otb.DTO.UserDTO;
+import project.otb.entity.Bus;
 import project.otb.entity.User;
-import project.otb.security.TokenProvider;
+import project.otb.service.BusService;
 import project.otb.service.UserService;
+
+import java.time.LocalDateTime;
 /*
 
 ex)
-http://localhost:8080/api/sginup
+http://localhost:8080/api/signup
 in data
 {
     "username":"pss",
@@ -43,11 +44,11 @@ http://localhost:8080/api/login
 @RequestMapping("/api")
 public class LoginController {
     private final UserService userService;
-    private final TokenProvider tokenProvider;
+    private final BusService busService;
 
-    public LoginController(UserService userService, TokenProvider tokenProvider) {
+    public LoginController(UserService userService, BusService busService) {
         this.userService = userService;
-        this.tokenProvider = tokenProvider;
+        this.busService=busService;
     }
 
     @PostMapping("/signup")
@@ -70,6 +71,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticator(@RequestBody LoginDto dto){
         UserDTO user = userService.getByCredentials(dto);
+
         if(user!= null) {
             return ResponseEntity.ok().body(user);
         }else {
@@ -77,5 +79,22 @@ public class LoginController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+    @PostMapping("/bussingup")
+    public ResponseEntity<?> createBus(@RequestBody BusDTO dto){
+        try {
+            Bus createdBus = busService.create(dto);
+            BusDTO responseBusDTO = BusDTO.builder()
+                    .BusNumber(createdBus.getBusNumber())
+                    .password(createdBus.getPassword())
+                    .CD(LocalDateTime.now())
+                    .Personnel(createdBus.getPersonnel())
+                    .build();
+            return ResponseEntity.ok().body(responseBusDTO);
+        }catch (Exception e){
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
 
 }
