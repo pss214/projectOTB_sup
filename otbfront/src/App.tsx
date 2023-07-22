@@ -19,7 +19,7 @@ export default function App() {
             <div className="App">
               {location.loaded
                 ? JSON.stringify(location)
-                : "Location data not available yet."}
+                : "위치를 찾을 수 없습니다."}
             </div>
             <RoutesSetup />
           </AuthProvider>
