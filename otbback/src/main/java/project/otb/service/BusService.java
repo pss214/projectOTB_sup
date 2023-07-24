@@ -7,7 +7,7 @@ import project.otb.DTO.BusDTO;
 import project.otb.DTO.LoginDto;
 import project.otb.DTO.ResponseDTO;
 import project.otb.entity.Bus;
-import project.otb.jwt.TokenProvider;
+import project.otb.security.TokenProvider;
 import project.otb.repositiry.BusRepository;
 
 import java.time.LocalDateTime;

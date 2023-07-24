@@ -7,7 +7,7 @@ import project.otb.DTO.LoginDto;
 import project.otb.DTO.ResponseDTO;
 import project.otb.DTO.UserDTO;
 import project.otb.entity.User;
-import project.otb.jwt.TokenProvider;
+import project.otb.security.TokenProvider;
 import project.otb.repositiry.UserRepository;
 
 import java.time.LocalDateTime;

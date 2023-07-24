@@ -42,7 +42,7 @@ http://localhost:8080/api/login
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user")
 public class LoginController {
     private final UserService userService;
     private final BusService busService;

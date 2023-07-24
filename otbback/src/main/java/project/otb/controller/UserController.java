@@ -16,6 +16,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
     public UserDTO getUserInfo(@AuthenticationPrincipal User user){
         return userService.getUserInfo(user);
     }
