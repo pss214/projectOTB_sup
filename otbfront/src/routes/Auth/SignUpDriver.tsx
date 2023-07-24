@@ -2,22 +2,21 @@ import type {ChangeEvent} from 'react'
 import {useState, useCallback} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts/AuthContext'
-//import * as D from '../../data'
 
 type SignUpFormType = Record<
-  'email' | 'username' | 'password' | 'confirmPassword' | 'busnumber',
+  'busnumberplate' | 'personnel' | 'password' | 'confirmPassword' | 'busnumber',
   string
 >
 const initialFormState = {
-  email: '',
-  username: '',
+  busnumberplate: '',
   password: '',
   confirmPassword: '',
-  busnumber: ''
+  busnumber: '',
+  personnel: ''
 }
 
 export default function SignUpDriver() {
-  const [{email, username, password, confirmPassword, busnumber}, setForm] =
+  const [{busnumberplate, password, confirmPassword, busnumber, personnel}, setForm] =
     useState<SignUpFormType>(initialFormState)
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,14 +31,19 @@ export default function SignUpDriver() {
   const createAccount = useCallback(() => {
     //console.log(email, password, confirmPassword)
     if (password === confirmPassword) {
-      signupdriver(email, password, busnumber, () => navigate('/'))
+      signupdriver(busnumberplate, password, busnumber, personnel, () => navigate('/'))
     } else alert('비밀번호가 일치하여야 합니다.')
+
+    if (busnumberplate == '') {
+      alert('차량번호를 입력해주세요')
+      signupdriver(busnumberplate, password, busnumber, personnel, () => navigate(-1))
+    }
 
     if (busnumber == '') {
       alert('버스 번호를 입력해주세요')
-      signupdriver(email, password, busnumber, () => navigate(-1))
+      signupdriver(busnumberplate, password, busnumber, personnel, () => navigate(-1))
     }
-  }, [email, password, confirmPassword, navigate, busnumber, signupdriver])
+  }, [password, confirmPassword, navigate, busnumber, personnel, signupdriver])
 
   return (
     <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
@@ -50,28 +54,27 @@ export default function SignUpDriver() {
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="email"
-            placeholder="Email을 입력해주세요."
-            value={email}
-            onChange={changed('email')}
+            name="username"
+            placeholder="차량 번호를 입력해 주세요."
+            value={busnumberplate}
+            onChange={changed('busnumberplate')}
           />
 
           <input
-            type="Id"
+            type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="busnumber"
             placeholder="버스 번호를 입력해주세요."
             value={busnumber}
             onChange={changed('busnumber')}
           />
-
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="username"
-            placeholder="사용할 이름을 입력해주세요."
-            value={username}
-            onChange={changed('username')}
+            name="personnel"
+            placeholder="탑승정원을 입력해주세요."
+            value={personnel}
+            onChange={changed('personnel')}
           />
 
           <input
