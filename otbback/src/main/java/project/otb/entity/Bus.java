@@ -2,9 +2,17 @@ package project.otb.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Table
+import java.time.LocalDateTime;
+@Builder
+@Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,6 +20,12 @@ public class Bus {
     private Long id;
     @Column(name = "b_num")
     private String BusNumber;
+    @Column(name = "b_password")
+    private String Password;
+    @Column(name = "DC",nullable = false)
+    private LocalDateTime Created_Date;
     @Column(name = "bu_num",nullable = false)
-    private String BusUniqueNumber;
+    private String BusUniNumber;
+    @Column(name = "b_Personnel", nullable = false)
+    private int Personnel;
 }
