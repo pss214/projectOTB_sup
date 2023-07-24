@@ -1,46 +1,60 @@
 import type {FC, PropsWithChildren} from 'react'
 import {createContext, useContext, useState, useCallback, useEffect} from 'react'
 import * as U from '../utils'
-import {SERVER_URL} from '../server/getServer'
-import {resourceLimits} from 'worker_threads'
-import {post} from '../server/postAndPut'
+import {SERVER_URL} from '../server'
+//import {resourceLimits} from 'worker_threads'
+//import {post} from '../server'
 
 export type LoggedUser = {username: string; password: string}
+export type LoggedDriver = {
+  busnumberplate: string
+  password: string
+  busnumber: string
+  personnel: string
+}
+export type ReservationUser = {username: string; busnumber: string}
 type Callback = () => void
 
 type ContextType = {
   jwt?: string
   errorMessage?: string
   loggedUser?: LoggedUser
+  loggedDriver?: LoggedDriver
   signup: (username: string, email: string, password: string, callback?: Callback) => void
   signupdriver: (
-    username: string,
-    email: string,
+    busnumberplate: string,
     password: string,
     busnumber: string,
+    personnel: string,
     callback?: Callback
   ) => void
   login: (username: string, password: string, callback?: Callback) => void
   logout: (callback?: Callback) => void
+  reservation: (username: string, busnumber: string, callback?: Callback) => void
 }
 
 export const AuthContext = createContext<ContextType>({
   signup: (username: string, email: string, password: string, callback?: Callback) => {},
   signupdriver: (
-    username: string,
-    email: string,
+    busnumberplate: string,
     password: string,
     busnumber: string,
+    personnel: string,
     callback?: Callback
   ) => {},
   login: (username: string, password: string, callback?: Callback) => {},
-  logout: (callback?: Callback) => {}
+  logout: (callback?: Callback) => {},
+  reservation: (username: string, busnumber: string, callback?: Callback) => {}
 })
 
 type AuthProviderProps = {}
 
 export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children}) => {
   const [loggedUser, setLoggedUser] = useState<LoggedUser | undefined>(undefined)
+  const [loggedDriver, setLoggedDriver] = useState<LoggedDriver | undefined>(undefined)
+  const [reservationUser, setReservationUser] = useState<ReservationUser | undefined>(
+    undefined
+  )
   //서버에서 보내는 json토큰이나 통신장애로 인한 오류 처리
   const [jwt, setJwt] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -55,11 +69,9 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
           username: username,
           password: password,
           email: email
-        }),
-        mode: 'no-cors'
+        })
       })
         .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-        // .then(result => console.log('결과: ', result))
         .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
           const {ok, body, errorMessage} = result
           if (ok) {
@@ -81,67 +93,116 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   )
   const signupdriver = useCallback(
     (
-      username: string,
-      email: string,
+      busnumberplate: string,
       password: string,
       busnumber: string,
+      personnel: string,
       callback?: Callback
     ) => {
-      const user = {username, password, busnumber}
-      fetch(SERVER_URL + '/user/signupdriver', {
-        method: 'POST', // http의 method
+      const user = {busnumberplate, password, busnumber, personnel}
+      fetch(SERVER_URL + '/user/bussignup', {
+        method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           // 기존의 js object를 JSON String의 형태로 변환
-          username: username,
-          email: email,
+          busnumberplate: busnumberplate,
           password: password,
-          busnumber: busnumber
+          busnumber: busnumber,
+          personnel: personnel
         })
       })
         .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-        .then(result => console.log('결과: ', result))
-      setLoggedUser(notUsed => ({username, password}))
-      U.writeObjectP('user', user).finally(() => callback && callback())
-      // callback && callback()
+        // .then(result => console.log('결과: ', result))
+        .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
+          const {ok, body, errorMessage} = result
+          if (ok) {
+            U.writeStringP('jwt', body ?? '').finally(() => {
+              setJwt(body ?? '')
+              setLoggedDriver(notUsed => ({
+                busnumberplate,
+                password,
+                busnumber,
+                personnel
+              }))
+              U.writeObjectP('driver', user).finally(() => callback && callback())
+            })
+            //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
+          }
+          console.log('결과: ', result)
+        })
+        .catch((e: Error) => setErrorMessage(e.message))
+      setLoggedDriver(notUsed => ({busnumberplate, password, busnumber, personnel}))
+      U.writeObjectP('driver', user).finally(() => callback && callback())
+      callback && callback()
     },
     []
   )
   const login = useCallback((username: string, password: string, callback?: Callback) => {
     const user = {username, password}
-    U.readStringP('jwt')
-      .then(jwt => {
-        setJwt(jwt ?? '')
-        return post('/user/login', user, jwt)
+    fetch(SERVER_URL + '/user/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: username,
+        password: password
       })
-      .then(res => res.json())
-      .then((result: {ok: boolean; errorMessage?: string}) => {
-        if (result.ok) {
-          setLoggedUser(notUsed => user)
-          callback && callback()
-        } else {
-          setErrorMessage(result.errorMessage ?? '')
+    })
+      .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
+      // .then(result => console.log('결과: ', result))
+      .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
+        const {ok, body, errorMessage} = result
+        if (ok) {
+          U.writeStringP('jwt', body ?? '').finally(() => {
+            setJwt(body ?? '')
+            setLoggedUser(notUsed => ({username, password}))
+            U.writeObjectP('user', user).finally(() => callback && callback())
+          })
+          //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
         }
+        console.log('결과: ', result)
       })
-      .catch((e: Error) => setErrorMessage(e.message ?? ''))
-    // fetch(SERVER_URL + '/api/login', {
-    //   method: 'POST', // http의 method
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: JSON.stringify({
-    //     // 기존의 js object를 JSON String의 형태로 변환
-    //     username: username,
-    //     password: password
-    //   })
-    // })
-    //   .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-    //   .then(result => console.log('결과: ', result))
-    // setLoggedUser(notUsed => ({username, password}))
-    // setLoggedUser(notUsed => ({username, password}))
-    // callback && callback()
+      .catch((e: Error) => setErrorMessage(e.message))
+    setLoggedUser(notUsed => ({username, password}))
+    U.writeObjectP('user', user).finally(() => callback && callback())
+    callback && callback()
   }, [])
+
+  const reservation = useCallback(
+    (username: string, busnumber: string, callback?: Callback) => {
+      const user = {username, busnumber}
+      fetch(SERVER_URL + '/user/reservation', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          username: username,
+          busnumber: busnumber
+        })
+      })
+        .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
+        // .then(result => console.log('결과: ', result))
+        .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
+          const {ok, body, errorMessage} = result
+          if (ok) {
+            U.writeStringP('jwt', body ?? '').finally(() => {
+              setJwt(body ?? '')
+              setReservationUser(notUsed => ({username, busnumber}))
+              U.writeObjectP('user', user).finally(() => callback && callback())
+            })
+            //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
+          }
+          console.log('결과: ', result)
+        })
+        .catch((e: Error) => setErrorMessage(e.message))
+      setReservationUser(notUsed => ({username, busnumber}))
+      U.writeObjectP('user', user).finally(() => callback && callback())
+      callback && callback()
+    },
+    []
+  )
   const logout = useCallback((callback?: Callback) => {
     setJwt(notUsed => '')
     setLoggedUser(undefined)
+    //setLoggedDriver(undefined)
     callback && callback()
   }, [])
 
@@ -172,10 +233,12 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     jwt,
     errorMessage,
     loggedUser,
+    loggedDriver,
     signup,
     signupdriver,
     login,
-    logout
+    logout,
+    reservation
   }
   return <AuthContext.Provider value={value} children={children} />
 }
