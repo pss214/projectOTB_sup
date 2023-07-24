@@ -4,8 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import project.otb.DTO.ResponseDTO;
 import project.otb.DTO.UserDTO;
 import project.otb.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/member")
@@ -17,11 +20,14 @@ public class UserController {
     }
 
     @GetMapping
-    public UserDTO getUserInfo(@AuthenticationPrincipal User user){
-        return userService.getUserInfo(user);
+    public ResponseDTO getUserInfo(@AuthenticationPrincipal User user){
+        return ResponseDTO.builder()
+                .message(user.getUsername()+"의 마이페이지")
+                .data(List.of(userService.getUserInfo(user)))
+                .build();
     }
-    @PutMapping
-    public ResponseEntity<?> putUserInfo(@RequestBody UserDTO user){ return ResponseEntity.ok().body(userService.putUserInfo(user));}
+    @PostMapping
+    public ResponseEntity<?> putUserInfo(@AuthenticationPrincipal User user,@RequestBody UserDTO dto){ return ResponseEntity.ok().body(userService.putUserInfo(user,dto));}
     @DeleteMapping
     public ResponseEntity<?> delUserInfo(@AuthenticationPrincipal User user){ return ResponseEntity.ok().body(userService.delUserInfo(user));}
 }

@@ -14,31 +14,6 @@ import project.otb.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-/*
-
-ex)
-http://localhost:8080/api/signup
-in data
-{
-    "username":"pss",
-    "password":"password",
-    "email":"username@gmail.com"
-}
-out data
-{
-    "username": "pss",
-    "password": "password",
-    "nickname": "pss",
-    "email": "username@gmail.com",
-    "token": null,
-    "cd": "2023-07-15T18:13:38.8908674"//회원가입 후 생성시각
-}
-http://localhost:8080/api/login
-{
-    "username":"pss",
-    "password":"password"
-}
- */
 
 @Slf4j
 @RestController
@@ -55,24 +30,19 @@ public class LoginController {
     @PostMapping("/signup")
     public ResponseEntity<?> createUser(@RequestBody UserDTO dto){
         try {
-            User createdUser = userService.create(dto);
-            UserDTO responseUserDTO = UserDTO.builder()
-                    .username(createdUser.getUsername())
-                    .password(createdUser.getPassword())
-                    .email(createdUser.getEmail())
-                    .CD(createdUser.getCreated_Date())
-                    .build();
-            return ResponseEntity.ok().body(responseUserDTO);
+            return ResponseEntity.ok().body(userService.create(dto));
         }catch (Exception e){
-            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
-            return ResponseEntity.badRequest().body(responseDTO);
+            return ResponseEntity.badRequest().body(ResponseDTO.builder().message(e.getMessage()).build());
         }
     }
     @PostMapping("/login")
     public ResponseEntity<?> authenticator(@RequestBody LoginDto dto){
         UserDTO user = userService.login(dto);
         if(user!= null) {
-            return ResponseEntity.ok().body(user);
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .message("로그인 성공")
+                    .data(List.of(user))
+                    .build());
         }else {
             BusDTO user2 = busService.getLogin(dto);
             if(user2!=null){
@@ -82,19 +52,18 @@ public class LoginController {
                         .build());
             }
             else {
-                ResponseDTO response = ResponseDTO.builder().message("아이디나 비밀번호를 다시 확인해주세요").build();
-                return ResponseEntity.badRequest().body(response);
+                return ResponseEntity.badRequest().body(ResponseDTO
+                        .builder().message("아이디나 비밀번호를 다시 확인해주세요").build());
             }
         }
     }
     @PostMapping("/bussignup")
     public ResponseEntity<?> createBus(@RequestBody BusDTO dto){
         try {
-            ResponseDTO createdBus = busService.create(dto);
-            return ResponseEntity.ok().body(createdBus);
+            return ResponseEntity.ok().body(busService.create(dto));
         }catch (Exception e){
-            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
-            return ResponseEntity.badRequest().body(responseDTO);
+            return ResponseEntity.badRequest().body(ResponseDTO
+                    .builder().message(e.getMessage()).build());
         }
     }
 
