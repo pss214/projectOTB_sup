@@ -1,7 +1,5 @@
 package project.otb.controller;
 
-package project.otb.controller;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
