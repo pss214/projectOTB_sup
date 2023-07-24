@@ -13,6 +13,7 @@ import project.otb.service.BusService;
 import project.otb.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 /*
 
 ex)
@@ -63,35 +64,36 @@ public class LoginController {
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
         }catch (Exception e){
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
-
     @PostMapping("/login")
     public ResponseEntity<?> authenticator(@RequestBody LoginDto dto){
-        UserDTO user = userService.getByCredentials(dto);
-
+        UserDTO user = userService.login(dto);
         if(user!= null) {
             return ResponseEntity.ok().body(user);
         }else {
-            ResponseDTO response = ResponseDTO.builder().error("아이디나 비밀번호를 다시 확인해주세요").build();
-            return ResponseEntity.badRequest().body(response);
+            BusDTO user2 = busService.getLogin(dto);
+            if(user2!=null){
+                return ResponseEntity.ok( ResponseDTO.builder()
+                        .message("로그인 성공")
+                        .data(List.of(user2))
+                        .build());
+            }
+            else {
+                ResponseDTO response = ResponseDTO.builder().message("아이디나 비밀번호를 다시 확인해주세요").build();
+                return ResponseEntity.badRequest().body(response);
+            }
         }
     }
-    @PostMapping("/bussingup")
+    @PostMapping("/bussignup")
     public ResponseEntity<?> createBus(@RequestBody BusDTO dto){
         try {
-            Bus createdBus = busService.create(dto);
-            BusDTO responseBusDTO = BusDTO.builder()
-                    .BusNumber(createdBus.getBusNumber())
-                    .password(createdBus.getPassword())
-                    .CD(LocalDateTime.now())
-                    .Personnel(createdBus.getPersonnel())
-                    .build();
-            return ResponseEntity.ok().body(responseBusDTO);
+            ResponseDTO createdBus = busService.create(dto);
+            return ResponseEntity.ok().body(createdBus);
         }catch (Exception e){
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }

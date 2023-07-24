@@ -15,17 +15,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Bus {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "b_id")
     private Long id;
-    @Column(name = "b_num")
+    @Column(name = "b_num",nullable = false)
     private String BusNumber;
-    @Column(name = "b_password")
+    @Column(name = "b_password",nullable = false)
     private String Password;
     @Column(name = "DC",nullable = false)
     private LocalDateTime Created_Date;
-    @Column(name = "bu_num",nullable = false)
-    private String BusUniNumber;
-    @Column(name = "b_Personnel", nullable = false)
+    @Column(unique = true,nullable = false)
+    private String busNumberPlate;
+    @Column(name = "b_personnel", nullable = false)
     private int Personnel;
 }

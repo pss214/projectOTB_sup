@@ -8,14 +8,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusDTO {
-    private String BusNumber;
+    private String busnumber;
     private String password;
     private LocalDateTime CD;
-    private int Personnel;
-    private String BusUniNumber;
-
-    public project.otb.DTO.BusDTO form(project.otb.DTO.BusDTO user){
-        return null;
-    }
+    private int personnel;
+    private String busnumberplate;
+    private String token;
 }
 

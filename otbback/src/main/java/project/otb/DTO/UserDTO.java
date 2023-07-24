@@ -15,8 +15,5 @@ public class UserDTO {
     private String email;
     private String token;
     private LocalDateTime CD;
-
-    public UserDTO form(UserDTO user){
-        return null;
-    }
+    private LocalDateTime MD;
 }
