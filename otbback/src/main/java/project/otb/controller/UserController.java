@@ -1,5 +1,6 @@
 package project.otb.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -20,14 +21,37 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseDTO getUserInfo(@AuthenticationPrincipal User user){
-        return ResponseDTO.builder()
-                .message(user.getUsername()+"의 마이페이지")
-                .data(List.of(userService.getUserInfo(user)))
-                .build();
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user){
+        try {
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value()).message(user.getUsername()+"의 마이페이지").data(List.of(userService.getUserInfo(user))).build());
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
+        }
     }
     @PostMapping
-    public ResponseEntity<?> putUserInfo(@AuthenticationPrincipal User user,@RequestBody UserDTO dto){ return ResponseEntity.ok().body(userService.putUserInfo(user,dto));}
+    public ResponseEntity<?> putUserInfo(@AuthenticationPrincipal User user,@RequestBody UserDTO dto){
+        try{
+            userService.putUserInfo(user,dto);
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value()).message("회원 정보 수정 완료").build());
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(ResponseDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
+        }
+
+    }
     @DeleteMapping
-    public ResponseEntity<?> delUserInfo(@AuthenticationPrincipal User user){ return ResponseEntity.ok().body(userService.delUserInfo(user));}
+    public ResponseEntity<?> delUserInfo(@AuthenticationPrincipal User user){
+        try {
+            userService.delUserInfo(user);
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value()).message("회원 정보 삭제 완료").build());}
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(ResponseDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
+        }
+        }
+
 }

@@ -48,48 +48,60 @@ public class UserService {
     }
     public UserDTO login(final LoginDto dto) {
         User user = userRepository.findByUsername(dto.getUsername());
-        try {
-            if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-                String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
-
-                return UserDTO.builder()
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .token("otb " + token)
-                        .build();
-            } else {
-                return null;
-            }
-        }catch (Exception e){
-            e.fillInStackTrace();
+        if(user==null){
+            return null;
         }
-        return null;
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
+
+            return UserDTO.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .token("otb " + token)
+                    .build();
+        } else {
+            return null;
+        }
+
     }
     public UserDTO getUserInfo(org.springframework.security.core.userdetails.User dto){
         User user = userRepository.findByUsername(dto.getUsername());
-        return UserDTO.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .MD(user.getModified_Date())
-                .build();
+        if(user!=null){
+            return UserDTO.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .CD(user.getCreated_Date())
+                    .MD(user.getModified_Date())
+                    .build();
+        }
+        else{
+            throw new RuntimeException("회원 정보 없음");
+        }
+
     }
-    public ResponseDTO putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
+    public UserDTO putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
         User saveuser = userRepository.findByUsername(user.getUsername());
-        if(dto.getEmail()!=null){
-            saveuser.setEmail(dto.getEmail());
+        if(user!=null){
+            if(dto.getEmail()!=null){
+                saveuser.setEmail(dto.getEmail());
+            }
+            if(dto.getPassword()!=null){
+                saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
+            return null;
+        }else {
+            throw new RuntimeException("회원 정보 없음");
         }
-        if(dto.getPassword()!=null){
-            saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-        return ResponseDTO.builder()
-                .message("회원정보 수정완료")
-                .build();
+
     }
-    public ResponseDTO delUserInfo(org.springframework.security.core.userdetails.User dto){
+    public UserDTO delUserInfo(org.springframework.security.core.userdetails.User dto){
         User user = userRepository.findByUsername(dto.getUsername());
-        userRepository.delete(user);
-        return ResponseDTO.builder()
-                .message("회원 삭제 완료")
-                .build();
+        if(user!=null){
+            userRepository.delete(user);
+            return null;
+        }else {
+            throw new RuntimeException("회원 정보 없음");
+        }
+
     }
 }

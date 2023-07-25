@@ -25,7 +25,7 @@ public class BusService {
         this.tokenProvider = tokenProvider;
     }
 
-    public ResponseDTO create(final BusDTO entity) {
+    public BusDTO create(final BusDTO entity) {
         if(busRepository.existsBybusNumberPlate(entity.getBusnumberplate())){
             throw new RuntimeException("아이디가 존재합니다!");
         }else {
@@ -37,13 +37,14 @@ public class BusService {
                     .Created_Date(LocalDateTime.now())
                     .build();
             busRepository.save(bus);
-            return ResponseDTO.builder()
-                    .message("회원가입을 성공했습니다")
-                    .build();
+            return null;
         }
     }
     public BusDTO getLogin(final LoginDto dto) {
         Bus bus = busRepository.findBybusNumberPlate(dto.getUsername());
+        if(bus==null){
+            return null;
+        }
         if (passwordEncoder.matches(dto.getPassword(), bus.getPassword())) {
             String token = tokenProvider.createToken(String.format("%s:%s", bus.getId(), "USER"));
             return BusDTO.builder()

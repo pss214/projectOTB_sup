@@ -1,6 +1,7 @@
 package project.otb.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.otb.DTO.BusDTO;
@@ -30,9 +31,12 @@ public class LoginController {
     @PostMapping("/signup")
     public ResponseEntity<?> createUser(@RequestBody UserDTO dto){
         try {
-            return ResponseEntity.ok().body(userService.create(dto));
+            userService.create(dto);
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value()).message("회원가입이 완료되었습니다").build());
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(ResponseDTO.builder().message(e.getMessage()).build());
+            return ResponseEntity.badRequest().body(ResponseDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
         }
     }
     @PostMapping("/login")
@@ -40,6 +44,7 @@ public class LoginController {
         UserDTO user = userService.login(dto);
         if(user!= null) {
             return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value())
                     .message("로그인 성공")
                     .data(List.of(user))
                     .build());
@@ -47,23 +52,26 @@ public class LoginController {
             BusDTO user2 = busService.getLogin(dto);
             if(user2!=null){
                 return ResponseEntity.ok( ResponseDTO.builder()
+                        .status(HttpStatus.OK.value())
                         .message("로그인 성공")
                         .data(List.of(user2))
                         .build());
             }
             else {
                 return ResponseEntity.badRequest().body(ResponseDTO
-                        .builder().message("아이디나 비밀번호를 다시 확인해주세요").build());
+                        .builder().status(HttpStatus.BAD_REQUEST.value()).message("아이디나 비밀번호를 다시 확인해주세요").build());
             }
         }
     }
     @PostMapping("/bussignup")
     public ResponseEntity<?> createBus(@RequestBody BusDTO dto){
         try {
-            return ResponseEntity.ok().body(busService.create(dto));
+            busService.create(dto);
+            return ResponseEntity.ok().body(ResponseDTO.builder()
+                    .status(HttpStatus.OK.value()).message("회원가입이 완료되었습니다").build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO
-                    .builder().message(e.getMessage()).build());
+                    .builder().status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
         }
     }
 
