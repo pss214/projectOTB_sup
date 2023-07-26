@@ -1,4 +1,5 @@
 export interface BusStop {
+  [x: string]: any;
   place: string;
   lat: number;
   lng: number;

@@ -5,6 +5,7 @@ import BUS_STOP from '../../busStop.'; // busStop.ts 파일에서 BUS_STOP 데�
 function Kakao(): JSX.Element {
   const [map, setMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]); // 마커들을 배열로 관리
+  const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null); // 내 위치 마커
 
   useEffect(() => {
     const container = document.getElementById('map');
@@ -24,12 +25,28 @@ function Kakao(): JSX.Element {
       // 마커 클릭 이벤트 리스너 등록
       (window as any).kakao.maps.event.addListener(marker, 'click', () => {
         // 마커 클릭 시 이동할 경로 설정
-        const path = '/BusReserve'; // 다른 컴포넌트로 이동할 경로를 입력하세요.
+        const path = "/BusReserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
         window.location.pathname = path;
       });
       return marker;
     });
     setMarkers(tempMarkers);
+
+    // 내 위치 마커 생성
+    const currentLocationMarker = new (window as any).kakao.maps.Marker({
+      position: map.getCenter(),
+      map,
+      title: '내 위치', // 레이블 추가
+      zIndex: 9999, // 다른 마커들 보다 항상 위에 표시
+      image: new (window as any).kakao.maps.MarkerImage(
+        'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+        new (window as any).kakao.maps.Size(24, 35),
+        {
+          offset: new (window as any).kakao.maps.Point(12, 35),
+        }
+      ),
+    });
+    setCurrentLocationMarker(currentLocationMarker);
   }, []);
 
   // 내 위치로 이동하는 함수
@@ -42,13 +59,14 @@ function Kakao(): JSX.Element {
           const lng = position.coords.longitude;
           const moveLatLng = new (window as any).kakao.maps.LatLng(lat, lng);
           map.setCenter(moveLatLng); // 지도의 중심을 실시간 위치로 이동
+          currentLocationMarker.setPosition(moveLatLng); // 내 위치 마커 위치 업데이트
         },
         (error) => {
-          console.error('Error getting geolocation:', error);
+          console.error('위치 정보 오류', error);
         }
       );
     } else {
-      console.error('Geolocation not supported');
+      console.error('위치 정보를 받아오지 못했습니다.');
     }
   };
 

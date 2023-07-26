@@ -8,11 +8,11 @@ export default function NavigationBar() {
   return (
     <div className="flex justify-between bg-lime-200">
       <div className="flex p-6 navbar ">
-      <Link to="/" className="ml-4">
+      <Link to="/" className="ml-1">
   <img
     src="/img/otblogogogo.png"
     alt="OTB(우비) 로고"
-    className="w-12.5 h-12.5"
+    className="w-12.5 h-12.5 bg-lime-200"
   />
 </Link>
         {loggedUser && (
