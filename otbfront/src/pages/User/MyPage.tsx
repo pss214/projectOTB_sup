@@ -1,45 +1,52 @@
-import React, {useState, useEffect} from 'react'
-import {SERVER_URL} from '../../server/getServer'
+import React, {useState} from 'react'
+import {SERVER_URL} from '../../server'
 import {Link} from '../../components'
-import {useAuth} from '../../contexts'
-import axios from 'axios'
-import styled from 'styled-components'
-import UserData from './UserData'
 
-interface Article {
-  email: string
-  username: string
-  password: string
-}
-const UserBlock = styled.div`
-  box-sizing: border-box;
-  padding-bottom: 3rem;
-  width: 768px;
-  margin: 0 auto;
-  margin-top: 2rem;
-  @media screen and (max-width: 768px) {
-    width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+const MyPage: React.FC = () => {
+  const [user, setUser] = useState<any | null>(null)
+  const [loginData, setLoginData] = useState({username: '', password: ''})
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target
+    setLoginData(prevData => ({
+      ...prevData,
+      [name]: value
+    }))
   }
-`
 
-const MyPage = () => {
-  const [articles, setArticles] = useState<Article[] | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  useEffect(() => {
-    async function fetchData(): Promise<void> {
-      setLoading(true)
-      try {
-        const response = await axios.get(SERVER_URL + '/member')
-        setArticles(response.data.articles.sli)
-      } catch (e) {
-        console.log(e)
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    fetch(SERVER_URL + '/user/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(loginData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        const {token} = data
+        getUserInfo(token)
+      })
+      .catch(error => {
+        console.error('로그인에 실패했습니다.', error)
+      })
+  }
+
+  const getUserInfo = (token: string) => {
+    fetch(SERVER_URL + '/member', {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-      setLoading(false)
-    }
-    fetchData()
-  })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setUser(data)
+      })
+      .catch(error => {
+        console.error('마이페이지 정보를 가져오는데 실패했습니다.', error)
+      })
+  }
 
   return (
     <div>
@@ -55,14 +62,37 @@ const MyPage = () => {
         </div>
       </div>
       <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
-        <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
-          <h1 className="mb-8 text-2xl text-center text-lime-500">회원 정보</h1>
+        <div>
+          <h1 className="mb-8 text-4xl text-center text-lime-500">마이 페이지</h1>
+          {user ? (
+            <div className="mb-8 text-2xl text-center text-black-500">
+              <p>ID: {user.id}</p>
+              <p>Username: {user.username}</p>
+              <p>Email: {user.email}</p>
+              <p>Password: {user.password}</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="username"
+                placeholder="사용자명"
+                value={loginData.username}
+                onChange={handleChange}
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호"
+                value={loginData.password}
+                onChange={handleChange}
+              />
+              <button className="btn btn-primary text-white bg-lime-500" type="submit">
+                로그인
+              </button>
+            </form>
+          )}
         </div>
-        <UserBlock>
-          {articles?.map((article: Article) => (
-            <UserData key={article.username} article={article} />
-          ))}
-        </UserBlock>
         <Link to="/" className="btn btn-link text-lime-500">
           메인 페이지로 이동하기
         </Link>
@@ -70,4 +100,5 @@ const MyPage = () => {
     </div>
   )
 }
+
 export default MyPage
