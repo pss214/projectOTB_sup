@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import BUS_STOP from '../../busStop.'; // busStop.ts 파일에서 BUS_STOP 데이터 가져옴
 
 function Kakao(): JSX.Element {
   const [map, setMap] = useState<any>(null);
-  const [marker, setMarker] = useState<any>(null);
+  const [markers, setMarkers] = useState<any[]>([]); // 마커들을 배열로 관리
 
   useEffect(() => {
     const container = document.getElementById('map');
@@ -14,24 +15,27 @@ function Kakao(): JSX.Element {
     const map = new (window as any).kakao.maps.Map(container, options);
     setMap(map);
 
-    // 초기 위치에 마커 생성
-    const initialMarkerPosition = new (window as any).kakao.maps.LatLng(37.567, 126.978);
-    const initialMarker = new (window as any).kakao.maps.Marker({ position: initialMarkerPosition });
-    initialMarker.setMap(map);
-    setMarker(initialMarker);
-
-    // 마커 클릭 이벤트 리스너 등록
-    (window as any).kakao.maps.event.addListener(initialMarker, 'click', () => {
-      // 마커 클릭 시 이동할 경로 설정
-      const path = '/other-component'; // 다른 컴포넌트로 이동할 경로를 입력하세요.
-      window.location.pathname = path;
+    // 마커 생성
+    const tempMarkers = BUS_STOP.map((busStop) => {
+      const marker = new (window as any).kakao.maps.Marker({
+        position: new (window as any).kakao.maps.LatLng(busStop.lat, busStop.lng),
+        map,
+      });
+      // 마커 클릭 이벤트 리스너 등록
+      (window as any).kakao.maps.event.addListener(marker, 'click', () => {
+        // 마커 클릭 시 이동할 경로 설정
+        const path = '/BusReserve'; // 다른 컴포넌트로 이동할 경로를 입력하세요.
+        window.location.pathname = path;
+      });
+      return marker;
     });
+    setMarkers(tempMarkers);
   }, []);
 
   // 내 위치로 이동하는 함수
   const moveToMyLocation = () => {
     // Geolocation 사용
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
@@ -44,7 +48,7 @@ function Kakao(): JSX.Element {
         }
       );
     } else {
-      console.error("Geolocation not supported");
+      console.error('Geolocation not supported');
     }
   };
 
@@ -65,9 +69,7 @@ function Kakao(): JSX.Element {
       >
         내 위치로 이동
       </button>
-      <Link to="/other-component">
-        
-      </Link>
+      <Link to="/BusReserve"></Link>
     </div>
   );
 }
