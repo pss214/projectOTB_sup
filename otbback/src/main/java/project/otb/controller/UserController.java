@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user){
         try {
             return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .status(HttpStatus.OK.value()).message(user.getUsername()+"의 마이페이지").data(List.of(userService.getUserInfo(user))).build());
+                    .status(HttpStatus.CREATED.value()).message(user.getUsername()+"의 마이페이지").data(List.of(userService.getUserInfo(user))).build());
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
@@ -35,7 +35,7 @@ public class UserController {
         try{
             userService.putUserInfo(user,dto);
             return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .status(HttpStatus.OK.value()).message("회원 정보 수정 완료").build());
+                    .status(HttpStatus.CREATED.value()).message("회원 정보 수정 완료").build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
@@ -47,7 +47,7 @@ public class UserController {
         try {
             userService.delUserInfo(user);
             return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .status(HttpStatus.OK.value()).message("회원 정보 삭제 완료").build());}
+                    .status(HttpStatus.CREATED.value()).message("회원 정보 삭제 완료").build());}
         catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());

@@ -33,7 +33,7 @@ public class LoginController {
         try {
             userService.create(dto);
             return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .status(HttpStatus.OK.value()).message("회원가입이 완료되었습니다").build());
+                    .status(HttpStatus.CREATED.value()).message("회원가입이 완료되었습니다").build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
