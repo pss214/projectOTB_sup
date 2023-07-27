@@ -17,20 +17,64 @@ function Kakao(): JSX.Element {
     setMap(map);
 
     // 마커 생성
-    const tempMarkers = BUS_STOP.map((busStop) => {
-      const marker = new (window as any).kakao.maps.Marker({
-        position: new (window as any).kakao.maps.LatLng(busStop.lat, busStop.lng),
-        map,
+    const getUserPosition = () => {
+      return new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
       });
-      // 마커 클릭 이벤트 리스너 등록
-      (window as any).kakao.maps.event.addListener(marker, 'click', () => {
-        // 마커 클릭 시 이동할 경로 설정
-        const path = "/BusReserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
-        window.location.pathname = path;
-      });
-      return marker;
-    });
-    setMarkers(tempMarkers);
+    };
+
+    // 두 지점 사이의 거리를 계산하는 함수
+    const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const radlat1 = (Math.PI * lat1) / 180; // 위도를 라디안 단위로 변환
+  const radlat2 = (Math.PI * lat2) / 180; // 위도를 라디안 단위로 변환
+  const theta = lng1 - lng2; // 두 경도의 차이를 계산
+  const radtheta = (Math.PI * theta) / 180; // 경도를 라디안 단위로 변환
+
+  // 'Haversine formula'를 이용해 두 지점의 직선 거리를 계산
+  let dist =
+    Math.sin(radlat1) * Math.sin(radlat2) +
+    Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+  dist = Math.acos(dist); // 코사인 역함수인 아크코사인(acos)을 적용하여 라디안 단위의 각도를 구함
+  dist = (dist * 180) / Math.PI; // 라디안 단위의 각도를 도(degree)로 변환
+  dist = dist * 60 * 1.1515 * 1609.344; // 마일을 미터로 변환 (1마일 = 1609.344미터)
+
+  return dist; // 두 지점 사이의 거리를 반환 (미터 단위)
+};
+
+    const loadMarkers = async () => {
+      try {
+        // 사용자의 현재 위치를 얻어옴
+        const userPosition = await getUserPosition();
+        const userLat = userPosition.coords.latitude;
+        const userLng = userPosition.coords.longitude;
+
+        // 사용자 위치에서 200m 이내의 버스 정류장만 필터링
+        const filteredMarkers = BUS_STOP.filter((busStop) => {
+          const distance = calculateDistance(userLat, userLng, busStop.lat, busStop.lng);
+          return distance <= 200;
+        });
+
+        // 필터링된 버스 정류장에 대한 마커 생성
+        const tempMarkers = filteredMarkers.map((busStop) => {
+          const marker = new (window as any).kakao.maps.Marker({
+            position: new (window as any).kakao.maps.LatLng(busStop.lat, busStop.lng),
+            map,
+          });
+          // 마커 클릭 이벤트 리스너 등록
+          (window as any).kakao.maps.event.addListener(marker, 'click', () => {
+            // 마커 클릭 시 이동할 경로 설정
+            const path = "/BusReserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
+            window.location.pathname = path;
+          });
+          return marker;
+        });
+        setMarkers(tempMarkers);
+      } catch (error) {
+        console.error('사용자 위치 가져오기 오류:', error);
+      }
+    };
+
+    loadMarkers();
 
     // 내 위치 마커 생성
     const currentLocationMarker = new (window as any).kakao.maps.Marker({
@@ -70,7 +114,7 @@ function Kakao(): JSX.Element {
     // Geolocation 사용
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        (position: GeolocationPosition) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           const moveLatLng = new (window as any).kakao.maps.LatLng(lat, lng);
