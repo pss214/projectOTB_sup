@@ -19,12 +19,11 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
     @GetMapping
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user){
         try {
             return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .status(HttpStatus.CREATED.value()).message(user.getUsername()+"의 마이페이지").data(List.of(userService.getUserInfo(user))).build());
+                    .status(HttpStatus.OK.value()).message(user.getUsername()+"의 마이페이지").data(List.of(userService.getUserInfo(user))).build());
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
@@ -40,7 +39,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
         }
-
     }
     @DeleteMapping
     public ResponseEntity<?> delUserInfo(@AuthenticationPrincipal User user){

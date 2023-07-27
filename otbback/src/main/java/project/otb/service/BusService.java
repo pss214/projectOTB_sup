@@ -28,12 +28,9 @@ public class BusService {
     }
 
     public BusDTO create(final BusDTO entity) {
-        if(busRepository.existsBybusNumberPlate(entity.getBusnumberplate())){
+        if(busRepository.existsBybusNumberPlate(entity.getBusnumberplate())&&userRepository.existsByUsername(entity.getBusnumberplate())){
             throw new RuntimeException("아이디가 존재합니다!");
         }else {
-            if(userRepository.existsByUsername(entity.getBusnumberplate())){
-                throw new RuntimeException("아이디가 존재합니다!");
-            }else{
                 Bus bus = Bus.builder()
                         .BusNumber(entity.getBusnumber())
                         .busNumberPlate(entity.getBusnumberplate())
@@ -44,23 +41,18 @@ public class BusService {
                 busRepository.save(bus);
                 return null;
             }
-
-        }
     }
     public BusDTO getLogin(final LoginDto dto) {
         Bus bus = busRepository.findBybusNumberPlate(dto.getUsername());
-        if(bus==null){
-            return null;
-        }
-        if (passwordEncoder.matches(dto.getPassword(), bus.getPassword())) {
+        if(bus!=null&&passwordEncoder.matches(dto.getPassword(), bus.getPassword())){
             String token = tokenProvider.createToken(String.format("%s:%s", bus.getId(), "USER"));
             return BusDTO.builder()
                     .busnumberplate(bus.getBusNumberPlate())
-                    .token("otb " + token)
+                    .token(token)
                     .busnumber(bus.getBusNumber())
                     .personnel(bus.getPersonnel())
                     .build();
-        } else {
+        }else {
             return null;
         }
     }
