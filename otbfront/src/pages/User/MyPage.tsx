@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {SERVER_URL} from '../../server'
 import {Link} from '../../components'
+import {response} from 'express'
 
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null)
@@ -35,16 +36,15 @@ const MyPage: React.FC = () => {
 
   const getUserInfo = (token: string) => {
     fetch(SERVER_URL + '/member', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      method: 'GET',
+      headers: {'Content-Type': 'application/json', Authorization: `${token}`}
     })
       .then(response => response.json())
       .then(data => {
         setUser(data)
       })
       .catch(error => {
-        console.error('마이페이지 정보를 가져오는데 실패했습니다.', error)
+        console.error('정보를 가져오는데 실패했습니다.', error)
       })
   }
 
@@ -66,7 +66,6 @@ const MyPage: React.FC = () => {
           <h1 className="mb-8 text-4xl text-center text-lime-500">마이 페이지</h1>
           {user ? (
             <div className="mb-8 text-2xl text-center text-black-500">
-              <p>ID: {user.id}</p>
               <p>Username: {user.username}</p>
               <p>Email: {user.email}</p>
               <p>Password: {user.password}</p>
@@ -74,7 +73,7 @@ const MyPage: React.FC = () => {
           ) : (
             <form onSubmit={handleSubmit}>
               <input
-                type="text"
+                type="username"
                 name="username"
                 placeholder="사용자명"
                 value={loginData.username}
