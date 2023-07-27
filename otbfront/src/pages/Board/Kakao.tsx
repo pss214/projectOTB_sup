@@ -47,6 +47,22 @@ function Kakao(): JSX.Element {
       ),
     });
     setCurrentLocationMarker(currentLocationMarker);
+
+    // 지도 확대 축소를 제어할 수 있는 줌 컨트롤 생성
+    const zoomControl = new (window as any).kakao.maps.ZoomControl();
+    map.addControl(zoomControl, (window as any).kakao.maps.ControlPosition.RIGHT);
+
+    // 지도가 확대 또는 축소되면 마지막 파라미터로 넘어온 함수를 호출하는 이벤트 등록
+    (window as any).kakao.maps.event.addListener(map, 'zoom_changed', function () {
+      // 지도의 현재 레벨을 얻어옵니다
+      const level = map.getLevel();
+
+      // 결과를 HTML 요소에 출력
+      const resultDiv = document.getElementById('result');
+      if (resultDiv) {
+        resultDiv.innerHTML = `현재 지도 레벨은 ${level} 입니다`;
+      }
+    });
   }, []);
 
   // 내 위치로 이동하는 함수
@@ -87,6 +103,8 @@ function Kakao(): JSX.Element {
       >
         내 위치로 이동
       </button>
+      {/* 지도 레벨을 출력할 HTML 요소 */}
+      <div id="result"></div>
       <Link to="/BusReserve"></Link>
     </div>
   );
