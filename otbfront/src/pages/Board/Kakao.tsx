@@ -6,6 +6,20 @@ function Kakao(): JSX.Element {
   const [map, setMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]); // 마커들을 배열로 관리
   const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null); // 내 위치 마커
+  const [showTrafficOverlay, setShowTrafficOverlay] = useState<boolean>(false); // 교통정보 보기/숨기기 상태
+
+  const toggleTrafficOverlay = () => {
+    // 교통정보를 토글하는 로직을 작성합니다.
+    // 지도에 교통정보 오버레이를 추가 또는 제거하여 보이거나 숨기는 기능을 구현합니다.
+    if (map) {
+      if (showTrafficOverlay) {
+        map.removeOverlayMapTypeId((window as any).kakao.maps.MapTypeId.TRAFFIC);
+      } else {
+        map.addOverlayMapTypeId((window as any).kakao.maps.MapTypeId.TRAFFIC);
+      }
+      setShowTrafficOverlay(!showTrafficOverlay);
+    }
+  };
 
   useEffect(() => {
     const container = document.getElementById('map');
@@ -73,6 +87,25 @@ function Kakao(): JSX.Element {
         console.error('사용자 위치 가져오기 오류:', error);
       }
     };
+
+    // 지도에 교통정보 오버레이를 추가하는 함수
+    const addTrafficOverlay = () => {
+      map.addOverlayMapTypeId((window as any).kakao.maps.MapTypeId.TRAFFIC);
+      setShowTrafficOverlay(true);
+    };
+
+    // 지도에 교통정보 오버레이를 제거하는 함수
+    const removeTrafficOverlay = () => {
+      map.removeOverlayMapTypeId((window as any).kakao.maps.MapTypeId.TRAFFIC);
+      setShowTrafficOverlay(false);
+    };
+
+    if (showTrafficOverlay) {
+      addTrafficOverlay();
+    } else {
+      removeTrafficOverlay();
+    }
+
 
     loadMarkers();
 
@@ -142,10 +175,25 @@ function Kakao(): JSX.Element {
           fontSize: '16px',
           border: 'none',
           cursor: 'pointer',
+          marginRight: '10px', // 오른쪽 여백 추가
         }}
         onClick={moveToMyLocation}
       >
         내 위치로 이동
+      </button>
+      <button
+        style={{
+          backgroundColor: '#cddc39', // lime-500
+          color: '#fff',
+          borderRadius: '5px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+        onClick={toggleTrafficOverlay}
+      >
+        {showTrafficOverlay ? '교통정보 숨기기' : '교통정보 표시하기'}
       </button>
       {/* 지도 레벨을 출력할 HTML 요소 */}
       <div id="result"></div>
