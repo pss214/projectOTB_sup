@@ -2,6 +2,7 @@ package project.otb.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Table
 @Entity
@@ -19,4 +20,8 @@ public class Reservation {
     private String BusNumber;
     @Column(name = "bu_num")
     private String BusUniqueNumber;
+    @Column(name = "purchase_status")
+    @ColumnDefault("0")
+    private boolean purchaseStatus;
+
 }

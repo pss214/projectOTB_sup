@@ -15,4 +15,6 @@ public class ReservationDTO {
     private String username;
     private String BusNumber;
     private String BusNumberPlate;
+    private boolean purchaseStatus;
+
 }
