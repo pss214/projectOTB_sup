@@ -8,6 +8,10 @@ import Login from './Auth/Login'
 import Logout from './Auth/Logout'
 import NoMatch from './NoMatch'
 import SignUpDriver from './Auth/SignUpDriver'
+import NewsPage from '../routes/LandingPage'
+
+import MyPage from '../pages/User/MyPage'
+import Reserve from '../pages/Reservation/Reserve'
 
 export default function RoutesSetup() {
   return (
@@ -27,6 +31,11 @@ export default function RoutesSetup() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/signupdriver" element={<SignUpDriver />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/" />
+      <Route path="/mypage" element={<MyPage />} />
+      <Route path="/" element={<NewsPage />} />
+      <Route path="/:category" element={<NewsPage />} />
+      <Route path="/reserve/" element={<Reserve />} />
       <Route
         path="/logout"
         element={
