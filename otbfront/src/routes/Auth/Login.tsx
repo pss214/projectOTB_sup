@@ -23,15 +23,15 @@ export default function Login() {
     login(username, password, () => navigate('/'))
   }, [username, password, navigate, login])
 
-  useEffect(() => {
-    U.readObjectP<LoginFormType>('user')
-      .then(user => {
-        if (user) setForm(user)
-      })
-      .catch(e => {
-        /* ignore */
-      })
-  }, [])
+  // useEffect(() => {
+  //   U.readObjectP<LoginFormType>('user')
+  //     .then(user => {
+  //       if (user) setForm(user)
+  //     })
+  //     .catch(e => {
+  //       /* ignore */
+  //     })
+  // }, [])
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 border border-gray-300 shadow-xl rounded-xl">
@@ -43,7 +43,7 @@ export default function Login() {
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="username"
-            placeholder="ID를 입력해주세요."
+            placeholder="고객은 ID 기사는 차량번호를 입력하세요"
             value={username}
             onChange={changed('username')}
           />
