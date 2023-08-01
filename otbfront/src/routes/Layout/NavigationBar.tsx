@@ -16,6 +16,7 @@ export default function NavigationBar() {
             className="w-12.5 h-12.5 bg-lime-200"
           />
         </Link>
+
       </div>
       <div className="flex p-6 items-center">
         {!loggedUser && (
