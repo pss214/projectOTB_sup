@@ -21,11 +21,9 @@ function Kakao(): JSX.Element {
     }
   };
 
-
   useEffect(() => {
-    const container = document.getElementById('map')
+    const container = document.getElementById('map');
     const options = {
-
       center: new (window as any).kakao.maps.LatLng(37.5665, 126.9780), // 초기 위치 설정 (서울)
       level: 3,
     };
@@ -67,7 +65,7 @@ function Kakao(): JSX.Element {
         // 사용자 위치에서 200m 이내의 버스 정류장만 필터링
         const filteredMarkers = BUS_STOP.filter((busStop) => {
           const distance = calculateDistance(userLat, userLng, busStop.lat, busStop.lng);
-          return distance <= 200;
+          return distance <= 500;
         });
 
         // 필터링된 버스 정류장에 대한 마커 생성
@@ -79,7 +77,7 @@ function Kakao(): JSX.Element {
           // 마커 클릭 이벤트 리스너 등록
           (window as any).kakao.maps.event.addListener(marker, 'click', () => {
             // 마커 클릭 시 이동할 경로 설정
-            const path = "/BusReserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
+            const path = "/reserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
             window.location.pathname = path;
           });
           return marker;
@@ -144,13 +142,11 @@ function Kakao(): JSX.Element {
     });
   }, []);
 
-
   // 내 위치로 이동하는 함수
   const moveToMyLocation = () => {
     // Geolocation 사용
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-
         (position: GeolocationPosition) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
@@ -170,7 +166,6 @@ function Kakao(): JSX.Element {
   return (
     <div>
       <div id="map" style={{ width: '500px', height: '500px' }}></div>
-
       <button
         style={{
           backgroundColor: '#cddc39', // lime-500
@@ -179,7 +174,6 @@ function Kakao(): JSX.Element {
           padding: '10px 20px',
           fontSize: '16px',
           border: 'none',
-
           cursor: 'pointer',
           marginRight: '10px', // 오른쪽 여백 추가
         }}
@@ -203,10 +197,9 @@ function Kakao(): JSX.Element {
       </button>
       {/* 지도 레벨을 출력할 HTML 요소 */}
       <div id="result"></div>
-      <Link to="/BusReserve"></Link>
+      <Link to="/reserve"></Link>
     </div>
   );
-
 }
 
-export default Kakao
+export default Kakao;

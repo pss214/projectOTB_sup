@@ -1,15 +1,15 @@
-import {Provider as ReduxProvider} from 'react-redux'
-import {DndProvider} from 'react-dnd'
-import {HTML5Backend} from 'react-dnd-html5-backend'
-import {BrowserRouter} from 'react-router-dom'
-import {AuthProvider} from './contexts'
-import RoutesSetup from './routes/RoutesSetup'
-import useGeoLocation from './useGeolocation'
-import {useStore} from './store'
+import { Provider as ReduxProvider } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './contexts';
+import RoutesSetup from './routes/RoutesSetup';
+import { useStore } from './store';
+import useGeoLocation from './useGeolocation';
 
 export default function App() {
-  const store = useStore()
-  const location = useGeoLocation()
+  const store = useStore();
+  const location = useGeoLocation();
 
   return (
     <ReduxProvider store={store}>
@@ -19,10 +19,8 @@ export default function App() {
             <div className="App">
               {location.loaded
                 ? JSON.stringify(location)
-                : 'Location data not available yet.'}
-              : "위치를 찾을 수 없습니다."
+                : "위치를 찾을 수 없습니다."}
             </div>
-            <RoutesSetup />
             <footer>
               <div className="text-center p-4 bg-lime-700 text-primary-100 fixed-bottom">
                 <p className="text-white">
@@ -31,10 +29,10 @@ export default function App() {
                 </p>
               </div>
             </footer>
+            <RoutesSetup />
           </AuthProvider>
         </BrowserRouter>
       </DndProvider>
     </ReduxProvider>
-  )
+  );
 }
-

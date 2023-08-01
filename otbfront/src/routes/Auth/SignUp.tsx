@@ -36,7 +36,6 @@ export default function SignUp() {
     }
     if (password === confirmPassword) {
       signup(username, email, password, () => navigate('/'))
-      alert('회원가입이 완료되었습니다.')
     } else alert('비밀번호가 일치하여야 합니다.')
   }, [email, password, confirmPassword, navigate, signup])
 
