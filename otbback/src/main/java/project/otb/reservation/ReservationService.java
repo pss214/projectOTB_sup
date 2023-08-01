@@ -1,4 +1,4 @@
-package project.otb.service;
+package project.otb.reservation;
 
 public class ReservationService {
 

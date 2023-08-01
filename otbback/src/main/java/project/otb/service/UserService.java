@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.otb.DTO.LoginDto;
-import project.otb.DTO.ResponseDTO;
 import project.otb.DTO.UserDTO;
 import project.otb.entity.User;
-import project.otb.jwt.TokenProvider;
+import project.otb.repositiry.BusRepository;
+import project.otb.security.TokenProvider;
 import project.otb.repositiry.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -19,68 +18,75 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final BusRepository busRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, BusRepository busRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+        this.busRepository = busRepository;
     }
 
-    public User create(final UserDTO entity){
-        final String username = entity.getUsername();
-        if(userRepository.existsByUsername(username)){
-            log.warn("username Already Exists!, {}", username);
+    public User create(final UserDTO dto){
+        if(userRepository.existsByUsername(dto.getUsername())&&busRepository.existsBybusNumberPlate(dto.getUsername())){
             throw new RuntimeException("아이디가 존재합니다!");
         }
-        User user= User.builder()
-                .password(passwordEncoder.encode(entity.getPassword()))
-                .username(entity.getUsername())
-                .email(entity.getEmail())
-                .Created_Date(LocalDateTime.now())
-                .build();
-
-        return userRepository.save(user);
+        else{
+                User user= User.builder()
+                        .password(passwordEncoder.encode(dto.getPassword()))
+                        .username(dto.getUsername())
+                        .email(dto.getEmail())
+                        .Created_Date(LocalDateTime.now())
+                        .build();
+                return userRepository.save(user);
+            }
     }
     public UserDTO login(final LoginDto dto) {
         User user = userRepository.findByUsername(dto.getUsername());
-        try {
-            if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-                String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
+        if(user!=null&&passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
 
-                return UserDTO.builder()
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .token("otb " + token)
-                        .build();
-            } else {
-                return null;
-            }
-        }catch (Exception e){
-            e.fillInStackTrace();
+            return UserDTO.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .token(token)
+                    .build();
+        } else {
+            return null;
         }
-        return null;
     }
     public UserDTO getUserInfo(org.springframework.security.core.userdetails.User dto){
         User user = userRepository.findByUsername(dto.getUsername());
-        return UserDTO.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .MD(user.getModified_Date())
-                .build();
+        if(user!=null){
+            return UserDTO.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .CD(user.getCreated_Date())
+                    .MD(user.getModified_Date())
+                    .build();
+        }
+        else{
+            throw new RuntimeException("회원 정보 없음");
+        }
+
     }
-    public ResponseDTO putUserInfo(UserDTO dto){
-        User user = userRepository.findByUsername(dto.getUsername());
-        //부분수정 (email,password)
-        return ResponseDTO.builder()
-                .message("회원정보 수정완료")
-                .data(List.of(user.getClass()))
-                .build();
+    public void putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
+        User saveuser = userRepository.findByUsername(user.getUsername());
+        if(dto.getEmail()!=null){
+            saveuser.setEmail(dto.getEmail());
+        }
+        if(dto.getPassword()!=null){
+            saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
     }
-    public ResponseDTO delUserInfo(org.springframework.security.core.userdetails.User dto){
+    public void delUserInfo(org.springframework.security.core.userdetails.User dto){
         User user = userRepository.findByUsername(dto.getUsername());
-        userRepository.delete(user);
-        return ResponseDTO.builder()
-                .message("회원 삭제 완료")
-                .build();
+        if(user!=null){
+            userRepository.delete(user);
+        }else {
+            throw new RuntimeException("회원 정보 없음");
+        }
+
     }
 }
