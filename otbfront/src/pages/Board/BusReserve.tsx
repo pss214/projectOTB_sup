@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+
 
 function BusReserve(): JSX.Element {
   return (
@@ -8,7 +9,6 @@ function BusReserve(): JSX.Element {
       <button>버튼2</button>
       {/* 원하는 다른 내용을 추가하세요 */}
     </div>
-  );
+  )
 }
-
-export default BusReserve;
+export default BusReserve

@@ -21,9 +21,11 @@ function Kakao(): JSX.Element {
     }
   };
 
+
   useEffect(() => {
-    const container = document.getElementById('map');
+    const container = document.getElementById('map')
     const options = {
+
       center: new (window as any).kakao.maps.LatLng(37.5665, 126.9780), // 초기 위치 설정 (서울)
       level: 3,
     };
@@ -142,11 +144,13 @@ function Kakao(): JSX.Element {
     });
   }, []);
 
+
   // 내 위치로 이동하는 함수
   const moveToMyLocation = () => {
     // Geolocation 사용
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
+
         (position: GeolocationPosition) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
@@ -166,6 +170,7 @@ function Kakao(): JSX.Element {
   return (
     <div>
       <div id="map" style={{ width: '500px', height: '500px' }}></div>
+
       <button
         style={{
           backgroundColor: '#cddc39', // lime-500
@@ -174,6 +179,7 @@ function Kakao(): JSX.Element {
           padding: '10px 20px',
           fontSize: '16px',
           border: 'none',
+
           cursor: 'pointer',
           marginRight: '10px', // 오른쪽 여백 추가
         }}
@@ -200,6 +206,7 @@ function Kakao(): JSX.Element {
       <Link to="/BusReserve"></Link>
     </div>
   );
+
 }
 
-export default Kakao;
+export default Kakao

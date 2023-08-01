@@ -23,6 +23,7 @@ otbfront/npm-debug.log*
 otbfront/yarn-debug.log*
 otbfront/yarn-error.log*
 
+otbfront/src/server/getServer.ts
 #back ignoring
 otbback/HELP.md
 otbback/.gradle
