@@ -8,13 +8,13 @@ export default function NavigationBar() {
   return (
     <div className="flex justify-between bg-lime-200">
       <div className="flex p-6 navbar ">
-        <Link to="/" className="ml-4">
-          <img
-            src="/img/otblogogogo.png"
-            alt="OTB(우비) 로고"
-            className="w-12.5 h-12.5"
-          />
-        </Link>
+      <Link to="/" className="ml-1">
+  <img
+    src="/img/otblogogogo.png"
+    alt="OTB(우비) 로고"
+    className="w-12.5 h-12.5 bg-lime-200"
+  />
+</Link>
         {loggedUser && (
           <Link to="/board" className="btn btn-link ml-4 font-bold text-lime-700">
             버스 이용하기
