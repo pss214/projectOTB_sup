@@ -7,4 +7,5 @@ import project.otb.entity.Reservation;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    Reservation findByUsername(String username);
 }
