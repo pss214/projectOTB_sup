@@ -8,37 +8,45 @@ import project.otb.DTO.ResponseDTO;
 import project.otb.repositiry.ReservationRepository;
 import project.otb.entity.Reservation;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
 @Service
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final ResponseDTO responseDTO;
 
-    public ReservationService(ReservationRepository reservationRepository, ResponseDTO responseDTO) {
+    public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-        this.responseDTO = responseDTO;
     }
-    public List<ReservationDTO> getReservationsByUsername(String username) {
-        List<Reservation> reservations = (List<Reservation>) reservationRepository.findByUsername(username);
-        return convertToDTOList(reservations);
 
-        public ResponseDTO saveReservation(final ReservationDTO dto) {
-            Reservation reservation = reservationRepository.findByUsername(dto.getUsername());
-            if (reservation != null)
-                return (List<ReservationDTO>) ResponseDTO.builder()
-                        .status(HttpStatus.CREATED.value())
-                        .message("예약이 성공적으로 저장되었습니다.")
-                        .data(null)
-                        .build();
+    public Reservation saveReservation(ReservationDTO dto, org.springframework.security.core.userdetails.User user) {
+        Reservation reservation = Reservation.builder()
+                .depart_station(dto.getDepart_station())
+                .busnumber(dto.getBusNumber())
+                .BusNumberPlate(dto.getBusNumberPlate())
+                .arrive_station(dto.getArrive_station())
+                .username(user.getUsername())
+                .Payment(dto.isPayment())
+                .rtuinum(dto.getUsername() + dto.getBusNumber() + LocalDateTime.now())
+                .build();
+            return reservationRepository.save(reservation);
         }
-    }
-    private List<ReservationDTO> convertToDTOList(List<Reservation> reservations) {
-        return null;
-    }
-
-    public Reservation saveReservation(Reservation reservation) {
-        return reservation;
+    public ReservationDTO getReservationInfo(org.springframework.security.core.userdetails.User dto) {
+        Reservation reservation = reservationRepository.findByUsername(dto.getUsername());
+        if (reservation != null) {
+            return ReservationDTO.builder()
+                    .depart_station(reservation.getDepart_station())
+                    .BusNumber(reservation.getBusnumber())
+                    .BusNumberPlate(reservation.getBusNumberPlate())
+                    .arrive_station(reservation.getArrive_station())
+                    .username(reservation.getUsername())
+                    .Payment(reservation.isPayment())
+                    .rtuinum(reservation.getRtuinum())
+                    .build();
+        } else {
+            throw new RuntimeException("예약정보 없음");
+        }
     }
 }

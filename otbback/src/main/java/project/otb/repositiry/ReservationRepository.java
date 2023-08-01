@@ -2,7 +2,6 @@ package project.otb.repositiry;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 import project.otb.entity.Reservation;
 

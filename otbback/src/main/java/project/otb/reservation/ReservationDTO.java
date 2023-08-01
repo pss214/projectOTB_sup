@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Data
@@ -15,6 +16,7 @@ public class ReservationDTO {
     private String username;
     private String BusNumber;
     private String BusNumberPlate;
-    private boolean purchaseStatus;
+    private boolean Payment;
+    private String rtuinum;//busnumber+time+username
 
 }
