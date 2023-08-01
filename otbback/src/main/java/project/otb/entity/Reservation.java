@@ -1,22 +1,29 @@
 package project.otb.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Table
 @Entity
 @Data
+@Builder
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Rt_Id;
+    private Long rt_id;
     private String rtuinum;//busnumber+time+username
     @Column(name = "dst")
     private int depart_station;
     @Column(name = "ast")
     private int arrive_station;
-    @Column(nullable = false)
-    private String BusNumber;
+    private String busnumber;
     @Column(name = "bu_num")
-    private String BusUniqueNumber;
+    private String BusNumberPlate;
+    @Column(name = "payment")
+    private boolean Payment;
+    private String username;
+
+
 }
