@@ -11,13 +11,13 @@ export default function Hero() {
           <div className="flex items-center justify-between mt-4">
             <Link to="/board">
               <Button className="btn-primary text-3xl font-bold btn-primary-lime-500 text-white bg-lime-500 border-lime-500">
-                user 클릭
+                서비스 이용하기
               </Button>
             </Link>
             <Link to="/">
-              <Button className="btn-primary text-3xl font-bold btn-primary-lime-500 text-white bg-lime-500 border-lime-500">
+              {/* <Button className="btn-primary text-3xl font-bold btn-primary-lime-500 text-white bg-lime-500 border-lime-500">
                 driver 클릭
-              </Button>
+              </Button> */}
             </Link>
           </div>
           <div></div>

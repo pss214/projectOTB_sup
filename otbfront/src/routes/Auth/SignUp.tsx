@@ -7,6 +7,8 @@ type SignUpFormType = Record<
   'email' | 'username' | 'password' | 'confirmPassword',
   string
 >
+const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+
 const initialFormState = {email: '', username: '', password: '', confirmPassword: ''}
 
 export default function SignUp() {
@@ -22,8 +24,16 @@ export default function SignUp() {
   const navigate = useNavigate()
   const {signup} = useAuth()
 
+  const validateEmail = (email: string) => {
+    return emailRegex.test(email)
+  }
+
   const createAccount = useCallback(() => {
     console.log(email, password, confirmPassword)
+    if (!validateEmail(email)) {
+      alert('올바른 이메일 형식을 입력해주세요.')
+      return
+    }
     if (password === confirmPassword) {
       signup(username, email, password, () => navigate('/'))
       alert('회원가입이 완료되었습니다.')

@@ -1,33 +1,47 @@
-import {Link} from '../../components'
-import Kakao from '../Board/Kakao'
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
+import ReservationForm from './ReservationForm'
+import {Link as RRLink} from 'react-router-dom'
+import {Link} from '../../components'
+import {useAuth} from '../../contexts'
 
-// 버스 도착 정보를 담을 타입 정의
-interface BusArrival {
+interface Bus {
+  id: number
   busNumber: string
-  arrivalTime: string
+  capacity: number
+  route: string
+  destination: string
 }
 
-const Reserve: React.FC = () => {
-  const [busArrivals, setBusArrivals] = useState<BusArrival[]>([])
+const BusListByStationId: React.FC = () => {
+  const [stationId, setStationId] = useState('')
+  const [buses, setBuses] = useState<Bus[]>([])
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
+  const [destinationStations, setDestinationStations] = useState<string[]>([])
 
   useEffect(() => {
-    // 외부 API의 엔드포인트 URL //
-    const apiUrl = 'https://api.example.com/bus-arrivals'
+    if (stationId.trim() === '') return
 
-    // 외부 API를 호출하여 버스 도착 정보를 가져옵니다.
+    const apiUrl = `http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?
+    ServiceKey=au774mPDNO37gAJrlTNvjrymn07a%2Ff739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw%3D%3D&arsId=${stationId}` // api 주소 추가하기
+
     axios
-      .get<BusArrival[]>(apiUrl) // API 응답의 타입을 지정
+      .get<Bus[]>(apiUrl)
       .then(response => {
-        // API 호출이 성공하면 결과를 상태에 저장
-        setBusArrivals(response.data)
+        setBuses(response.data)
+        const destinationStations = Array.from(
+          new Set(response.data.map(bus => bus.destination))
+        )
+        setDestinationStations(destinationStations)
       })
       .catch(error => {
-        // API 호출이 실패한 경우 에러 처리
-        console.error('Error fetching bus arrivals:', error)
+        console.error('옳지않은 정류장 ID입니다.:', error)
       })
-  }, [])
+  }, [stationId])
+
+  const handleBusSelect = (bus: Bus) => {
+    setSelectedBus(bus)
+  }
 
   return (
     <div>
@@ -46,20 +60,44 @@ const Reserve: React.FC = () => {
         <div className="flex flex-col items-center  flex-1 max-w-sm px-2 mx-auto">
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
             <div>
-              <h1 className="mb-8 text-4xl text-center text-black">예약 페이지</h1>
-              <ul>
-                {busArrivals.map((bus, index) => (
-                  <li key={index}>
-                    <strong>버스 번호:</strong> {bus.busNumber},{' '}
-                    <strong>도착 예정 시간:</strong> {bus.arrivalTime}
-                  </li>
-                ))}
-              </ul>
-              <button className="ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
-                예약 하기
-              </button>
+              <h1 className="mb-8 text-4xl text-center text-lime-500">예약 하기</h1>
+              <h1>출발 정류장 선택</h1>
+              <input
+                type="text"
+                value={stationId}
+                onChange={e => setStationId(e.target.value)}
+                placeholder="출발 정류장 ID를 입력하세요"
+              />
+
+              {stationId.trim() !== '' && (
+                <>
+                  <h2>정류장 {stationId} 도착 버스 목록</h2>
+                  <ul>
+                    {buses.map(bus => (
+                      <li key={bus.id}>
+                        <span>{bus.busNumber}</span>
+                        <button onClick={() => handleBusSelect(bus)}>예약하기</button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {selectedBus && (
+                <div>
+                  <h2>선택한 버스 노선 정보</h2>
+                  <p>노선 이름: {selectedBus.route}</p>
+                  <p>도착정류장: {selectedBus.destination}</p>
+                  <ReservationForm
+                    bus={selectedBus}
+                    destinationStations={destinationStations}
+                    startingStation={`정류장 ${stationId}`}
+                    onReservationSuccess={function (): void {
+                      throw new Error('문제 발생')
+                    }}
+                  />
+                </div>
+              )}
             </div>
-            {/*값 기재 하기*/}
             <Link to="/" className="btn btn-link text-lime-500">
               메인 페이지로 이동하기
             </Link>
@@ -69,4 +107,5 @@ const Reserve: React.FC = () => {
     </div>
   )
 }
-export default Reserve
+
+export default BusListByStationId
