@@ -1,5 +1,4 @@
-package project.otb.api;
-
+package project.otb.api.busroute;
 
 import lombok.Getter;
 
@@ -8,11 +7,9 @@ import java.util.List;
 @Getter
 public class BusRouteApiDTO {
     private BusRoute busRoute;
-
     public BusRoute getBusRoute() {
         return busRoute;
     }
-
     public void setBusRoute(BusRoute busRoute) {
         this.busRoute = busRoute;
     }

@@ -1,8 +1,9 @@
-package project.otb.api;
+package project.otb.api.busroute;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Service;
+import project.otb.entity.BusRoute;
 import project.otb.repositiry.BusRouteRepository;
 
 import java.io.BufferedReader;
@@ -50,7 +51,7 @@ public class BusApiService {
             Gson pretty = new GsonBuilder().setPrettyPrinting().create();
             BusRouteApiDTO busdto = pretty.fromJson(api, BusRouteApiDTO.class);
             for (int i = 0; i < busdto.getBusRoute().getList_total_count(); i++) {
-                project.otb.entity.BusRoute busRoute = project.otb.entity.BusRoute.builder()
+                project.otb.entity.BusRoute busRoute = BusRoute.builder()
                         .route(busdto.getBusRoute().getRow().get(i).ROUTE)
                         .routeid(busdto.getBusRoute().getRow().get(i).ROUTE_ID)
                         .build();
