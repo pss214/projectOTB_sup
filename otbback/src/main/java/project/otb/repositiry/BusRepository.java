@@ -6,4 +6,6 @@ import project.otb.entity.Bus;
 
 @Repository
 public interface BusRepository extends JpaRepository<Bus,String> {
+    Bus findBybusNumberPlate(String BusUniNumber);
+    Boolean existsBybusNumberPlate(String username);
 }

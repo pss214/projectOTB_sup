@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 function BusReserve(): JSX.Element {
   return (
     <div>
@@ -10,5 +11,4 @@ function BusReserve(): JSX.Element {
     </div>
   )
 }
-
 export default BusReserve

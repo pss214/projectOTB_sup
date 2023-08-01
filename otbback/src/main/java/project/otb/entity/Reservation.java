@@ -10,6 +10,7 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Rt_Id;
+    private String rtuinum;//busnumber+time+username
     @Column(name = "dst")
     private int depart_station;
     @Column(name = "ast")
