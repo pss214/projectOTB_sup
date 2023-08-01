@@ -23,13 +23,24 @@ export default function NavigationBar() {
       </div>
       <div className="flex p-2 items-center">
         {!loggedUser && (
-          <RRLink to="/login" className="btn btn-sm text-white border-lime-600 bg-lime-600">
+          <RRLink
+            to="/login"
+            className="btn btn-sm text-white border-lime-600 bg-lime-600">
             로그인
           </RRLink>
         )}
         {!loggedUser && (
-          <RRLink to="/signup" className="ml-4 btn btn-sm btn-outline text-white border-lime-600 bg-lime-600">
+          <RRLink
+            to="/signup"
+            className="ml-4 btn btn-sm btn-outline text-white border-lime-600 bg-lime-600">
             회원 가입
+          </RRLink>
+        )}
+        {!loggedUser && (
+          <RRLink
+            to="/signupdriver"
+            className="ml-4 btn btn-sm btn-outline  text-white border-lime-600 bg-lime-600">
+            버스 기사 회원 가입
           </RRLink>
         )}
         {loggedUser && (

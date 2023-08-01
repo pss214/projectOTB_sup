@@ -24,43 +24,47 @@ otbfront/yarn-debug.log*
 otbfront/yarn-error.log*
 
 #back ignoring
-project/HELP.md
-project/.gradle
-project/build/
-project/!gradle/wrapper/gradle-wrapper.jar
-project/!**/src/main/**/build/
-project/!**/src/test/**/build/
+otbback/HELP.md
+otbback/.gradle
+otbback/build/
+otbback/!gradle/wrapper/gradle-wrapper.jar
+otbback/!**/src/main/**/build/
+otbback/!**/src/test/**/build/
 
 ### STS ###
-project/.apt_generated
-project/.classpath
-project/.factorypath
-project/.project
-project/.settings
-project/.springBeans
-project/.sts4-cache
-project/bin/
-project/!**/src/main/**/bin/
-project/!**/src/test/**/bin/
+otbback/.apt_generated
+otbback/.classpath
+otbback/.factorypath
+otbback/.settings
+otbback/.springBeans
+otbback/.sts4-cache
+otbback/bin/
+otbback/!**/src/main/**/bin/
+otbback/!**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-project/.idea
-project/*.iws
-project/*.iml
-project/*.ipr
-project/out/
-project/!**/src/main/**/out/
-project/!**/src/test/**/out/
+otbback/.idea
+otbback/*.iws
+otbback/*.iml
+otbback/*.ipr
+otbback/out/
+otbback/!**/src/main/**/out/
+otbback/!**/src/test/**/out/
 
 
 ### NetBeans ###
-project/nbproject/private/
-project/nbbuild/
-project/dist/
-project/nbdist/
-project/.nb-gradle/
+otbback/nbbackend/private/
+otbback/nbbuild/
+otbback/dist/
+otbback/nbdist/
+otbback/.nb-gradle/
+
+
+###otbback profail###
+otbback/src/main/resources/application-db.properties
+###test###
+otbback/src/test/
 
 ### VS Code ###
-project/.vscode/
+.vscode/
 
-project/src/main/resources/application-db.properties

@@ -1,0 +1,1 @@
+export const SERVER_URL = 'http://bak10172.asuscomm.com:10001';

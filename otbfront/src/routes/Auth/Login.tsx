@@ -4,11 +4,11 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
 import * as U from '../../utils'
 
-type LoginFormType = Record<'email' | 'password', string>
-const initialFormState = {email: '', password: ''}
+type LoginFormType = Record<'username' | 'password', string>
+const initialFormState = {username: '', password: ''}
 
 export default function Login() {
-  const [{email, password}, setForm] = useState<LoginFormType>(initialFormState)
+  const [{username, password}, setForm] = useState<LoginFormType>(initialFormState)
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
       setForm(obj => ({...obj, [key]: e.target.value}))
@@ -20,8 +20,8 @@ export default function Login() {
   const {login} = useAuth()
 
   const loginAccount = useCallback(() => {
-    login(email, password, () => navigate('/'))
-  }, [email, password, navigate, login])
+    login(username, password, () => navigate('/'))
+  }, [username, password, navigate, login])
 
   useEffect(() => {
     U.readObjectP<LoginFormType>('user')
@@ -42,10 +42,10 @@ export default function Login() {
           <input
             type="text"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="email"
-            placeholder="Email을 입력해주세요."
-            value={email}
-            onChange={changed('email')}
+            name="username"
+            placeholder="ID를 입력해주세요."
+            value={username}
+            onChange={changed('username')}
           />
 
           <input
@@ -57,7 +57,10 @@ export default function Login() {
             onChange={changed('password')}
           />
 
-          <button type="submit" className="w-full btn btn-primary text-white bg-lime-500 border-lime-500" onClick={loginAccount}>
+          <button
+            type="submit"
+            className="w-full btn btn-primary text-white bg-lime-500 border-lime-500"
+            onClick={loginAccount}>
             로그인
           </button>
         </div>

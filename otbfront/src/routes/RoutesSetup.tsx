@@ -7,6 +7,7 @@ import Signup from './Auth/SignUp'
 import Login from './Auth/Login'
 import Logout from './Auth/Logout'
 import NoMatch from './NoMatch'
+import SignUpDriver from './Auth/SignUpDriver'
 
 export default function RoutesSetup() {
   return (
@@ -24,6 +25,7 @@ export default function RoutesSetup() {
         <Route path="*" element={<NoMatch />} />
       </Route>
       <Route path="/signup" element={<Signup />} />
+      <Route path="/signupdriver" element={<SignUpDriver />} />
       <Route path="/login" element={<Login />} />
       <Route
         path="/logout"
