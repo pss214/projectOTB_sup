@@ -21,28 +21,28 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public Reservation saveReservation(ReservationDTO dto, org.springframework.security.core.userdetails.User user) {
+    public Reservation saveReservation(ReservationDTO dto,User user) {
         Reservation reservation = Reservation.builder()
                 .depart_station(dto.getDepart_station())
-                .busnumber(dto.getBusNumber())
-                .BusNumberPlate(dto.getBusNumberPlate())
+                .busnumber(dto.getBusnumber())
+                .BusNumberPlate(dto.getBusnumberplate())
                 .arrive_station(dto.getArrive_station())
                 .username(user.getUsername())
-                .Payment(dto.isPayment())
-                .rtuinum(dto.getUsername() + dto.getBusNumber() + LocalDateTime.now())
+                .Payment(Boolean.parseBoolean(dto.getPayment()))
+                .rtuinum(user.getUsername() + dto.getBusnumber() + LocalDateTime.now())
                 .build();
             return reservationRepository.save(reservation);
         }
-    public ReservationDTO getReservationInfo(org.springframework.security.core.userdetails.User dto) {
+    public ReservationDTO getReservationInfo(User dto) {
         Reservation reservation = reservationRepository.findByUsername(dto.getUsername());
         if (reservation != null) {
             return ReservationDTO.builder()
                     .depart_station(reservation.getDepart_station())
-                    .BusNumber(reservation.getBusnumber())
-                    .BusNumberPlate(reservation.getBusNumberPlate())
+                    .busnumber(reservation.getBusnumber())
+                    .busnumberplate(reservation.getBusNumberPlate())
                     .arrive_station(reservation.getArrive_station())
                     .username(reservation.getUsername())
-                    .Payment(reservation.isPayment())
+                    .payment(String.valueOf(reservation.isPayment()))
                     .rtuinum(reservation.getRtuinum())
                     .build();
         } else {

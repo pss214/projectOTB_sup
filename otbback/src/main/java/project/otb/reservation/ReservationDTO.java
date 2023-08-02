@@ -11,12 +11,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationDTO {
-    private int depart_station;
-    private int arrive_station;
+    private String depart_station;
+    private String arrive_station;
     private String username;
-    private String BusNumber;
-    private String BusNumberPlate;
-    private boolean Payment;
+    private String busnumber;
+    private String busnumberplate;
+    private String payment;
     private String rtuinum;//busnumber+time+username
 
 }
