@@ -1,4 +1,4 @@
-package project.otb.reservation;
+package project.otb.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,6 @@ public class ReservationDTO {
     private String busnumberplate;
     private String payment;
     private String rtuinum;//busnumber+time+username
+    private String member;
 
 }

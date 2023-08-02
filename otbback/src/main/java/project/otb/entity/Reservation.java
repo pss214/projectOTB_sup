@@ -25,9 +25,6 @@ public class Reservation {
     private String busnumber;
     @Column(name = "bu_num")
     private String BusNumberPlate;
-    @Column(name = "payment")
-    private boolean Payment;
+    private boolean payment;
     private String username;
-
-
 }

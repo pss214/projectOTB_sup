@@ -1,34 +1,34 @@
-package project.otb.reservation;
+package project.otb.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import project.otb.DTO.ResponseDTO;
+import project.otb.DTO.ReservationDTO;
 import project.otb.repositiry.ReservationRepository;
 import project.otb.entity.Reservation;
+import project.otb.repositiry.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @Slf4j
 @Service
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
+        this.userRepository = userRepository;
     }
 
-    public Reservation saveReservation(ReservationDTO dto,User user) {
+    public Reservation saveReservation(ReservationDTO dto, User user) {
         Reservation reservation = Reservation.builder()
                 .depart_station(dto.getDepart_station())
                 .busnumber(dto.getBusnumber())
                 .BusNumberPlate(dto.getBusnumberplate())
                 .arrive_station(dto.getArrive_station())
                 .username(user.getUsername())
-                .Payment(Boolean.parseBoolean(dto.getPayment()))
+                .payment(Boolean.parseBoolean(dto.getPayment()))
                 .rtuinum(user.getUsername() + dto.getBusnumber() + LocalDateTime.now())
                 .build();
             return reservationRepository.save(reservation);
