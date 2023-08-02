@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import project.otb.DTO.ReservationDTO;
 import project.otb.DTO.ResponseDTO;
+import project.otb.api.BusApiService;
 import project.otb.service.ReservationService;
 
 import java.util.List;
@@ -15,8 +16,11 @@ import java.util.List;
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
+    private final BusApiService busApiService;
 
-    public ReservationController(ReservationService reservationService) {this.reservationService = reservationService;}
+    public ReservationController(ReservationService reservationService, BusApiService busApiService) {this.reservationService = reservationService;
+        this.busApiService = busApiService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getInfo(@AuthenticationPrincipal User user) {
@@ -48,4 +52,19 @@ public class ReservationController {
                             .build());
         }
     }
+    @PostMapping("/businpo")
+    public ResponseEntity<?> Businpormation(@RequestBody StationDTO dto){
+        return ResponseEntity.ok().body(ResponseDTO.builder()
+                .status(HttpStatus.OK.value()).message("완료되었습니다")
+                .data(busApiService.GetBusStation(dto.id)).build());
+    }
+    @PostMapping("/busroutenm")
+    public ResponseEntity<?> Busroutenm(@RequestBody StationDTO dto){
+        return ResponseEntity.ok().body(ResponseDTO.builder()
+                .status(HttpStatus.OK.value()).message("완료되었습니다")
+                .data(busApiService.GetBusStationRoute(dto.id)).build());
+    }
+}
+class StationDTO{
+    String id;
 }
