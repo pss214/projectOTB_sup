@@ -69,3 +69,4 @@ otbback/src/test/
 ### VS Code ###
 .vscode/
 
+package-lock.json
