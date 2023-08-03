@@ -69,24 +69,27 @@ function Kakao(): JSX.Element {
         });
 
         // 필터링된 버스 정류장에 대한 마커 생성
-        const tempMarkers = filteredMarkers.map((busStop) => {
-          const marker = new (window as any).kakao.maps.Marker({
-            position: new (window as any).kakao.maps.LatLng(busStop.lat, busStop.lng),
-            map,
-          });
-          // 마커 클릭 이벤트 리스너 등록
-          (window as any).kakao.maps.event.addListener(marker, 'click', () => {
-            // 마커 클릭 시 이동할 경로 설정
-            const path = "/reserve"; // 다른 컴포넌트로 이동할 경로를 입력하세요.
-            window.location.pathname = path;
-          });
-          return marker;
-        });
-        setMarkers(tempMarkers);
-      } catch (error) {
-        console.error('사용자 위치 가져오기 오류:', error);
-      }
-    };
+    const tempMarkers = filteredMarkers.map((busStop) => {
+      const marker = new (window as any).kakao.maps.Marker({
+        position: new (window as any).kakao.maps.LatLng(busStop.lat, busStop.lng),
+        map,
+      });
+
+      // 마커 클릭 이벤트 리스너 등록
+      (window as any).kakao.maps.event.addListener(marker, 'click', () => {
+        // 클릭된 마커의 정보를 쿼리 파라미터로 전달하여 다음 페이지로 이동
+        const path = "/reserve"; // 다음 페이지 경로
+        const queryParams = `lat=${busStop.lat}&lng=${busStop.lng}&id=${busStop.id}&place=${busStop.place}`;
+        window.location.href = `${path}?${queryParams}`;
+      });
+
+      return marker;
+    });
+    setMarkers(tempMarkers);
+  } catch (error) {
+    console.error('사용자 위치 가져오기 오류:', error);
+  }
+};
 
     // 지도에 교통정보 오버레이를 추가하는 함수
     const addTrafficOverlay = () => {
