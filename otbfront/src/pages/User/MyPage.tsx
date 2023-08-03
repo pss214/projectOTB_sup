@@ -1,15 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { SERVER_URL } from '../../server/getServer';
 import { Link } from '../../components';
 import * as U from '../../utils';
 import axios from 'axios';
 import type { ChangeEvent } from 'react';
+import { async } from 'q';
 
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
   const [jwt, setJwt] = useState<string>('');
   const [loginData, setPassword] = useState({ password: '' });
+  const [getpassword, setGetpassword] = useState<string>('');
 
+  useEffect(()=>{
+    U.readStringP('jwt').then((jwt) => {
+      setJwt(jwt ?? '');
+    });
+    U.readStringP('password').then((password)=>{
+      setGetpassword(password ?? '')
+    })
+  },[jwt, getpassword])
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPassword((prevData) => ({
@@ -17,7 +27,6 @@ const MyPage: React.FC = () => {
       [name]: value,
     }));
   };
-
   type FormType = Record<'password', string>;
   const initialFormState = { password: '' };
   const changed = useCallback(
@@ -28,11 +37,9 @@ const MyPage: React.FC = () => {
   );
   const [{ password }, setForm] = useState<FormType>(initialFormState);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    U.readStringP('jwt').then((jwt) => {
-      setJwt(jwt ?? '');
-    });
-    axios(SERVER_URL + '/member', {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    
+    await axios(SERVER_URL + '/member', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

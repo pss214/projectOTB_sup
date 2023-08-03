@@ -126,31 +126,35 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const login = useCallback(
     async (username: string, password: string, callback?: Callback) => {
       const user = {username, password}
-      await axios({
-        method: 'POST',
-        timeout: 4000,
-        url: SERVER_URL + '/user/login',
-        headers: {'Context-Type': 'application/json'},
-        data: {
-          username: username,
-          password: password
-        }
-      })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.status == 200) {
-            U.writeStringP('jwt', res.data.data[0].token)
-            setJwt(res.data.data[0].token)
-            setLoggedUser(user)
-            // setLoggedUser(notUsed => ({username, password}))
-            // U.writeObjectP('user', user).finally(() => callback && callback())
-            if (res.data.data[0].type == 'user') {
-              navigate('/')
-            } else if (res.data.data[0].type == 'bus') {
-              navigate('/busmain')
-            }
+      try{
+        await axios({
+          method: 'POST',
+          timeout: 4000,
+          url: SERVER_URL + '/user/login',
+          headers: {'Context-Type': 'application/json'},
+          data: {
+            username: username,
+            password: password
           }
         })
+          .then(res => {
+            console.log(res.data)
+            if (res.data.status == 200) {
+              U.writeStringP('jwt', res.data.data[0].token)
+              setJwt(res.data.data[0].token)
+              setLoggedUser(user)
+              // setLoggedUser(notUsed => ({username, password}))
+              // U.writeObjectP('user', user).finally(() => callback && callback())
+              if (res.data.data[0].type == 'user') {
+                navigate('/')
+              } else if (res.data.data[0].type == 'bus') {
+                navigate('/busmain')
+              }
+            }
+          })
+      }catch{
+        alert('아이디나 비밀번호를 확인하세요')
+      }
   }
   ,[]
   )
@@ -204,7 +208,6 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         if (res.data.status == 200) {
           const username = res.data.data[0].username
           const email = res.data.data[0].email
-
           const user = {username, email}
           U.writeObjectP('user', user).finally(() => callback && callback())
         }
