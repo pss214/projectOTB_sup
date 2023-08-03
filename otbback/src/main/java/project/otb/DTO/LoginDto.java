@@ -1,5 +1,6 @@
 package project.otb.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 
@@ -9,6 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDto {
+    @Schema(description = "ID", example = "user")
     private String username;
+    @Schema(description = "PW")
     private String password;
 }
