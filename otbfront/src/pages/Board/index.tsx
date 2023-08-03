@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';//useEffect로 열고 닫기 버튼 기능
-import { useMemo } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-import { Title } from '../../components';
-import CreateListForm from './CreateListForm';
-import BoardList from '../BoardList';
-import { ListDroppable } from '../../components';
-import { useLists } from '../../store/useLists';
-import { Button } from '../../theme/daisyui';
-import Kakao from './Kakao'; // 추가: Kakao 컴포넌트를 가져옵니다.
+import React, {useState, useEffect} from 'react' //useEffect로 열고 닫기 버튼 기능
+import {useMemo} from 'react'
+import {DragDropContext} from 'react-beautiful-dnd'
+import {Title} from '../../components'
+import CreateListForm from './CreateListForm'
+import BoardList from '../BoardList'
+import {ListDroppable} from '../../components'
+import {useLists} from '../../store/useLists'
+import {Button} from '../../theme/daisyui'
+import Kakao from './Kakao' // 추가: Kakao 컴포넌트를 가져옵니다.
 
 export default function Board() {
-  const { lists, onRemoveList, onCreateList, onMoveList, onDragEnd } = useLists();
-  const [showMap, setShowMap] = useState(false); // 추가: 지도를 보여줄 상태 추가
+  const {lists, onRemoveList, onCreateList, onMoveList, onDragEnd} = useLists()
+  const [showMap, setShowMap] = useState(false) // 추가: 지도를 보여줄 상태 추가
 
   // 지도 버튼을 누를 때 호출되는 함수
   const handleToggleMap = () => {
-    setShowMap((prevShowMap) => !prevShowMap);
-  };
+    setShowMap(prevShowMap => !prevShowMap)
+  }
 
   const children = useMemo(
     () =>
@@ -30,13 +30,13 @@ export default function Board() {
         />
       )),
     [lists, onRemoveList, onMoveList]
-  );
+  )
 
   const handleShowMap = () => {
-    setShowMap(true);
-  };
+    setShowMap(true)
+  }
 
-    // 지도가 열려있을 때만 카카오지도 컴포넌트를 렌더링하도록 수정
+  // 지도가 열려있을 때만 카카오지도 컴포넌트를 렌더링하도록 수정
   return (
     <section className="mt-4">
       <Title>원하시는 서비스를 선택하세요.</Title>
@@ -45,8 +45,7 @@ export default function Board() {
           <div className="space-x-4">
             <Button
               className="text-white border-lime-500 bg-lime-500"
-              onClick={handleToggleMap}
-            >
+              onClick={handleToggleMap}>
               {showMap ? '지도 닫기' : '지도 보기'}
             </Button>
 
@@ -60,5 +59,5 @@ export default function Board() {
       {/* showMap 상태에 따라 지도를 보여줍니다. */}
       {showMap && <Kakao />}
     </section>
-  );
+  )
 }

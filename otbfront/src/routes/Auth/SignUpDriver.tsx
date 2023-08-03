@@ -29,9 +29,10 @@ export default function SignUpDriver() {
   const {signupdriver} = useAuth()
 
   const createAccount = useCallback(() => {
-    //console.log(email, password, confirmPassword)
+    console.log(busnumberplate, busnumber, password, confirmPassword)
     if (password === confirmPassword) {
       signupdriver(busnumberplate, password, busnumber, personnel, () => navigate('/'))
+      alert('회원가입이 완료되었습니다.')
     } else alert('비밀번호가 일치하여야 합니다.')
 
     if (busnumberplate == '') {
@@ -43,7 +44,7 @@ export default function SignUpDriver() {
       alert('버스 번호를 입력해주세요')
       signupdriver(busnumberplate, password, busnumber, personnel, () => navigate(-1))
     }
-  }, [password, confirmPassword, navigate, busnumber, personnel, signupdriver])
+  }, [password, confirmPassword, busnumber, personnel, signupdriver, navigate])
 
   return (
     <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
@@ -52,16 +53,16 @@ export default function SignUpDriver() {
           <h1 className="mb-8 text-2xl text-center text-lime-500">회원 가입</h1>
 
           <input
-            type="text"
+            type="username"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
-            name="username"
+            name="busnumberplate"
             placeholder="차량 번호를 입력해 주세요."
             value={busnumberplate}
             onChange={changed('busnumberplate')}
           />
 
           <input
-            type="text"
+            type="busnumber"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="busnumber"
             placeholder="버스 번호를 입력해주세요."
@@ -69,7 +70,7 @@ export default function SignUpDriver() {
             onChange={changed('busnumber')}
           />
           <input
-            type="text"
+            type="personnel"
             className="w-full p-3 mb-4 input input-primary border-lime-500"
             name="personnel"
             placeholder="탑승정원을 입력해주세요."

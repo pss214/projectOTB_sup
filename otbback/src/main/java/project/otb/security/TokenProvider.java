@@ -1,38 +1,48 @@
 package project.otb.security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import project.otb.entity.User;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-@Slf4j
 @Service
 public class TokenProvider {
-    private static final String SECRET_KEY = "aaaabbbbccccddddaaaabbbbccccddddaaaabbbbccccddddaaaabbbbccccdddd";
+    private final String secretKey;
+    private final long expirationHours;
+    private final String issuer;
 
-    public String create(User entity) {
-        Date expiryDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
-
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.ES512, SECRET_KEY)
-                .setSubject(entity.getUsername())
-                .setIssuer("OTB app provider")
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .compact();
+    public TokenProvider(
+            @Value("${secret.key}") String secretKey,
+            @Value("${expiration.hours}") long expirationHours,
+            @Value("${issuer}") String issuer
+    ) {
+        this.secretKey = secretKey;
+        this.expirationHours = expirationHours;
+        this.issuer = issuer;
     }
-    public String validateAndGetUserId(String token){
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+
+    public String createToken(String userSpecification) {
+        return Jwts.builder()
+                .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))   // HS512 알고리즘을 사용하여 secretKey를 이용해 서명
+                .setSubject(userSpecification)  // JWT 토큰 제목
+                .setIssuer(issuer)  // JWT 토큰 발급자
+                .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))    // JWT 토큰 발급 시간
+                .setExpiration(Date.from(Instant.now().plus(expirationHours, ChronoUnit.HOURS)))    // JWT 토큰 만료 시간
+                .compact(); // JWT 토큰 생성
+    }
+    public String validateTokenAndGetSubject(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes())
+                .build()
                 .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+                .getBody()
+                .getSubject();
     }
 }

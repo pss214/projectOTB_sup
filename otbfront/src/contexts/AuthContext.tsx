@@ -1,9 +1,8 @@
 import type {FC, PropsWithChildren} from 'react'
 import {createContext, useContext, useState, useCallback, useEffect} from 'react'
 import * as U from '../utils'
-import {SERVER_URL} from '../server'
-//import {resourceLimits} from 'worker_threads'
-//import {post} from '../server'
+import {SERVER_URL} from '../server/getServer'
+import axios from 'axios'
 
 export type LoggedUser = {username: string; password: string}
 export type LoggedDriver = {
@@ -30,6 +29,7 @@ type ContextType = {
   ) => void
   login: (username: string, password: string, callback?: Callback) => void
   logout: (callback?: Callback) => void
+  mypage: (jwt: string, callback?: Callback) => void
   reservation: (username: string, busnumber: string, callback?: Callback) => void
 }
 
@@ -44,6 +44,7 @@ export const AuthContext = createContext<ContextType>({
   ) => {},
   login: (username: string, password: string, callback?: Callback) => {},
   logout: (callback?: Callback) => {},
+  mypage(jwt: string, callback?: Callback) {},
   reservation: (username: string, busnumber: string, callback?: Callback) => {}
 })
 
@@ -58,115 +59,97 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   //서버에서 보내는 json토큰이나 통신장애로 인한 오류 처리
   const [jwt, setJwt] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
-
   const signup = useCallback(
-    (username: string, email: string, password: string, callback?: Callback) => {
-      const user = {email, password}
-      fetch(SERVER_URL + '/user/signup', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          username: username,
-          password: password,
-          email: email
-        })
-      })
-        .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-        .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
-          const {ok, body, errorMessage} = result
-          if (ok) {
-            U.writeStringP('jwt', body ?? '').finally(() => {
-              setJwt(body ?? '')
-              setLoggedUser(notUsed => ({username, password}))
-              U.writeObjectP('user', user).finally(() => callback && callback())
-            })
-            //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
+    async (username: string, email: string, password: string, callback?: Callback) => {
+      const anonymous = {}
+      try{
+        await axios({
+          method: 'POST',
+          timeout: 4000,
+          url: SERVER_URL + '/user/signup',
+          headers: {'Context-Type': 'application/json'},
+          data: {
+            username: username,
+            password: password,
+            email: email
           }
-          console.log('결과: ', result)
         })
-        .catch((e: Error) => setErrorMessage(e.message))
-      setLoggedUser(notUsed => ({username, password}))
-      U.writeObjectP('user', user).finally(() => callback && callback())
-      callback && callback()
+          .then(res => {
+            console.log(res.data)
+            if (res.data.status == 201) {
+              alert('회원가입이 완료되었습니다.')
+              U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
+            }
+          })
+      }catch(e){
+        alert('아이디가 중복입니다! 다시 입력하세요.')
+      }
     },
     []
   )
   const signupdriver = useCallback(
-    (
+    async (
       busnumberplate: string,
       password: string,
       busnumber: string,
       personnel: string,
       callback?: Callback
     ) => {
-      const user = {busnumberplate, password, busnumber, personnel}
-      fetch(SERVER_URL + '/user/bussignup', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          // 기존의 js object를 JSON String의 형태로 변환
-          busnumberplate: busnumberplate,
-          password: password,
-          busnumber: busnumber,
-          personnel: personnel
-        })
-      })
-        .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-        // .then(result => console.log('결과: ', result))
-        .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
-          const {ok, body, errorMessage} = result
-          if (ok) {
-            U.writeStringP('jwt', body ?? '').finally(() => {
-              setJwt(body ?? '')
-              setLoggedDriver(notUsed => ({
-                busnumberplate,
-                password,
-                busnumber,
-                personnel
-              }))
-              U.writeObjectP('driver', user).finally(() => callback && callback())
-            })
-            //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
+      const anonymous = {}
+      try{
+        await axios({
+          method: 'POST',
+          timeout: 4000,
+          url: SERVER_URL + '/user/bussignup',
+          headers: {'Context-Type': 'application/json'},
+          data: {
+            busnumberplate: busnumberplate,
+            password: password,
+            busnumber: busnumber,
+            personnel: personnel
           }
-          console.log('결과: ', result)
         })
-        .catch((e: Error) => setErrorMessage(e.message))
-      setLoggedDriver(notUsed => ({busnumberplate, password, busnumber, personnel}))
-      U.writeObjectP('driver', user).finally(() => callback && callback())
-      callback && callback()
+        .then(res => {
+          if (res.data.status == 201) {
+            alert('회원가입이 완료되었습니다.')
+            U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
+          }
+        })
+      }catch(e){
+        alert('아이디 이름이 중복입니다! 다시 입력하세요')
+      }
     },
     []
   )
-  const login = useCallback((username: string, password: string, callback?: Callback) => {
-    const user = {username, password}
-    fetch(SERVER_URL + '/user/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        username: username,
-        password: password
-      })
-    })
-      .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
-      // .then(result => console.log('결과: ', result))
-      .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
-        const {ok, body, errorMessage} = result
-        if (ok) {
-          U.writeStringP('jwt', body ?? '').finally(() => {
-            setJwt(body ?? '')
-            setLoggedUser(notUsed => ({username, password}))
-            U.writeObjectP('user', user).finally(() => callback && callback())
+  const login = useCallback(
+    async (username: string, password: string, callback?: Callback) => {
+      const user = {username, password}
+      try{
+        await axios({
+          method: 'POST',
+          timeout: 4000,
+          url: SERVER_URL + '/user/login',
+          headers: {'Context-Type': 'application/json'},
+          data: {
+            username: username,
+            password: password
+          }
+        })
+          .then(res => {
+            console.log(res.data)
+            if (res.data.status == 200) {
+              U.writeStringP('jwt', res.data.data[0].token)
+              setJwt(res.data.data[0].token)
+              setLoggedUser(notUsed => ({username, password}))
+              U.writeObjectP('user', user).finally(() => callback && callback())
+            }
           })
-          //back 서버에서 ok 값이 true일때 setLoggedUser, U.writeObjectP 함수 호출
-        }
-        console.log('결과: ', result)
-      })
-      .catch((e: Error) => setErrorMessage(e.message))
-    setLoggedUser(notUsed => ({username, password}))
-    U.writeObjectP('user', user).finally(() => callback && callback())
-    callback && callback()
-  }, [])
-
+      }catch(e){
+        alert('아이디나 비밀번호를 다시 입력해주세요')
+      }
+    },
+    []
+  )
   const reservation = useCallback(
     (username: string, busnumber: string, callback?: Callback) => {
       const user = {username, busnumber}
@@ -181,7 +164,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         .then(response => response.json()) //server에서 보내준 response를 object 형태로 변환
         // .then(result => console.log('결과: ', result))
         .then((result: {ok: boolean; body?: string; errorMessage?: string}) => {
-          const {ok, body, errorMessage} = result
+          const {ok, body} = result
           if (ok) {
             U.writeStringP('jwt', body ?? '').finally(() => {
               setJwt(body ?? '')
@@ -202,10 +185,30 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const logout = useCallback((callback?: Callback) => {
     setJwt(notUsed => '')
     setLoggedUser(undefined)
-    //setLoggedDriver(undefined)
     callback && callback()
   }, [])
 
+  const mypage = useCallback(async (jwt: string, callback?: Callback) => {
+    await axios({
+      method: 'GET',
+      timeout: 4000,
+      url: SERVER_URL + '/member',
+      headers: {'Context-Type': 'application/json', Authorization: jwt}
+    })
+      .then(res => {
+        console.log(res.data)
+        if (res.data.status == 200) {
+          const username = res.data.data[0].username
+          const email = res.data.data[0].email
+
+          const user = {username, email}
+          U.writeObjectP('user', user).finally(() => callback && callback())
+        }
+      })
+      .catch(e => {
+        alert(e.data.message)
+      })
+  }, [])
   //로그인했을때 localStorage에 저장된 jwt값을 읽어 컨텍스트의 jwt상태값 복원
   useEffect(() => {
     U.readStringP('jwt')
@@ -238,7 +241,8 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     signupdriver,
     login,
     logout,
-    reservation
+    reservation,
+    mypage
   }
   return <AuthContext.Provider value={value} children={children} />
 }
