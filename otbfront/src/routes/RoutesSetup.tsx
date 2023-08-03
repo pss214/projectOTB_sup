@@ -12,7 +12,7 @@ import NewsPage from '../routes/LandingPage'
 
 import MyPage from '../pages/User/MyPage'
 import Reserve from '../pages/Reservation/Reserve'
-
+import BusMain from '../pages/User/BusMain'
 export default function RoutesSetup() {
   return (
     <Routes>
@@ -33,6 +33,7 @@ export default function RoutesSetup() {
       <Route path="/login" element={<Login />} />
       <Route path="/" />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/busmain" element={<BusMain />} />
       <Route path="/" element={<NewsPage />} />
       <Route path="/:category" element={<NewsPage />} />
       <Route path="/reserve/" element={<Reserve />} />
