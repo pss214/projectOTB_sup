@@ -149,9 +149,10 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
             } else if (res.data.data[0].type == 'bus') {
               navigate('/busmain')
             }
-      
-    },
-    []
+          }
+        })
+  }
+  ,[]
   )
   const reservation = useCallback(
     (username: string, busnumber: string, callback?: Callback) => {
