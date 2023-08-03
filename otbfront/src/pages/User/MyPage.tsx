@@ -1,15 +1,21 @@
-import React, {useState, useCallback} from 'react'
+import React, {useState, useCallback, useEffect} from 'react'
 import {SERVER_URL} from '../../server/getServer'
 import {Link} from '../../components'
 import * as U from '../../utils'
 import axios from 'axios'
 import type {ChangeEvent} from 'react'
+import Login from '../../routes/Auth/Login'
 
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null)
   const [jwt, setJwt] = useState<string>('')
   const [loginData, setPassword] = useState({password: ''})
-
+ 
+  useEffect(()=>{
+    U.readStringP('jwt').then(jwt => {
+      setJwt(jwt ?? '')
+    })
+  },[jwt])
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target
     setPassword(prevData => ({
@@ -28,9 +34,6 @@ const MyPage: React.FC = () => {
   const [{password}, setForm] = useState<FormType>(initialFormState)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    U.readStringP('jwt').then(jwt => {
-      setJwt(jwt ?? '')
-    })
     axios(SERVER_URL + '/member', {
       method: 'GET',
       headers: {
@@ -79,13 +82,13 @@ const MyPage: React.FC = () => {
                 </div>
               ) : (
                 <form className="text-center" onSubmit={handleSubmit}>
-                  <input
+                  {/* <input
                     type="password"
                     name="password"
                     placeholder="비밀번호를 입력해주세요"
                     value={loginData.password}
                     onChange={handleChange}
-                  />
+                  /> */}
                   <button
                     className="btn btn-primary text-white bg-lime-500"
                     type="submit">
