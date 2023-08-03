@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+        private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final BusRepository busRepository;

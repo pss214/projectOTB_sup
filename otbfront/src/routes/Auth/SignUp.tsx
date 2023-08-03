@@ -29,7 +29,6 @@ export default function SignUp() {
   }
 
   const createAccount = useCallback(() => {
-    console.log(email, password, confirmPassword)
     if (!validateEmail(email)) {
       alert('올바른 이메일 형식을 입력해주세요.')
       return
