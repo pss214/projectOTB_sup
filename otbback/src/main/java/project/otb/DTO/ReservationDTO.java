@@ -18,6 +18,5 @@ public class ReservationDTO {
     private String busnumberplate;
     private String payment;
     private String rtuinum;//busnumber+time+username
-    private String member;
 
 }

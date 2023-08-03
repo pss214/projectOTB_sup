@@ -2,15 +2,15 @@ package project.otb.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.Builder;
 import org.springframework.stereotype.Service;
+import project.otb.DTO.BusRouteNmDTO;
+import project.otb.DTO.BusStationDTO;
 import project.otb.entity.BusRoute;
 import project.otb.repositiry.BusRouteRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +137,7 @@ public class BusApiService {
         BusStopInformationDTO busdto = pretty.fromJson(api, BusStopInformationDTO.class);
         List<BusStationDTO> res = new ArrayList<>();
         for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-            res.add(i, BusStationDTO.builder().busrouteid(busdto.getMsgBody().itemList.get(0).busRouteNm).build());
+            res.add(i, BusStationDTO.builder().busrouteid(busdto.getMsgBody().itemList.get(i).busRouteNm).build());
         }
         return res;
     }
@@ -153,13 +153,5 @@ public class BusApiService {
         return res;
     }
 
-}
-@Builder
-class BusStationDTO{
-    String busrouteid;
-}
-@Builder
-class BusRouteNmDTO{
-    String stationNm;
 }
 
