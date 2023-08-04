@@ -23,16 +23,6 @@ export default function Login() {
     login(username, password, () => navigate('/'))
   }, [username, password, navigate, login])
 
-  // useEffect(() => {
-  //   U.readObjectP<LoginFormType>('user')
-  //     .then(user => {
-  //       if (user) setForm(user)
-  //     })
-  //     .catch(e => {
-  //       /* ignore */
-  //     })
-  // }, [])
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 border border-gray-300 shadow-xl rounded-xl">
       <div className="flex flex-col items-center justify-center flex-1 max-w-sm px-2 mx-auto">

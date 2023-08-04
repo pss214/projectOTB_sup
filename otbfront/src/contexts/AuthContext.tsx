@@ -64,7 +64,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const signup = useCallback(
     async (username: string, email: string, password: string, callback?: Callback) => {
       const anonymous = {}
-      try{
+      try {
         await axios({
           method: 'POST',
           timeout: 4000,
@@ -75,15 +75,14 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
             password: password,
             email: email
           }
+        }).then(res => {
+          console.log(res.data)
+          if (res.data.status == 201) {
+            alert('회원가입이 완료되었습니다.')
+            U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
+          }
         })
-          .then(res => {
-            console.log(res.data)
-            if (res.data.status == 201) {
-              alert('회원가입이 완료되었습니다.')
-              U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
-            }
-          })
-      }catch(e){
+      } catch (e) {
         alert('아이디가 중복입니다! 다시 입력하세요.')
       }
     },
@@ -98,7 +97,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
       callback?: Callback
     ) => {
       const anonymous = {}
-      try{
+      try {
         await axios({
           method: 'POST',
           timeout: 4000,
@@ -110,14 +109,13 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
             busnumber: busnumber,
             personnel: personnel
           }
-        })
-        .then(res => {
+        }).then(res => {
           if (res.data.status == 201) {
             alert('회원가입이 완료되었습니다.')
             U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
           }
         })
-      }catch(e){
+      } catch (e) {
         alert('아이디 이름이 중복입니다! 다시 입력하세요')
       }
     },
@@ -135,21 +133,21 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
           username: username,
           password: password
         }
+      }).then(res => {
+        console.log(res.data)
+        if (res.data.status == 200) {
+          U.writeStringP('jwt', res.data.data[0].token)
+          setJwt(res.data.data[0].token)
+          setLoggedUser(user)
+          // setLoggedUser(notUsed => ({username, password}))
+          U.writeObjectP('user', user).finally(() => callback && callback())
+          if (res.data.data[0].type == 'user') {
+            navigate('/')
+          } else if (res.data.data[0].type == 'bus') {
+            navigate('/busmain')
+          }
+        }
       })
-        .then(res => {
-          console.log(res.data)
-          if (res.data.status == 200) {
-            U.writeStringP('jwt', res.data.data[0].token)
-            setJwt(res.data.data[0].token)
-            setLoggedUser(user)
-            // setLoggedUser(notUsed => ({username, password}))
-            // U.writeObjectP('user', user).finally(() => callback && callback())
-            if (res.data.data[0].type == 'user') {
-              navigate('/')
-            } else if (res.data.data[0].type == 'bus') {
-              navigate('/busmain')
-            }
-      
     },
     []
   )
