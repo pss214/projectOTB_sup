@@ -1,4 +1,3 @@
-import axios from 'axios'
 import styled from 'styled-components'
 import {useEffect, useState} from 'react'
 import NewsItem from './NewsItem'
@@ -9,6 +8,7 @@ interface Article {
   url: string
   urlToImage: string
 }
+
 const NewsListBlock = styled.div`
   box-sizing: border-box;
   padding-bottom: 3rem;
@@ -21,9 +21,11 @@ const NewsListBlock = styled.div`
     padding-right: 1rem;
   }
 `
+
 interface Props {
   category: string
 }
+
 export default function NewsList({category}: Props) {
   const [articles, setArticles] = useState<Article[] | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -33,10 +35,10 @@ export default function NewsList({category}: Props) {
       setLoading(true)
       try {
         const query = category === 'all' ? '' : `&category=${category}`
-        const response = await axios.get(
-          `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=71e24a4b43ac4a689f929182c81dc940`
-        )
-        setArticles(response.data.articles.sli)
+        const url = `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=71e24a4b43ac4a689f929182c81dc940`
+        const response = await fetch(url)
+        const data = await response.json()
+        setArticles(data.articles.slice(0, 2))
       } catch (e) {
         console.log(e)
       }
@@ -55,9 +57,9 @@ export default function NewsList({category}: Props) {
 
   return (
     <NewsListBlock>
-      {articles
-        .map((article: Article) => <NewsItem key={article.url} article={article} />)
-        .splice(0, 2)}
+      {articles.map((article: Article) => (
+        <NewsItem key={article.url} article={article} />
+      ))}
     </NewsListBlock>
   )
 }

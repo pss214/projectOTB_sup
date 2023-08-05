@@ -2,7 +2,6 @@ import React, {useState, useCallback} from 'react'
 import {SERVER_URL} from '../../server/getServer'
 import {Link} from '../../components'
 import * as U from '../../utils'
-import axios from 'axios'
 import type {ChangeEvent} from 'react'
 
 const MyPage: React.FC = () => {
@@ -17,6 +16,7 @@ const MyPage: React.FC = () => {
       [name]: value
     }))
   }
+
   type FormType = Record<'password', string>
   const initialFormState = {password: ''}
   const changed = useCallback(
@@ -28,24 +28,54 @@ const MyPage: React.FC = () => {
   const [{password}, setForm] = useState<FormType>(initialFormState)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    U.readStringP('jwt').then(jwt => {
-      setJwt(jwt ?? '')
-    })
-    axios(SERVER_URL + '/member', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `otb ${jwt}`
-      }
-    })
-      .then(res => {
-        setUser(res.data.data[0])
-        console.log(res)
+    e.preventDefault()
+
+    U.readStringP('jwt')
+      .then(jwt => {
+        setJwt(jwt ?? '')
+
+        return fetch(SERVER_URL + '/member', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `otb ${jwt}`
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setUser(data.data[0])
+        console.log(data)
       })
       .catch(error => {
         console.error('정보를 가져오는데 실패했습니다.', error)
       })
+  }
+
+  const [showEditForm, setShowEditForm] = useState(false)
+
+  const toggleEditForm = () => {
+    setShowEditForm(prevState => !prevState)
+  }
+
+  const [formData, setFormData] = useState({
+    newUsername: '',
+    newEmail: ''
+    // 다른 수정 정보들을 추가하세요
+  })
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }))
+  }
+
+  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // 수정 정보를 서버로 전송하는 로직을 추가하세요
+    // fetch를 사용하여 서버로 수정 정보를 보낼 수 있습니다.
   }
 
   return (
@@ -70,7 +100,9 @@ const MyPage: React.FC = () => {
                 <div className="mb-8 text-2xl text-center text-black-500">
                   <p>Username: {user.username}</p>
                   <p>Email: {user.email}</p>
-                  <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
+                  <button
+                    className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
+                    onClick={toggleEditForm}>
                     수정하기
                   </button>
                   <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
@@ -93,10 +125,42 @@ const MyPage: React.FC = () => {
                   </button>
                 </form>
               )}
+              {showEditForm && (
+                <div>
+                  <h2 className="text-2xl text-center text-lime-500 mt-4">
+                    내 정보 수정하기
+                  </h2>
+                  <form className="mt-4" onSubmit={handleUpdate}>
+                    <input
+                      type="text"
+                      name="newUsername"
+                      placeholder="새로운 사용자 이름"
+                      value={formData.newUsername}
+                      onChange={handleFormChange}
+                      className="mt-2 p-2 border rounded"
+                    />
+                    <input
+                      type="email"
+                      name="newEmail"
+                      placeholder="새로운 이메일 주소"
+                      value={formData.newEmail}
+                      onChange={handleFormChange}
+                      className="mt-2 p-2 border rounded"
+                    />
+                    <button
+                      className="mt-4 btn btn-primary text-white bg-lime-500"
+                      type="submit">
+                      저장하기
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
-            <Link to="/" className="btn btn-link text-lime-500">
-              메인 페이지로 이동하기
-            </Link>
+            <center>
+              <Link to="/" className="btn btn-link text-lime-500">
+                메인 페이지로 이동하기
+              </Link>
+            </center>
           </div>
         </div>
       </div>

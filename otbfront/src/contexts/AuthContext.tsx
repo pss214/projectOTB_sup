@@ -3,7 +3,7 @@ import {createContext, useContext, useState, useCallback, useEffect} from 'react
 import * as U from '../utils'
 import {SERVER_URL} from '../server/getServer'
 import axios from 'axios'
-
+import {useNavigate} from 'react-router-dom'
 export type LoggedUser = {username: string; password: string}
 export type LoggedDriver = {
   busnumberplate: string
@@ -59,10 +59,12 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   //서버에서 보내는 json토큰이나 통신장애로 인한 오류 처리
   const [jwt, setJwt] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const navigate = useNavigate()
+
   const signup = useCallback(
     async (username: string, email: string, password: string, callback?: Callback) => {
       const anonymous = {}
-      try{
+      try {
         await axios({
           method: 'POST',
           timeout: 4000,
@@ -73,15 +75,14 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
             password: password,
             email: email
           }
+        }).then(res => {
+          console.log(res.data)
+          if (res.data.status == 201) {
+            alert('회원가입이 완료되었습니다.')
+            U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
+          }
         })
-          .then(res => {
-            console.log(res.data)
-            if (res.data.status == 201) {
-              alert('회원가입이 완료되었습니다.')
-              U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
-            }
-          })
-      }catch(e){
+      } catch (e) {
         alert('아이디가 중복입니다! 다시 입력하세요.')
       }
     },
@@ -96,7 +97,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
       callback?: Callback
     ) => {
       const anonymous = {}
-      try{
+      try {
         await axios({
           method: 'POST',
           timeout: 4000,
@@ -108,14 +109,13 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
             busnumber: busnumber,
             personnel: personnel
           }
-        })
-        .then(res => {
+        }).then(res => {
           if (res.data.status == 201) {
             alert('회원가입이 완료되었습니다.')
             U.writeObjectP('anonymous', anonymous).finally(() => callback && callback())
           }
         })
-      }catch(e){
+      } catch (e) {
         alert('아이디 이름이 중복입니다! 다시 입력하세요')
       }
     },
@@ -124,29 +124,35 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const login = useCallback(
     async (username: string, password: string, callback?: Callback) => {
       const user = {username, password}
-      try{
-        await axios({
-          method: 'POST',
-          timeout: 4000,
-          url: SERVER_URL + '/user/login',
-          headers: {'Context-Type': 'application/json'},
-          data: {
-            username: username,
-            password: password
+      // try {
+      await axios({
+        method: 'POST',
+        timeout: 4000,
+        url: SERVER_URL + '/user/signin',
+        headers: {'Context-Type': 'application/json'},
+        data: {
+          username: username,
+          password: password
+        }
+      }).then(res => {
+        console.log(res.data)
+        if (res.data.status == 200) {
+          U.writeStringP('jwt', res.data.data[0].token)
+          setJwt(res.data.data[0].token)
+          setLoggedUser({username, password})
+          // setLoggedUser(notUsed => ({username, password}))
+
+          if (res.data.data[0].type == 'user') {
+            U.writeObjectP('user', user).finally(() => callback && callback())
+            navigate('/')
+          } else if (res.data.data[0].type == 'bus') {
+            navigate('/busmain')
           }
-        })
-          .then(res => {
-            console.log(res.data)
-            if (res.data.status == 200) {
-              U.writeStringP('jwt', res.data.data[0].token)
-              setJwt(res.data.data[0].token)
-              setLoggedUser(notUsed => ({username, password}))
-              U.writeObjectP('user', user).finally(() => callback && callback())
-            }
-          })
-      }catch(e){
-        alert('아이디나 비밀번호를 다시 입력해주세요')
-      }
+        }
+      })
+      // } catch {
+      //   alert('아이디나 비밀번호를 확인하세요')
+      // }
     },
     []
   )
@@ -200,7 +206,6 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         if (res.data.status == 200) {
           const username = res.data.data[0].username
           const email = res.data.data[0].email
-
           const user = {username, email}
           U.writeObjectP('user', user).finally(() => callback && callback())
         }

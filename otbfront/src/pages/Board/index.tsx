@@ -48,10 +48,6 @@ export default function Board() {
               onClick={handleToggleMap}>
               {showMap ? '지도 닫기' : '지도 보기'}
             </Button>
-
-            <Button className="text-white border-lime-500 bg-lime-500">
-              내 주변 버스 탑승하기
-            </Button>
           </div>
         </ListDroppable>
       </DragDropContext>

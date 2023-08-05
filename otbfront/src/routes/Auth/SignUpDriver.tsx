@@ -32,7 +32,6 @@ export default function SignUpDriver() {
     console.log(busnumberplate, busnumber, password, confirmPassword)
     if (password === confirmPassword) {
       signupdriver(busnumberplate, password, busnumber, personnel, () => navigate('/'))
-      alert('회원가입이 완료되었습니다.')
     } else alert('비밀번호가 일치하여야 합니다.')
 
     if (busnumberplate == '') {

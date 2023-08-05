@@ -1,7 +1,6 @@
 import {Link} from 'react-router-dom'
 import {Div} from '../../components'
 import {Button} from '../../theme/daisyui'
-//import * as D from '../../data'
 
 export default function Hero() {
   return (
@@ -13,11 +12,6 @@ export default function Hero() {
               <Button className="btn-primary text-3xl font-bold btn-primary-lime-500 text-white bg-lime-500 border-lime-500">
                 서비스 이용하기
               </Button>
-            </Link>
-            <Link to="/">
-              {/* <Button className="btn-primary text-3xl font-bold btn-primary-lime-500 text-white bg-lime-500 border-lime-500">
-                driver 클릭
-              </Button> */}
             </Link>
           </div>
           <div></div>
