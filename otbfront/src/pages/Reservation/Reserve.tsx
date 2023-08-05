@@ -1,46 +1,17 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-import ReservationForm from './ReservationForm'
-import {Link as RRLink} from 'react-router-dom'
+import React, {useState} from 'react'
 import {Link} from '../../components'
 import {useAuth} from '../../contexts'
+import BUS_STOP, {BusStop} from '../../busStop.' // BusStop 타입과 busStops 데이터를 가져옴
 
-interface Bus {
-  id: number
-  busNumber: string
-  capacity: number
-  route: string
-  destination: string
-}
+const Reserve: React.FC = () => {
+  const [selectedStation, setSelectedStation] = useState<BusStop | null>(null)
 
-const BusListByStationId: React.FC = () => {
-  const [stationId, setStationId] = useState('')
-  const [buses, setBuses] = useState<Bus[]>([])
-  const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
-  const [destinationStations, setDestinationStations] = useState<string[]>([])
+  const handleMarkerClick = (station: BusStop) => {
+    setSelectedStation(station)
+  }
 
-  useEffect(() => {
-    if (stationId.trim() === '') return
-
-    const apiUrl = `http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?
-    ServiceKey=au774mPDNO37gAJrlTNvjrymn07a%2Ff739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw%3D%3D&arsId=${stationId}` // api 주소 추가하기
-
-    axios
-      .get<Bus[]>(apiUrl)
-      .then(response => {
-        setBuses(response.data)
-        const destinationStations = Array.from(
-          new Set(response.data.map(bus => bus.destination))
-        )
-        setDestinationStations(destinationStations)
-      })
-      .catch(error => {
-        console.error('옳지않은 정류장 ID입니다.:', error)
-      })
-  }, [stationId])
-
-  const handleBusSelect = (bus: Bus) => {
-    setSelectedBus(bus)
+  const handleListItemClick = (station: BusStop) => {
+    handleMarkerClick(station)
   }
 
   return (
@@ -60,47 +31,37 @@ const BusListByStationId: React.FC = () => {
         <div className="flex flex-col items-center  flex-1 max-w-sm px-2 mx-auto">
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
             <div>
-              <h1 className="mb-8 text-4xl text-center text-lime-500">예약 하기</h1>
-              <h1>출발 정류장 선택</h1>
-              <input
-                type="text"
-                value={stationId}
-                onChange={e => setStationId(e.target.value)}
-                placeholder="출발 정류장 ID를 입력하세요"
-              />
-
-              {stationId.trim() !== '' && (
-                <>
-                  <h2>정류장 {stationId} 도착 버스 목록</h2>
-                  <ul>
-                    {buses.map(bus => (
-                      <li key={bus.id}>
-                        <span>{bus.busNumber}</span>
-                        <button onClick={() => handleBusSelect(bus)}>예약하기</button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {selectedBus && (
-                <div>
-                  <h2>선택한 버스 노선 정보</h2>
-                  <p>노선 이름: {selectedBus.route}</p>
-                  <p>도착정류장: {selectedBus.destination}</p>
-                  <ReservationForm
-                    bus={selectedBus}
-                    destinationStations={destinationStations}
-                    startingStation={`정류장 ${stationId}`}
-                    onReservationSuccess={function (): void {
-                      throw new Error('문제 발생')
-                    }}
-                  />
-                </div>
-              )}
+              <h1 className="mb-8 text-4xl text-center text-lime-500">정류장</h1>
             </div>
-            <Link to="/" className="btn btn-link text-lime-500">
-              메인 페이지로 이동하기
-            </Link>
+            {selectedStation ? (
+              <div>
+                <h2 className="mb-4 text-2xl text-lime-500">정류장 정보</h2>
+                <p>정류장 이름: {selectedStation.place}</p>
+                <p>정류장 ID: {selectedStation.id}</p>
+                <p>위도: {selectedStation.lat}</p>
+                <p>경도: {selectedStation.lng}</p>
+              </div>
+            ) : (
+              <p className="text-center">정류장을 선택해주세요.</p>
+            )}
+
+            <ul>
+              {BUS_STOP.map(station => (
+                <li key={station.id} onClick={() => handleListItemClick(station)}>
+                  {station.place} - 위도: {station.lat}, 경도: {station.lng}
+                </li>
+              )).splice(0, 2)}
+            </ul>
+            <center>
+              <Link to="/pay">
+                <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
+                  결제하기
+                </button>
+              </Link>
+              <Link to="/" className="block mt-4 text-lime-500">
+                메인 페이지로 이동하기
+              </Link>
+            </center>
           </div>
         </div>
       </div>
@@ -108,4 +69,4 @@ const BusListByStationId: React.FC = () => {
   )
 }
 
-export default BusListByStationId
+export default Reserve

@@ -1,79 +1,82 @@
-import React, { useState, useCallback } from 'react';
-import { SERVER_URL } from '../../server/getServer';
-import { Link } from '../../components';
-import * as U from '../../utils';
-import axios from 'axios';
-import type { ChangeEvent } from 'react';
+import React, {useState, useCallback} from 'react'
+import {SERVER_URL} from '../../server/getServer'
+import {Link} from '../../components'
+import * as U from '../../utils'
+import type {ChangeEvent} from 'react'
 
 const MyPage: React.FC = () => {
-  const [user, setUser] = useState<any | null>(null);
-  const [jwt, setJwt] = useState<string>('');
-  const [loginData, setPassword] = useState({ password: '' });
+  const [user, setUser] = useState<any | null>(null)
+  const [jwt, setJwt] = useState<string>('')
+  const [loginData, setPassword] = useState({password: ''})
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPassword((prevData) => ({
+    const {name, value} = e.target
+    setPassword(prevData => ({
       ...prevData,
-      [name]: value,
-    }));
-  };
+      [name]: value
+    }))
+  }
 
-  type FormType = Record<'password', string>;
-  const initialFormState = { password: '' };
+  type FormType = Record<'password', string>
+  const initialFormState = {password: ''}
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
-      setForm((obj) => ({ ...obj, [key]: e.target.value }));
+      setForm(obj => ({...obj, [key]: e.target.value}))
     },
     []
-  );
-  const [{ password }, setForm] = useState<FormType>(initialFormState);
+  )
+  const [{password}, setForm] = useState<FormType>(initialFormState)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    U.readStringP('jwt').then((jwt) => {
-      setJwt(jwt ?? '');
-    });
-    axios(SERVER_URL + '/member', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `otb ${jwt}`,
-      },
-    })
-      .then((res) => {
-        setUser(res.data.data[0]);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.error('정보를 가져오는데 실패했습니다.', error);
-      });
-    e.preventDefault();
-  };
+    e.preventDefault()
 
-  const [showEditForm, setShowEditForm] = useState(false);
+    U.readStringP('jwt')
+      .then(jwt => {
+        setJwt(jwt ?? '')
+
+        return fetch(SERVER_URL + '/member', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `otb ${jwt}`
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setUser(data.data[0])
+        console.log(data)
+      })
+      .catch(error => {
+        console.error('정보를 가져오는데 실패했습니다.', error)
+      })
+  }
+
+  const [showEditForm, setShowEditForm] = useState(false)
 
   const toggleEditForm = () => {
-    setShowEditForm((prevState) => !prevState);
-  };
+    setShowEditForm(prevState => !prevState)
+  }
 
   const [formData, setFormData] = useState({
     newUsername: '',
-    newEmail: '',
+    newEmail: ''
     // 다른 수정 정보들을 추가하세요
-  });
+  })
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
+    const {name, value} = e.target
+    setFormData(prevData => ({
       ...prevData,
-      [name]: value,
-    }));
-  };
+      [name]: value
+    }))
+  }
 
   const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     // 수정 정보를 서버로 전송하는 로직을 추가하세요
-    // axios 또는 fetch 등을 사용하여 서버로 수정 정보를 보낼 수 있습니다.
-  };
+    // fetch를 사용하여 서버로 수정 정보를 보낼 수 있습니다.
+  }
 
   return (
     <div>
@@ -92,17 +95,14 @@ const MyPage: React.FC = () => {
         <div className="flex flex-col items-center  flex-1 max-w-sm px-2 mx-auto">
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
             <div>
-              <h1 className="mb-8 text-4xl text-center text-lime-500">
-                마이 페이지
-              </h1>
+              <h1 className="mb-8 text-4xl text-center text-lime-500">마이 페이지</h1>
               {user ? (
                 <div className="mb-8 text-2xl text-center text-black-500">
                   <p>Username: {user.username}</p>
                   <p>Email: {user.email}</p>
                   <button
                     className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
-                    onClick={toggleEditForm}
-                  >
+                    onClick={toggleEditForm}>
                     수정하기
                   </button>
                   <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
@@ -120,8 +120,7 @@ const MyPage: React.FC = () => {
                   />
                   <button
                     className="btn btn-primary text-white bg-lime-500"
-                    type="submit"
-                  >
+                    type="submit">
                     로그인
                   </button>
                 </form>
@@ -150,22 +149,23 @@ const MyPage: React.FC = () => {
                     />
                     <button
                       className="mt-4 btn btn-primary text-white bg-lime-500"
-                      type="submit"
-                    >
+                      type="submit">
                       저장하기
                     </button>
                   </form>
                 </div>
               )}
             </div>
-            <Link to="/" className="btn btn-link text-lime-500">
-              메인 페이지로 이동하기
-            </Link>
+            <center>
+              <Link to="/" className="btn btn-link text-lime-500">
+                메인 페이지로 이동하기
+              </Link>
+            </center>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MyPage;
+export default MyPage

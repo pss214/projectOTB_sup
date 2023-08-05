@@ -7,12 +7,13 @@ import Signup from './Auth/SignUp'
 import Login from './Auth/Login'
 import Logout from './Auth/Logout'
 import NoMatch from './NoMatch'
+
 import SignUpDriver from './Auth/SignUpDriver'
 import NewsPage from '../routes/LandingPage'
-
 import MyPage from '../pages/User/MyPage'
 import Reserve from '../pages/Reservation/Reserve'
 import BusMain from '../pages/User/BusMain'
+import Pay from '../pages/Reservation/Pay'
 export default function RoutesSetup() {
   return (
     <Routes>
@@ -36,7 +37,8 @@ export default function RoutesSetup() {
       <Route path="/busmain" element={<BusMain />} />
       <Route path="/" element={<NewsPage />} />
       <Route path="/:category" element={<NewsPage />} />
-      <Route path="/reserve/" element={<Reserve />} />
+      <Route path="/reserve" element={<Reserve />} />
+      <Route path="/pay" element={<Pay />} />
       <Route
         path="/logout"
         element={
