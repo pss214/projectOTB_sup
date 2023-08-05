@@ -51,6 +51,7 @@ public class BusService {
                     .token(token)
                     .busnumber(bus.getBusNumber())
                     .personnel(bus.getPersonnel())
+                    .type("bus")
                     .build();
         }else {
             return null;

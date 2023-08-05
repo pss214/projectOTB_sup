@@ -69,29 +69,5 @@ public class ReservationController {
                             .build());
         }
     }
-    @PostMapping("/businpo")
-    @Operation(summary = "정류장 버스노선리스트",description = "정류장ID를 통해 해당 정류장을 경유하는 버스노선을 리스트로 보내는 API 입니다.")
-    @ApiResponses(value ={
-            @ApiResponse(responseCode = "200", description = "성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "실패",content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
-    })
-    public ResponseEntity<?> Businpormation(@RequestBody StationDTO dto){
-        return ResponseEntity.ok().body(ResponseDTO.builder()
-                .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(busApiService.GetBusStation(dto.id)).build());
-    }
-    @PostMapping("/busroutenm")
-    @Operation(summary = "버스노선 정류장리스트",description = "버스노선ID를 통해 해당 버스가 경유하는 정류장을 리스트로 보내는 API 입니다.")
-    @ApiResponses(value ={
-            @ApiResponse(responseCode = "200", description = "성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "실패",content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
-    })
-    public ResponseEntity<?> Busroutenm(@RequestBody StationDTO dto){
-        return ResponseEntity.ok().body(ResponseDTO.builder()
-                .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(busApiService.GetBusStationRoute(dto.id)).build());
-    }
 }
-class StationDTO{
-    String id;
-}
+

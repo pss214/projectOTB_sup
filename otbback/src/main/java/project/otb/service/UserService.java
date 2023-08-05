@@ -50,6 +50,7 @@ public class UserService {
                     .username(user.getUsername())
                     .email(user.getEmail())
                     .token(token)
+                    .type("user")
                     .build();
         } else {
             return null;

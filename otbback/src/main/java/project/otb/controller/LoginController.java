@@ -51,7 +51,7 @@ public class LoginController {
                     .status(HttpStatus.BAD_REQUEST.value()).message(e.getMessage()).build());
         }
     }
-    @PostMapping("/login")
+    @PostMapping("/signin")
     @Operation(summary = "유저 및 버스 회원 로그인",description = "통합 로그인 api입니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "200", description = "로그인 성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),

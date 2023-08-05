@@ -10,6 +10,7 @@ import project.otb.api.BusApiService;
 
 @RestController
 @RequestMapping("/admin")
+
 public class AdminController {
     private final BusApiService busApiService;
 

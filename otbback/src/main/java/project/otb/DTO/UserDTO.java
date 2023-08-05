@@ -23,4 +23,5 @@ public class UserDTO {
     private LocalDateTime CD;
     @Schema(description = "회원 수정날짜",nullable = true)
     private LocalDateTime MD;
+    private String type;
 }
