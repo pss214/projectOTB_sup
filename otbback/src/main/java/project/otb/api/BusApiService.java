@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
+import project.otb.DTO.BusRouteNmDTO;
+import project.otb.DTO.BusStationDTO;
 import project.otb.entity.BusRoute;
 import project.otb.repositiry.BusRouteRepository;
 
@@ -47,10 +49,10 @@ public class BusApiService {
     }
     public String readBusStopInformation(String dto){
         try {
-            //서울특별시 정류장정보조회 서비스 - 고유번호에 해당하는 경유노선목록을 조회한다.
+            //서울특별시 정류장정보조회 서비스 - 정류소고유번호를 입력받아 버스도착정보목록을 조회한다.
             String serviceKey = "au774mPDNO37gAJrlTNvjrymn07a/f739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw==";
 
-            String urlBuilder = new String("http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation") /*URL*/
+            String urlBuilder = new String("http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid") /*URL*/
                     +("?serviceKey=" + URLEncoder.encode(serviceKey,"UTF-8"))/*Service Key*/
                     +("&arsId=" + URLEncoder.encode(dto, "UTF-8")) /*정류장 고유번호*/
                     +("&resultType="+ URLEncoder.encode("json", "UTF-8"));
@@ -131,35 +133,34 @@ public class BusApiService {
             return e.getMessage();
         }
     }
-    public List GetBusStation(String dto){
+    public List<BusStationDTO> GetBusStation(String dto){
         String api = readBusStopInformation(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
         BusStopInformationDTO busdto = pretty.fromJson(api, BusStopInformationDTO.class);
         List<BusStationDTO> res = new ArrayList<>();
         for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-            res.add(i, BusStationDTO.builder().busrouteid(busdto.getMsgBody().itemList.get(0).busRouteNm).build());
+            res.add(i, BusStationDTO.builder().busRouteId(busdto.getMsgBody().itemList.get(i).busRouteId)
+                            .rtNm(busdto.getMsgBody().itemList.get(i).rtNm)
+                            .arrmsg1(busdto.getMsgBody().itemList.get(i).arrmsg1)
+                            .arrmsg2(busdto.getMsgBody().itemList.get(i).arrmsg2)
+                            .build());
         }
         return res;
     }
-    public List GetBusStationRoute(String dto){
+    public List<BusRouteNmDTO> GetBusStationRoute(String dto){
         String api = readGetBusStationRoute(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
         BusStationRouteDTO busdto = pretty.fromJson(api, BusStationRouteDTO.class);
         List<BusRouteNmDTO> res = new ArrayList<>();
         for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-            res.add(i,BusRouteNmDTO.builder().stationNm(busdto.getMsgBody()
+            res.add(i, BusRouteNmDTO.builder().stationNm(busdto.getMsgBody()
                     .getItemList().get(i).stationNm).build());
         }
         return res;
     }
 
+
 }
-@Builder
-class BusStationDTO{
-    String busrouteid;
-}
-@Builder
-class BusRouteNmDTO{
-    String stationNm;
-}
+
+
 

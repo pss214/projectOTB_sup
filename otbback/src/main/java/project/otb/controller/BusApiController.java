@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.otb.DTO.BusStationDTO;
 import project.otb.DTO.ResponseDTO;
 import project.otb.DTO.StationDTO;
 import project.otb.api.BusApiService;
@@ -34,10 +37,11 @@ public class BusApiController {
             @ApiResponse(responseCode = "200", description = "성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "실패",content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
     })
-    public ResponseEntity<?> Businpormation(@RequestBody StationDTO dto){
+    public ResponseEntity<?> Businpormation( @RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusStation(dto.getId()))));
+                .data(List.of(busApiService.GetBusStation(dto.getId())))
+                .build());
     }
     @PostMapping("/route-name")
     @Operation(summary = "버스노선 정류장리스트",description = "버스노선ID를 통해 해당 버스가 경유하는 정류장을 리스트로 보내는 API 입니다.")
@@ -45,9 +49,10 @@ public class BusApiController {
             @ApiResponse(responseCode = "200", description = "성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "실패",content = @Content(schema = @Schema(implementation = ResponseDTO.class)))
     })
-    public ResponseEntity<?> Busroutenm(@RequestBody StationDTO dto) {
+    public ResponseEntity<?> Busroutenm( @RequestBody StationDTO dto) {
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusStationRoute(dto.getId()))).build());
+                .data(List.of(busApiService.GetBusStationRoute(dto.getId())))
+                .build());
     }
 }
