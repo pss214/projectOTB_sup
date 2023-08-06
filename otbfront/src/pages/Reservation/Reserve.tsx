@@ -1,18 +1,15 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link} from '../../components'
-import {useAuth} from '../../contexts'
-import BUS_STOP from '../../busStop.' // BusStop 타입과 busStops 데이터를 가져옴
 import {useLocation} from 'react-router-dom'
 import * as U from '../../utils'
 import {SERVER_URL} from '../../server'
 import axios from 'axios'
 
 interface Bus {
-  id: number
-  busNumber: string
-  capacity: number
-  route: string
-  destination: string
+  rtNm: string
+  busRouteId:string
+  arrmsg1:string
+  arrmsg2:string
 }
 
 interface BusStop {
@@ -40,11 +37,41 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const [seats, setSeats] = useState(1)
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
   const [selectedDestination, setSelectedDestination] = useState('')
-
+  const [busArrivalInfo, setBusArrivalInfo] = useState([])
   const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const lat = queryParams.get('lat')
+  const lng = queryParams.get('lng')
+  const place = queryParams.get('place')
+  const id = queryParams.get('id')
   const selectedMarker = location.state
     ? (location.state as {selectedMarker: BusStop}).selectedMarker
     : null
+  useEffect(() => {
+    if(selectedMarker?.id){
+      fetchData();
+    }
+  }, [selectedMarker])
+  const fetchData =  () => {
+    try {
+       fetch(SERVER_URL + '/bus/information', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id: selectedMarker?.id})
+      }).then((res)=>{
+        res.json().then(res=>{
+          console.log(res)
+            const data = res.data[0];
+            setBusArrivalInfo(data)
+        })
+      })
+    } catch (error) {
+      console.error('API 요청 중 오류 발생:', error)
+    }
+  }
+  
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
@@ -57,14 +84,15 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDestination(e.target.value)
   }
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     const reservationData = {
       startingStation,
-      busNumber: selectedBus?.busNumber || '',
-      route: selectedBus?.route || '',
+      busNumber: selectedBus?.rtNm || '',
+      route: selectedBus?.busRouteId || '',
       destination: selectedDestination,
       name,
       seats
@@ -125,25 +153,18 @@ const Reserve: React.FC<ReservationFormProps> = ({
             </div>
 
             <div>
-              <label htmlFor="bus">버스 선택:</label>
-              <select
-                id="bus"
-                value={selectedBus ? selectedBus.id : ''}
-                onChange={e => {
-                  const selectedBusId = parseInt(e.target.value)
-                  const selectedBus = buses.find(bus => bus.id === selectedBusId)
-                  setSelectedBus(selectedBus || null)
-                  setSelectedDestination('') // 새로운 버스 선택 시 도착 정류장 선택 초기화
-                }}>
-                <option value="" disabled>
-                  버스 선택
-                </option>
-                {buses.map(bus => (
-                  <option key={bus.id} value={bus.id}>
-                    {bus.busNumber}
-                  </option>
-                ))}
-              </select>
+              <h2 className="mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
+              {busArrivalInfo.length > 0 ? (
+                <ul>
+                  {busArrivalInfo.map((bus: any, index: number) => (
+                    <li key={index}>
+                     {bus.rtNm},{bus.arrmsg1}도착 예정
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>버스 도착 정보가 없습니다.</p>
+              )}
             </div>
             {selectedBus && (
               <div>

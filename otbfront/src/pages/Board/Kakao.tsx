@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Link} from 'react-router-dom'
-import BUS_STOP, {BusStop} from '../../busStop.' // busStop.ts 파일에서 BUS_STOP 데이터 가져옴
+import BUS_STOP, {BusStop} from '../../busStop' // busStop.ts 파일에서 BUS_STOP 데이터 가져옴
 import {useNavigate} from 'react-router-dom'
 
 function Kakao(): JSX.Element {
@@ -73,7 +73,7 @@ function Kakao(): JSX.Element {
         // 사용자 위치에서 200m 이내의 버스 정류장만 필터링
         const filteredMarkers = BUS_STOP.filter(busStop => {
           const distance = calculateDistance(userLat, userLng, busStop.lat, busStop.lng)
-          return distance <= 500
+          return distance <= 3000
         })
 
         // 필터링된 버스 정류장에 대한 마커 생성
