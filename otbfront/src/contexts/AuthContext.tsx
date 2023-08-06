@@ -130,7 +130,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
         await axios({
           method: 'POST',
           timeout: 4000,
-          url: SERVER_URL + '/user/login',
+          url: SERVER_URL + '/user/signin',
           headers: {'Context-Type': 'application/json'},
           data: {
             username: username,

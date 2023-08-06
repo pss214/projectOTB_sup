@@ -5,6 +5,8 @@ import * as U from '../../utils';
 import axios from 'axios';
 import type { ChangeEvent } from 'react';
 import { async } from 'q';
+import { useNavigate } from 'react-router-dom';
+import Logout from '../../routes/Auth/Logout';
 
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
@@ -36,10 +38,27 @@ const MyPage: React.FC = () => {
     []
   );
   const [{ password }, setForm] = useState<FormType>(initialFormState);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    
-    await axios(SERVER_URL + '/member', {
+  const deleteuser = ()=>{
+    if(window.confirm("삭제하시겠습니까?")){
+      axios.delete(SERVER_URL+'/member',{
+        headers:{
+          'Content-Type' : 'applecation/json',
+          Authorization : `otb ${jwt}`
+        }
+      }).then(res=>{
+        if(res.data.status == 201){
+          alert("삭제되었습니다")
+          Logout();
+          navigate('/')
+        }
+      }).catch(error=>{
+        alert("오류! 다시 입력해주세요.")
+      })
+    }else{
+    }
+  }
+  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
+     axios(SERVER_URL + '/member', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +67,6 @@ const MyPage: React.FC = () => {
     })
       .then((res) => {
         setUser(res.data.data[0]);
-        console.log(res);
       })
       .catch((error) => {
         console.error('정보를 가져오는데 실패했습니다.', error);
@@ -63,8 +81,8 @@ const MyPage: React.FC = () => {
   };
 
   const [formData, setFormData] = useState({
-    newUsername: '',
     newEmail: '',
+    newPassword: '',
     // 다른 수정 정보들을 추가하세요
   });
 
@@ -76,8 +94,29 @@ const MyPage: React.FC = () => {
     }));
   };
 
+  const navigate = useNavigate()
   const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+      e.preventDefault();
+      axios({
+        method:'POST',
+        url:SERVER_URL+'/member',
+        headers :{
+          "Content-Type": "application/json",
+          Authorization: `otb ${jwt}`
+        },
+        data : {
+          email: formData.newEmail,
+          password : formData.newPassword
+        }
+      }).then(res =>{
+        if(res.data.status == 201){
+          alert(res.data.message)
+          navigate("/")
+        }
+      })
+      .catch(error=>{
+        console.log(error.data)
+      })
     // 수정 정보를 서버로 전송하는 로직을 추가하세요
     // axios 또는 fetch 등을 사용하여 서버로 수정 정보를 보낼 수 있습니다.
   };
@@ -112,7 +151,8 @@ const MyPage: React.FC = () => {
                   >
                     수정하기
                   </button>
-                  <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
+                  <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
+                  onClick={deleteuser}>
                     회원탈퇴
                   </button>
                 </div>
@@ -141,17 +181,17 @@ const MyPage: React.FC = () => {
                   <form className="mt-4" onSubmit={handleUpdate}>
                     <input
                       type="text"
-                      name="newUsername"
-                      placeholder="새로운 사용자 이름"
-                      value={formData.newUsername}
+                      name="newEmail"
+                      placeholder="새로운 이메일"
+                      value={formData.newEmail}
                       onChange={handleFormChange}
                       className="mt-2 p-2 border rounded"
                     />
                     <input
-                      type="email"
-                      name="newEmail"
-                      placeholder="새로운 이메일 주소"
-                      value={formData.newEmail}
+                      type="text"
+                      name="newPassword"
+                      placeholder="새로운 비밀번호"
+                      value={formData.newPassword}
                       onChange={handleFormChange}
                       className="mt-2 p-2 border rounded"
                     />
