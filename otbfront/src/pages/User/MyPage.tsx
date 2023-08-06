@@ -4,8 +4,8 @@ import { Link } from '../../components';
 import * as U from '../../utils';
 import axios from 'axios';
 import type { ChangeEvent } from 'react';
-import { async } from 'q';
 import { useNavigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from '../../contexts';
 import Logout from '../../routes/Auth/Logout';
 
 const MyPage: React.FC = () => {
@@ -14,6 +14,7 @@ const MyPage: React.FC = () => {
   const [loginData, setPassword] = useState({ password: '' });
   const [getpassword, setGetpassword] = useState<string>('');
 
+  const {logout} = useAuth()
   useEffect(()=>{
     U.readStringP('jwt').then((jwt) => {
       setJwt(jwt ?? '');
@@ -48,13 +49,15 @@ const MyPage: React.FC = () => {
       }).then(res=>{
         if(res.data.status == 201){
           alert("삭제되었습니다")
-          Logout();
-          navigate('/')
+          logout(() => {
+            navigate('/') // 홈 페이지로 이동합니다
+          })
         }
       }).catch(error=>{
         alert("오류! 다시 입력해주세요.")
       })
     }else{
+
     }
   }
   const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {

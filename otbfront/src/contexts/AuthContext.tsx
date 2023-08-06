@@ -124,7 +124,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
   const login = useCallback(
     async (username: string, password: string, callback?: Callback) => {
       const user = {username, password}
-      // try {
+      try {
       await axios({
         method: 'POST',
         timeout: 4000,
@@ -150,9 +150,9 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
           }
         }
       })
-      // } catch {
-      //   alert('아이디나 비밀번호를 확인하세요')
-      // }
+      }catch {
+        alert('아이디나 비밀번호를 확인하세요')
+      }
     },
     []
   )
