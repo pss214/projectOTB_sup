@@ -73,11 +73,13 @@ public class UserService {
     }
     public void putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
         User saveuser = userRepository.findByUsername(user.getUsername());
-        if(dto.getEmail()!=null){
+        if(dto.getEmail() != null){
             saveuser.setEmail(dto.getEmail());
+            userRepository.save(saveuser);
         }
         if(dto.getPassword()!=null){
             saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
+            userRepository.save(saveuser);
         }
 
     }

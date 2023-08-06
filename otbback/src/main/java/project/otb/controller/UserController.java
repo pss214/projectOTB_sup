@@ -49,6 +49,14 @@ public class UserController {
     })
     public ResponseEntity<?> putUserInfo(@AuthenticationPrincipal User user,@RequestBody UserDTO dto){
         try{
+            if (dto.getEmail() != "") {
+            } else {
+                dto.setEmail(null);
+            }
+            if (dto.getPassword() != ""){
+            }else {
+                dto.setPassword(null);
+            }
             userService.putUserInfo(user,dto);
             return ResponseEntity.ok().body(ResponseDTO.builder()
                     .status(HttpStatus.CREATED.value()).message("회원 정보 수정 완료").build());
