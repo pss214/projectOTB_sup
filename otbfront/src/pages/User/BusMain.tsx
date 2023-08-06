@@ -19,9 +19,9 @@ const BusMain: React.FC = () => {
           <h1 className="mb-8 text-4xl text-center text-lime-500">Driver Main</h1>
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
             <div></div>
-            {/* <Link to="/" className="btn btn-link text-lime-500">
+            <Link to="/" className="btn btn-link text-lime-500">
               메인 페이지로 이동하기
-            </Link> */}
+            </Link>
           </div>
         </div>
       </div>
