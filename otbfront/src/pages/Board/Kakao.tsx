@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Link} from 'react-router-dom'
-import BUS_STOP from '../../busStop.' // busStop.ts 파일에서 BUS_STOP 데이터 가져옴
+import BUS_STOP, {BusStop} from '../../busStop.' // busStop.ts 파일에서 BUS_STOP 데이터 가져옴
+import {useNavigate} from 'react-router-dom'
 
 function Kakao(): JSX.Element {
   const [map, setMap] = useState<any>(null)
@@ -8,9 +9,8 @@ function Kakao(): JSX.Element {
   const [currentLocationMarker, setCurrentLocationMarker] = useState<any>(null) // 내 위치 마커
   const [showTrafficOverlay, setShowTrafficOverlay] = useState<boolean>(false) // 교통정보 보기/숨기기 상태
 
+  const navigate = useNavigate()
   const toggleTrafficOverlay = () => {
-    // 교통정보를 토글하는 로직을 작성합니다.
-    // 지도에 교통정보 오버레이를 추가 또는 제거하여 보이거나 숨기는 기능을 구현합니다.
     if (map) {
       if (showTrafficOverlay) {
         map.removeOverlayMapTypeId((window as any).kakao.maps.MapTypeId.TRAFFIC)
@@ -20,24 +20,27 @@ function Kakao(): JSX.Element {
       setShowTrafficOverlay(!showTrafficOverlay)
     }
   }
-
   useEffect(() => {
+    const handleMarkerClick = (station: BusStop) => {
+      navigate('/reserve', {
+        state: {selectedMarker: station}
+      })
+    }
+
     const container = document.getElementById('map')
     const options = {
-      center: new (window as any).kakao.maps.LatLng(37.5665, 126.978), // 초기 위치 설정 (서울)
+      center: new (window as any).kakao.maps.LatLng(37.5665, 126.978),
       level: 3
     }
     const map = new (window as any).kakao.maps.Map(container, options)
     setMap(map)
 
-    // 마커 생성
     const getUserPosition = () => {
       return new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject)
       })
     }
 
-    // 두 지점 사이의 거리를 계산하는 함수
     const calculateDistance = (
       lat1: number,
       lng1: number,
@@ -82,10 +85,7 @@ function Kakao(): JSX.Element {
 
           // 마커 클릭 이벤트 리스너 등록
           ;(window as any).kakao.maps.event.addListener(marker, 'click', () => {
-            // 클릭된 마커의 정보를 쿼리 파라미터로 전달하여 다음 페이지로 이동
-            const path = '/reserve' // 다음 페이지 경로
-            const queryParams = `lat=${busStop.lat}&lng=${busStop.lng}&id=${busStop.id}&place=${busStop.place}`
-            window.location.href = `${path}?${queryParams}`
+            handleMarkerClick(busStop)
           })
 
           return marker
@@ -169,7 +169,6 @@ function Kakao(): JSX.Element {
       console.error('위치 정보를 받아오지 못했습니다.')
     }
   }
-
   return (
     <div>
       <div id="map" style={{width: '500px', height: '500px'}}></div>

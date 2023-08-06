@@ -37,7 +37,19 @@ export default function RoutesSetup() {
       <Route path="/busmain" element={<BusMain />} />
       <Route path="/" element={<NewsPage />} />
       <Route path="/:category" element={<NewsPage />} />
-      <Route path="/reserve" element={<Reserve />} />
+      <Route
+        path="/reserve"
+        element={
+          <Reserve
+            buses={[]}
+            destinationStations={[]}
+            startingStation={''}
+            onReservationSuccess={function (): void {
+              throw new Error('Function not implemented.')
+            }}
+          />
+        }
+      />
       <Route path="/pay" element={<Pay />} />
       <Route
         path="/logout"
