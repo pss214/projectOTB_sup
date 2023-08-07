@@ -20,7 +20,7 @@ const BusMain: React.FC = () => {
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
             <div></div>
             <Link to="/" className="btn btn-link text-lime-500">
-              메인 페이지로 이동하기
+              메인 페이지로 이동
             </Link>
           </div>
         </div>

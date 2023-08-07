@@ -5,40 +5,33 @@ import * as U from '../../utils';
 import axios from 'axios';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../../contexts';
-import Logout from '../../routes/Auth/Logout';
-
+import { useAuth } from '../../contexts';
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
   const [jwt, setJwt] = useState<string>('');
-  const [loginData, setPassword] = useState({ password: '' });
-  const [getpassword, setGetpassword] = useState<string>('');
-
+  const [jwtbool, setJwtbool] = useState<boolean>(false)
   const {logout} = useAuth()
-  useEffect(()=>{
-    U.readStringP('jwt').then((jwt) => {
-      setJwt(jwt ?? '');
+  useEffect( ()=>{
+     U.readStringP('jwt').then((jwt) => {
+       setJwt(jwt ?? '');
+       setJwtbool(true)
     });
-    U.readStringP('password').then((password)=>{
-      setGetpassword(password ?? '')
-    })
-  },[jwt, getpassword])
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPassword((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-  type FormType = Record<'password', string>;
-  const initialFormState = { password: '' };
-  const changed = useCallback(
-    (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
-      setForm((obj) => ({ ...obj, [key]: e.target.value }));
-    },
-    []
-  );
-  const [{ password }, setForm] = useState<FormType>(initialFormState);
+    if(jwtbool){
+      axios(SERVER_URL + '/member', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`,
+        },
+      })
+        .then((res) => {
+          setUser(res.data.data[0]);
+        })
+        .catch((error) => {
+        });
+     }
+  },[jwt])
+  
   const deleteuser = ()=>{
     if(window.confirm("삭제하시겠습니까?")){
       axios.delete(SERVER_URL+'/member',{
@@ -60,22 +53,6 @@ const MyPage: React.FC = () => {
 
     }
   }
-  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
-     axios(SERVER_URL + '/member', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `otb ${jwt}`,
-      },
-    })
-      .then((res) => {
-        setUser(res.data.data[0]);
-      })
-      .catch((error) => {
-        console.error('정보를 가져오는데 실패했습니다.', error);
-      });
-    e.preventDefault();
-  };
 
   const [showEditForm, setShowEditForm] = useState(false);
 
@@ -160,21 +137,12 @@ const MyPage: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <form className="text-center" onSubmit={handleSubmit}>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="비밀번호를 입력해주세요"
-                    value={loginData.password}
-                    onChange={handleChange}
-                  />
                   <button
                     className="btn btn-primary text-white bg-lime-500"
                     type="submit"
                   >
                     로그인
                   </button>
-                </form>
               )}
               {showEditForm && (
                 <div>
