@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import project.otb.DTO.ReservationDTO;
 import project.otb.DTO.ResponseDTO;
+import project.otb.DTO.StationDTO;
 import project.otb.api.BusApiService;
 import project.otb.service.ReservationService;
 
@@ -52,19 +53,16 @@ public class ReservationController {
                             .build());
         }
     }
-    @PostMapping("/businpo")
+    @PostMapping("/businfo")
     public ResponseEntity<?> Businpormation(@RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(busApiService.GetBusStation(dto.id)).build());
+                .data(busApiService.GetBusStation(dto.getId())).build());
     }
     @PostMapping("/busroutenm")
     public ResponseEntity<?> Busroutenm(@RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(busApiService.GetBusStationRoute(dto.id)).build());
+                .data(busApiService.GetBusStationRoute(dto.getId())).build());
     }
-}
-class StationDTO{
-    String id;
 }
