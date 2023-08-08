@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BusRouteNmDTO{
     String stationNm;
+    String arsId;
 }
