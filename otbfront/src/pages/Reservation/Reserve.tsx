@@ -37,9 +37,9 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const [seats, setSeats] = useState(1);
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   const [selectedDestination, setSelectedDestination] = useState('');
-  const [busArrivalInfo, setBusArrivalInfo] = useState<Bus[]>([]); // 배열 타입으로 초기화
-  const [currentPage, setCurrentPage] = useState(1); // 페이지 관련 상태 추가
-  const itemsPerPage = 9;
+  const [busArrivalInfo, setBusArrivalInfo] = useState<Bus[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const lat = queryParams.get('lat');
@@ -140,6 +140,11 @@ const Reserve: React.FC<ReservationFormProps> = ({
       });
   };
 
+  const handleBusSelection = (bus: Bus) => {
+    setSelectedBus(bus);
+    // 여기에서 선택된 버스에 대한 추가 작업 수행 가능
+  };
+
   return (
     <div>
       <div className="flex justify-between bg-lime-200">
@@ -168,31 +173,47 @@ const Reserve: React.FC<ReservationFormProps> = ({
                 </ul>
               )}
             </div>
-
             <div>
               {currentBusArrivalInfo.length > 0 ? (
                 <div>
                   <h2 className="mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
                   <ul>
                     {currentBusArrivalInfo.map((bus: any, index: number) => (
-                      <li key={index}>
-                        {bus.rtNm}, {bus.arrmsg1}, {bus.arrmsg2}
-                      </li>
+                      <li key={index} className="mb-1" style={{ display: 'flex', alignItems: 'center' }}>
+                      <button
+                        className="btn btn-orange text-xs px-1 py-0.5"
+                        onClick={() => handleBusSelection(bus)}
+                        style={{
+                          margin: '0',
+                          lineHeight: '1',
+                          width: '16%',
+                          height: '11%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {bus.rtNm}
+                      </button>
+                      <span>, {bus.arrmsg1}, {bus.arrmsg2}</span>
+                    </li>
                     ))}
                   </ul>
                   <div className="flex justify-center mt-4">
-                  <button
-                    className="btn btn-orange mr-2" 
-                    onClick={goToPreviousPage}
-                    disabled={currentPage === 1}>
-                    이전
-                  </button>
-                  <button
-                    className="btn btn-orange" 
-                    onClick={goToNextPage}
-                    disabled={indexOfLastItem >= busArrivalInfo.length}>
-                    다음
-                  </button>
+                    <button
+                      className="btn btn-orange mr-2"
+                      onClick={goToPreviousPage}
+                      disabled={currentPage === 1}
+                    >
+                      이전
+                    </button>
+                    <button
+                      className="btn btn-orange"
+                      onClick={goToNextPage}
+                      disabled={indexOfLastItem >= busArrivalInfo.length}
+                    >
+                      다음
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -200,27 +221,28 @@ const Reserve: React.FC<ReservationFormProps> = ({
               )}
             </div>
             {selectedBus && (
-              <div>
-                <label htmlFor="destination">도착 정류장 선택:</label>
-                <select
-                  id="destination"
-                  value={selectedDestination}
-                  onChange={handleDestinationChange}
-                  required>
-                  <option value="" disabled>
-                    도착 정류장 선택
+            <div>
+              <label htmlFor="destination">{selectedBus.rtNm}, {selectedBus.busRouteId} 노선 버스 하차지 :</label>
+              <select
+                id="destination"
+                value={selectedDestination}
+                onChange={handleDestinationChange}
+                required
+              >
+                <option value="" disabled>
+                  정류장 선택
+                </option>
+                {destinationStations.map((station) => (
+                  <option key={station} value={station}>
+                    {station}
                   </option>
-                  {destinationStations.map(station => (
-                    <option key={station} value={station}>
-                      {station}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                ))}
+              </select>
+            </div>
             )}
             <center>
               <Link to="/pay">
-                <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600">
+                <button className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600">
                   결제하기
                 </button>
               </Link>
