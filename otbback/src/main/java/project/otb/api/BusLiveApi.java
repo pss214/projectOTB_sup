@@ -15,11 +15,12 @@ import java.util.List;
 public class BusLiveApi {
         public static void main(String[] args) throws IOException {
             /*URL*/
-            String serviceKey = "au774mPDNO37gAJrlTNvjrymn07a%2Ff739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw%3D%3D";
+            String serviceKey = "" +
+                    "au774mPDNO37gAJrlTNvjrymn07a/f739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw==";
 
-            String urlBuilder = "http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll" + "?"
+            String urlBuilder = "http://ws.bus.go.kr/api/rest/buspos/getBusPosByVehId" + "?"
                     + "serviceKey" +"="+ serviceKey /*Service Key*/
-                    +"&busRouteId=" + "121900016"  /*노선ID 100100056)341*/
+                    +"&vehId=" + "122014061"  /*노선ID 100100056)341*/
                     +"&resultType="+"json";
 
             URL url = new URL(urlBuilder);
@@ -39,19 +40,19 @@ public class BusLiveApi {
             }
             rd.close();
             conn.disconnect();
-            Gson pretty = new GsonBuilder().setPrettyPrinting().create();
-            BusLiveByRouteApiDTO busdto = pretty.fromJson(sb.toString(), BusLiveByRouteApiDTO.class);
-            List<BusLiveByRouteDTO> res = new ArrayList<>();
-            for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
-                res.add(BusLiveByRouteDTO.builder()
-                        .stNm(busdto.getMsgBody().getItemList().get(i).stNm)
-                        .rtNm(busdto.getMsgBody().getItemList().get(i).rtNm)
-                        .arsId(busdto.getMsgBody().getItemList().get(i).arsId)
-                        .plainNo1(busdto.getMsgBody().getItemList().get(i).plainNo1)
-                        .arrmsg1(busdto.getMsgBody().getItemList().get(i).arrmsg1)
-                        .stationNm1(busdto.getMsgBody().getItemList().get(i).stationNm1)
-                        .nstnId1(busdto.getMsgBody().getItemList().get(i).nstnId1)
-                        .build());
+            System.out.println(sb);
+//            Gson pretty = new GsonBuilder().setPrettyPrinting().create();
+//            BusLiveByRouteApiDTO busdto = pretty.fromJson(sb.toString(), BusLiveByRouteApiDTO.class);
+//            List<BusLiveByRouteDTO> res = new ArrayList<>();
+//            for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
+//                res.add(BusLiveByRouteDTO.builder()
+//                        .stNm(busdto.getMsgBody().getItemList().get(i).stNm)
+//                        .rtNm(busdto.getMsgBody().getItemList().get(i).rtNm)
+//                        .arsId(busdto.getMsgBody().getItemList().get(i).arsId)
+//                        .plainNo1(busdto.getMsgBody().getItemList().get(i).plainNo1)
+//                        .arrmsg1(busdto.getMsgBody().getItemList().get(i).arrmsg1)
+//                        .stationNm1(busdto.getMsgBody().getItemList().get(i).stationNm1)
+//                        .nstnId1(busdto.getMsgBody().getItemList().get(i).nstnId1)
+//                        .build());
             }
         }
-}

@@ -18,4 +18,5 @@ class ItemList{
     String busRouteId;
     String arrmsg1;
     String arrmsg2;
+    String vehId1;
 }

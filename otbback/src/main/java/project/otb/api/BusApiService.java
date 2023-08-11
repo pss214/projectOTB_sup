@@ -3,6 +3,7 @@ package project.otb.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Service;
+import project.otb.DTO.BusArrivalDTO;
 import project.otb.DTO.BusLiveByRouteDTO;
 import project.otb.DTO.BusRouteNmDTO;
 import project.otb.DTO.BusStationDTO;
@@ -81,7 +82,7 @@ public class BusApiService {
     }
     public String readGetBusStationRoute(String dto){
         try{
-            //서울특별시 버스 노선 정보 조회 서비스 - 고유번호에 해당하는 경유 정류장 목록 조회한다.
+            //서울특별시 버스노선정보조회 서비스 - 고유번호에 해당하는 경유 정류장 목록 조회한다.
             String serviceKey = "au774mPDNO37gAJrlTNvjrymn07a/f739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw==";
 
             String urlBuilder = new String("http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute") /*URL*/
@@ -110,38 +111,40 @@ public class BusApiService {
         }catch (IOException e){
             throw new RuntimeException(e.getMessage()+"\nmessage : readGetBusStationRoute api 오류");
         }
-
     }
-    public String readBusLiveByRouteApi(String api) {
-        /*버스위치정보조회 서비스 - 노선ID로 차량들의 위치정보를 조회한다*/
-        try{
-            String serviceKey = "au774mPDNO37gAJrlTNvjrymn07a%2Ff739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw%3D%3D";
+    public String readBusArrivalInformation(String dto){
+        try {
+            //서울특별시 버스도착정보조회 서비스 - 고유번호에 해당하는 경유 정류장 목록 조회한다.
+            String serviceKey = "au774mPDNO37gAJrlTNvjrymn07a/f739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw==";
 
-            String urlBuilder = "http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll" + "?"
-                    + "serviceKey" +"="+ serviceKey /*Service Key*/
-                    +"&busRouteId=" +api  /*노선ID 100100056)341*/
-                    +"&resultType="+"json";
+            String urlBuilder = new String("http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll") /*URL*/
+                    + "?serviceKey=" + serviceKey/*Service Key*/
+                    + "&busRouteId=" +dto /*버스 고유 id*/
+                    + "&resultType=" + "json";
             URL url = new URL(urlBuilder);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                System.out.println("BusLiveByRoute - Response code: " + conn.getResponseCode());
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
+            System.out.println("Response code: " + conn.getResponseCode());
             BufferedReader rd;
-                if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                 rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             } else {
                 rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
             }
             StringBuilder sb = new StringBuilder();
             String line;
-                while ((line = rd.readLine()) != null) {
+            while ((line = rd.readLine()) != null) {
                 sb.append(line);
             }
-                rd.close();
-                conn.disconnect();
+            rd.close();
+            conn.disconnect();
             return sb.toString();
-        }catch(IOException e){
-            throw new RuntimeException(e.getMessage()+"\nmessage : readBusLiveByRouteApi api 오류");
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage()+"\nmessage : api 오류");
         }
     }
+
     public BusApiService(BusRouteRepository busRouteRepository) {
         this.busRouteRepository = busRouteRepository;
     }
@@ -172,6 +175,7 @@ public class BusApiService {
                             .rtNm(busdto.getMsgBody().itemList.get(i).rtNm)
                             .arrmsg1(busdto.getMsgBody().itemList.get(i).arrmsg1)
                             .arrmsg2(busdto.getMsgBody().itemList.get(i).arrmsg2)
+                            .vehId1(busdto.getMsgBody().itemList.get(i).vehId1)
                             .build());
         }
         return res;
@@ -190,7 +194,7 @@ public class BusApiService {
         return res;
     }
     public List<BusLiveByRouteDTO> GetBusLiveByRoute(String dto){
-        String api = readGetBusStationRoute(dto);
+        String api = readBusArrivalInformation(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
         BusLiveByRouteApiDTO busdto = pretty.fromJson(api, BusLiveByRouteApiDTO.class);
         List<BusLiveByRouteDTO> res = new ArrayList<>();
@@ -207,8 +211,6 @@ public class BusApiService {
         }
         return res;
     }
-
-
 }
 
 

@@ -55,7 +55,7 @@ public class BusApiController {
                 .data(List.of(busApiService.GetBusStationRoute(dto.getId())))
                 .build());
     }
-    @PostMapping("/LiveByRoute")
+    @PostMapping("/livebyroute")
     @Operation(summary = "버스도착정보 정류장리스트",description = "버스노선ID를 통해 해당노선의 전체 정류소 도착예정정보를 리스트로 보내는 API 입니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "200", description = "성공",content = @Content(schema = @Schema(implementation = ResponseDTO.class))),
