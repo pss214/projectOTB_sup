@@ -6,17 +6,21 @@ import axios from 'axios';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts';
+import QRCode from 'qrcode.react'; // QRCode 라이브러리를 가져옵니다.
+
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
   const [jwt, setJwt] = useState<string>('');
-  const [jwtbool, setJwtbool] = useState<boolean>(false)
-  const {logout} = useAuth()
-  useEffect( ()=>{
-     U.readStringP('jwt').then((jwt) => {
-       setJwt(jwt ?? '');
-       setJwtbool(true)
+  const [jwtbool, setJwtbool] = useState<boolean>(false);
+  const [showQRCode, setShowQRCode] = useState<boolean>(false); // QR 코드를 표시할지 여부를 추적하는 상태
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    U.readStringP('jwt').then((jwt) => {
+      setJwt(jwt ?? '');
+      setJwtbool(true);
     });
-    if(jwtbool){
+    if (jwtbool) {
       axios(SERVER_URL + '/member', {
         method: 'GET',
         headers: {
@@ -27,32 +31,34 @@ const MyPage: React.FC = () => {
         .then((res) => {
           setUser(res.data.data[0]);
         })
-        .catch((error) => {
-        });
-     }
-  },[jwt])
-  
-  const deleteuser = ()=>{
-    if(window.confirm("삭제하시겠습니까?")){
-      axios.delete(SERVER_URL+'/member',{
-        headers:{
-          'Content-Type' : 'applecation/json',
-          Authorization : `otb ${jwt}`
-        }
-      }).then(res=>{
-        if(res.data.status == 201){
-          alert("삭제되었습니다")
-          logout(() => {
-            navigate('/') // 홈 페이지로 이동합니다
-          })
-        }
-      }).catch(error=>{
-        alert("오류! 다시 입력해주세요.")
-      })
-    }else{
-
+        .catch((error) => {});
     }
-  }
+  }, [jwt]);
+
+  const deleteuser = () => {
+    if (window.confirm('삭제하시겠습니까?')) {
+      axios
+        .delete(SERVER_URL + '/member', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `otb ${jwt}`,
+          },
+        })
+        .then((res) => {
+          if (res.data.status === 201) {
+            alert('삭제되었습니다');
+            logout(() => {
+              navigate('/'); // 홈 페이지로 이동합니다
+            });
+          }
+        })
+        .catch((error) => {
+          alert('오류! 다시 입력해주세요.');
+        });
+    } else {
+      // 삭제 취소
+    }
+  };
 
   const [showEditForm, setShowEditForm] = useState(false);
 
@@ -74,42 +80,41 @@ const MyPage: React.FC = () => {
     }));
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      axios({
-        method:'POST',
-        url:SERVER_URL+'/member',
-        headers :{
-          "Content-Type": "application/json",
-          Authorization: `otb ${jwt}`
-        },
-        data : {
-          email: formData.newEmail,
-          password : formData.newPassword
-        }
-      }).then(res =>{
-        if(res.data.status == 201){
-          alert(res.data.message)
-          navigate("/")
+    e.preventDefault();
+    axios({
+      method: 'POST',
+      url: SERVER_URL + '/member',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `otb ${jwt}`,
+      },
+      data: {
+        email: formData.newEmail,
+        password: formData.newPassword,
+      },
+    })
+      .then((res) => {
+        if (res.data.status === 201) {
+          alert(res.data.message);
+          navigate('/');
         }
       })
-      .catch(error=>{
-        console.log(error.data)
-      })
-    // 수정 정보를 서버로 전송하는 로직을 추가하세요
-    // axios 또는 fetch 등을 사용하여 서버로 수정 정보를 보낼 수 있습니다.
+      .catch((error) => {
+        console.log(error.data);
+      });
   };
 
   return (
     <div>
-      <div className="flex justify-between bg-lime-200">
-        <div className="flex p-2 ">
+      <div className="flex justify-between bg-gray-100">
+        <div className="flex p-2">
           <Link to="/" className="ml-1">
             <img
               src="/img/otblogogogo.png"
               alt="OTB(우비) 로고"
-              className="w-12.5 h-12.5 bg-lime-200"
+              className="w-12.5 h-12.5 bg-gray-100"
             />
           </Link>
         </div>
@@ -126,23 +131,31 @@ const MyPage: React.FC = () => {
                   <p>Username: {user.username}</p>
                   <p>Email: {user.email}</p>
                   <button
-                    className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
+                    className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600"
                     onClick={toggleEditForm}
                   >
                     수정하기
                   </button>
-                  <button className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
-                  onClick={deleteuser}>
+                  <button
+                    className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600"
+                    onClick={deleteuser}
+                  >
                     회원탈퇴
+                  </button>
+                  <button
+                    className="mt-4 text-center flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600"
+                    onClick={() => setShowQRCode(!showQRCode)}
+                  >
+                    {showQRCode ? 'QR 닫기' : 'QR 보기'}
                   </button>
                 </div>
               ) : (
-                  <button
-                    className="btn btn-primary text-white bg-lime-500"
-                    type="submit"
-                  >
-                    로그인
-                  </button>
+                <button
+                  className="btn btn-primary text-white bg-lime-500"
+                  type="submit"
+                >
+                  로그인
+                </button>
               )}
               {showEditForm && (
                 <div>
@@ -175,8 +188,16 @@ const MyPage: React.FC = () => {
                   </form>
                 </div>
               )}
+              {showQRCode && user && (
+                <div className="mt-4 text-center">
+                <h2 className="text-2xl text-lime-500">내 결제 정보</h2>
+                <div className="flex justify-center">
+                  <QRCode value={`Username: ${user.username}, Email: ${user.email}`} />
+                </div>
+              </div>
+              )}
             </div>
-            <Link to="/" className="btn btn-link text-lime-500">
+            <Link to="/" className="flex justify-center text-center btn btn-link text-lime-500">
               메인 페이지로 이동하기
             </Link>
           </div>
