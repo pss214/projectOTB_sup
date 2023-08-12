@@ -10,6 +10,7 @@ interface Bus {
   busRouteId: string;
   arrmsg1: string;
   arrmsg2: string;
+  vehId1 : string;
 }
 
 interface BusStop {
@@ -18,10 +19,15 @@ interface BusStop {
   lat: number;
   lng: number;
 }
+interface busstation{
+  arsId : string;
+  stationNm : string;
+
+}
 
 interface ReservationFormProps {
   buses: Bus[];
-  destinationStations: string[];
+  destinationStations: busstation[];
   startingStation: string;
   onReservationSuccess: () => void;
 }
@@ -36,7 +42,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const [name, setName] = useState('');
   const [seats, setSeats] = useState(1);
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
-  const [selectedDestination, setSelectedDestination] = useState('');
+  const [selectedDestination, setSelectedDestination] =useState<busstation|null>(null);
   const [busArrivalInfo, setBusArrivalInfo] = useState<Bus[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -142,6 +148,15 @@ const Reserve: React.FC<ReservationFormProps> = ({
 
   const handleBusSelection = (bus: Bus) => {
     setSelectedBus(bus);
+    fetch(SERVER_URL+'/bus/route-name',{
+      method:'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ id: bus.busRouteId }),
+  }).then((res) => {
+    res.json().then((res) => {
+      console.log(res);
+    });
+  });
     // 여기에서 선택된 버스에 대한 추가 작업 수행 가능
   };
 
@@ -195,7 +210,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
                       >
                         {bus.rtNm}
                       </button>
-                      <span>, {bus.arrmsg1}, {bus.arrmsg2}</span>
+                      <span>, {bus.arrmsg1}</span>
                     </li>
                     ))}
                   </ul>
