@@ -1,78 +1,78 @@
-import {useEffect, useRef, useState} from 'react'
-import {loadPaymentWidget, PaymentWidgetInstance} from '@tosspayments/payment-widget-sdk'
-import {nanoid} from 'nanoid'
-import {Link} from '../../components'
+import React, { useEffect, useRef, useState } from 'react';
+import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import { nanoid } from 'nanoid';
+import { Link } from '../../components';
+import QRCode from 'qrcode.react';
 
-const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
-const customerKey = 'YbX2HuSlsC9uVJW6NMRMj'
+const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+const customerKey = 'YbX2HuSlsC9uVJW6NMRMj';
 
 export default function Pay() {
-  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null)
+  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
-  > | null>(null)
-  const [price, setPrice] = useState(1)
+  > | null>(null);
+  const [price, setPrice] = useState(1);
+  const [showQRCode, setShowQRCode] = useState(false);
 
   useEffect(() => {
     ;(async () => {
-      const paymentWidget = await loadPaymentWidget(clientKey, customerKey)
+      const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
 
       const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
         '#payment-widget',
         price
-      )
+      );
 
-      paymentWidgetRef.current = paymentWidget
-      paymentMethodsWidgetRef.current = paymentMethodsWidget
-    })()
-  }, [])
+      paymentWidgetRef.current = paymentWidget;
+      paymentMethodsWidgetRef.current = paymentMethodsWidget;
+    })();
+  }, []);
 
   useEffect(() => {
-    const paymentMethodsWidget = paymentMethodsWidgetRef.current
+    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
 
     if (paymentMethodsWidget == null) {
-      return
+      return;
     }
 
-    paymentMethodsWidget.updateAmount(price, paymentMethodsWidget.UPDATE_REASON.COUPON)
-  }, [price])
+    paymentMethodsWidget.updateAmount(price, paymentMethodsWidget.UPDATE_REASON.COUPON);
+  }, [price]);
 
   return (
     <div>
-      <div className="flex justify-between bg-lime-200">
-        <div className="flex p-2 ">
-          <Link to="/" className="ml-1">
-            <img
-              src="/img/otblogogogo.png"
-              alt="OTB(우비) 로고"
-              className="w-12.5 h-12.5 bg-lime-200"
-            />
-          </Link>
-        </div>
-      </div>
+      {/* ... */}
       <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
-        <div className=" w-full px-6 py-8 text-black bg-white rounded shadow-md">
+        <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
           <div>
             <h1 className="mb-8 text-4xl text-center text-lime-500">결제</h1>
           </div>
           <div id="payment-widget" />
           <center>
             <button
-              className="flex-center ml-4 mr-4 btn btn-primary text-white  border-lime-600 bg-lime-600"
+              className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600"
               onClick={() => {
-                const paymentWidget = paymentWidgetRef.current
+                const paymentWidget = paymentWidgetRef.current;
                 paymentWidget?.requestPayment({
                   orderId: nanoid(),
                   orderName: '버스 예약',
                   customerName: '김xx',
                   customerEmail: 'customer123@gmail.com',
                   successUrl: `${window.location.origin}/success`,
-                  failUrl: `${window.location.origin}/fail`
-                })
-              }}>
+                  failUrl: `${window.location.origin}/fail`,
+                });
+              }}
+            >
               결제하기
             </button>
-
+            <button
+              className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600"
+              onClick={() => setShowQRCode(!showQRCode)}
+            >
+              {showQRCode ? 'QR 코드 닫기' : '결제하기 QR'}
+            </button>
+            {/* 3항 연산자로 QR 코드 렌더링 여닫음 */}
+            {showQRCode ? <QRCode value={`금액: ${price}`} /> : null}
             <Link to="/" className="block mt-4 text-lime-500">
               메인 페이지로 이동하기
             </Link>
@@ -80,5 +80,5 @@ export default function Pay() {
         </div>
       </div>
     </div>
-  )
+  );
 }
