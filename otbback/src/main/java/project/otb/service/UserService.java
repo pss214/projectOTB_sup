@@ -69,16 +69,15 @@ public class UserService {
         else{
             throw new RuntimeException("회원 정보 없음");
         }
-
     }
     public void putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
         User saveuser = userRepository.findByUsername(user.getUsername());
         if(dto.getEmail() != null){
-            saveuser.setEmail(dto.getEmail());
+            saveuser.updateUser(dto.getEmail(), saveuser.getPassword());
             userRepository.save(saveuser);
         }
         if(dto.getPassword()!=null){
-            saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
+            saveuser.updateUser(saveuser.getEmail(), passwordEncoder.encode(dto.getPassword()));
             userRepository.save(saveuser);
         }
 

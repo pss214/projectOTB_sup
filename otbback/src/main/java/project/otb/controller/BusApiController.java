@@ -40,7 +40,7 @@ public class BusApiController {
     public ResponseEntity<?> Businpormation( @RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusStation(dto.getId())))
+                .data(List.of(busApiService.GetBusStation(dto.getStationid())))
                 .build());
     }
     @PostMapping("/route-name")
@@ -52,7 +52,7 @@ public class BusApiController {
     public ResponseEntity<?> Busroutenm( @RequestBody StationDTO dto) {
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusStationRoute(dto.getId())))
+                .data(List.of(busApiService.GetBusStationRoute(dto.getBusrouteid(), dto.getStationid())))
                 .build());
     }
     @PostMapping("/livebyroute")
@@ -64,7 +64,7 @@ public class BusApiController {
     public ResponseEntity<?> BusLiveByRoute(@RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusLiveByRoute(dto.getId())))
+                .data(List.of(busApiService.GetBusLiveByRoute(dto.getBusid())))
                 .build());
     }
 }

@@ -19,11 +19,11 @@ public class BusDriverService {
         this.reservationRepository = reservationRepository;
     }
 
-    public BusLiveByRouteDTO getBusDriverInfo(BusLiveByRouteDTO dto) {
-        List<Reservation> reservation = reservationRepository.findByBusNumberPlate(dto.getPlainNo1());
-        if (reservation != null) {
-            return null;
-        }
-        return null;
-    }
+//    public BusLiveByRouteDTO getBusDriverInfo(BusLiveByRouteDTO dto) {
+//        List<Reservation> reservation = reservationRepository.findByBusNumberPlate(dto.getPlainNo1());
+//        if (reservation != null) {
+//            return null;
+//        }
+//        return null;
+//    }
 }

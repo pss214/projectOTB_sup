@@ -16,10 +16,14 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BusApiService {
     private final BusRouteRepository busRouteRepository;
+    public BusApiService(BusRouteRepository busRouteRepository) {
+        this.busRouteRepository = busRouteRepository;
+    }
     public String readRouteApi(){
         // 서울특별시 노선 목록 API
         String serviceKey = "6b6667495662616b35394e70675958";
@@ -141,13 +145,43 @@ public class BusApiService {
             conn.disconnect();
             return sb.toString();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage()+"\nmessage : api 오류");
+            throw new RuntimeException(e.getMessage()+"\nmessage : readBusArrivalInformation api 오류");
+        }
+    }
+    public String readBusPlaceNum(String dto){
+        /*서울특별시 버스위치정보조회 서비스 - 	차량ID로 위치정보를 조회한다*/
+        try {
+            String serviceKey = "" +
+                    "au774mPDNO37gAJrlTNvjrymn07a/f739RcICwnifiDnut1ekKDvSB8VpIbxYugjR0bPwIe1TM7uTzYk3yjsiw==";
+
+            String urlBuilder = "http://ws.bus.go.kr/api/rest/buspos/getBusPosByVehId" + "?"
+                    + "serviceKey" +"="+ serviceKey /*Service Key*/
+                    +"&vehId=" + "122014061"  /*노선ID 100100056)341*/
+                    +"&resultType="+"json";
+
+            URL url = new URL(urlBuilder);
+            System.out.println(urlBuilder);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            System.out.println("Response code: " + conn.getResponseCode());
+            BufferedReader rd;
+            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } else {
+                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+            rd.close();
+            conn.disconnect();
+            return sb.toString();
+        }catch (IOException e){
+            throw new RuntimeException(e.getMessage()+"\nmessage : readBusPlaceNum api 오류");
         }
     }
 
-    public BusApiService(BusRouteRepository busRouteRepository) {
-        this.busRouteRepository = busRouteRepository;
-    }
     public String GetBusRouteApi(){
         try {
             String api = readRouteApi();
@@ -180,18 +214,44 @@ public class BusApiService {
         }
         return res;
     }
-    public List<BusRouteNmDTO> GetBusStationRoute(String dto){
-        String api = readGetBusStationRoute(dto);
+    public List<BusRouteNmDTO> GetBusStationRoute(String dto,String station){
+        BusRoute bus = busRouteRepository.findByrouteid(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
-        BusStationRouteDTO busdto = pretty.fromJson(api, BusStationRouteDTO.class);
-        List<BusRouteNmDTO> res = new ArrayList<>();
-        for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-            res.add(i, BusRouteNmDTO.builder()
-                    .stationNm(busdto.getMsgBody().getItemList().get(i).stationNm)
-                    .arsId(busdto.getMsgBody().getItemList().get(i).arsId)
-                    .build());
+        if(bus.getStationlist()!=null){
+            BusStationRouteDTO busdto = pretty.fromJson(bus.getStationlist(), BusStationRouteDTO.class);
+            List<BusRouteNmDTO> res = new ArrayList<>();
+            for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
+                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).arsId, station)){
+                    for (int j = i; j < busdto.getMsgBody().itemList.size();j++) {
+                        res.add(j-i, BusRouteNmDTO.builder()
+                                .stationNm(busdto.getMsgBody().getItemList().get(j).stationNm)
+                                .arsId(busdto.getMsgBody().getItemList().get(j).arsId)
+                                .build());
+                    }
+                    break;
+                }
+            }
+            return res;
         }
-        return res;
+        else{
+            String api = readGetBusStationRoute(dto);
+            bus.updateStation(api);
+            busRouteRepository.save(bus);
+            BusStationRouteDTO busdto = pretty.fromJson(api, BusStationRouteDTO.class);
+            List<BusRouteNmDTO> res = new ArrayList<>();
+            for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
+                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).arsId, station)){
+                    for (int j = i; j < busdto.getMsgBody().itemList.size();j++) {
+                        res.add(j-i, BusRouteNmDTO.builder()
+                                .stationNm(busdto.getMsgBody().getItemList().get(j).stationNm)
+                                .arsId(busdto.getMsgBody().getItemList().get(j).arsId)
+                                .build());
+                    }
+                    break;
+                }
+            }
+            return res;
+        }
     }
     public List<BusLiveByRouteDTO> GetBusLiveByRoute(String dto){
         String api = readBusArrivalInformation(dto);
@@ -211,7 +271,10 @@ public class BusApiService {
         }
         return res;
     }
+    public String GetBusRoutePlaceNum(String dto){
+        String api = readBusPlaceNum(dto);
+        Gson pretty = new GsonBuilder().setPrettyPrinting().create();
+        BusRoutePlateDTO busdto = pretty.fromJson(api, BusRoutePlateDTO.class);
+        return busdto.getMsgBody().getItemList().get(0).plainNo;
+    }
 }
-
-
-

@@ -41,18 +41,8 @@ public class BusLiveApi {
             rd.close();
             conn.disconnect();
             System.out.println(sb);
-//            Gson pretty = new GsonBuilder().setPrettyPrinting().create();
-//            BusLiveByRouteApiDTO busdto = pretty.fromJson(sb.toString(), BusLiveByRouteApiDTO.class);
-//            List<BusLiveByRouteDTO> res = new ArrayList<>();
-//            for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
-//                res.add(BusLiveByRouteDTO.builder()
-//                        .stNm(busdto.getMsgBody().getItemList().get(i).stNm)
-//                        .rtNm(busdto.getMsgBody().getItemList().get(i).rtNm)
-//                        .arsId(busdto.getMsgBody().getItemList().get(i).arsId)
-//                        .plainNo1(busdto.getMsgBody().getItemList().get(i).plainNo1)
-//                        .arrmsg1(busdto.getMsgBody().getItemList().get(i).arrmsg1)
-//                        .stationNm1(busdto.getMsgBody().getItemList().get(i).stationNm1)
-//                        .nstnId1(busdto.getMsgBody().getItemList().get(i).nstnId1)
-//                        .build());
-            }
+            Gson pretty = new GsonBuilder().setPrettyPrinting().create();
+            BusRoutePlateDTO busdto = pretty.fromJson(sb.toString(), BusRoutePlateDTO.class);
+            System.out.println(busdto.getMsgBody().getItemList().get(0).plainNo);
         }
+}
