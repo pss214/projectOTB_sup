@@ -184,18 +184,18 @@ const Reserve: React.FC<ReservationFormProps> = ({
               <h1 className="mb-8 text-4xl text-center text-lime-500">정류장</h1>
               {selectedMarker && (
                 <ul>
-                  <h2>정류장 정보</h2>
+                  {/*<h2>정류장 정보</h2>*/}
                   <p>정류장 이름: {selectedMarker.place}</p>
                   <p>정류장 ID: {selectedMarker.id}</p>
-                  <p>위도: {selectedMarker.lat}</p>
-                  <p>경도: {selectedMarker.lng}</p>
+                  {/*<p>위도: {selectedMarker.lat}</p>*/}
+                  {/*<p>경도: {selectedMarker.lng}</p>*/}
                 </ul>
               )}
             </div>
             <div>
               {currentBusArrivalInfo.length > 0 ? (
                 <div>
-                  <h2 className="mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
+                  <h2 className="text-center mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
                   <ul>
                     {currentBusArrivalInfo.map((bus: any, index: number) => (
                       <li
