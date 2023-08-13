@@ -82,7 +82,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({id: selectedMarker?.id})
+        body: JSON.stringify({stationid:selectedMarker?.id})
       }).then(res => {
         res.json().then(res => {
           console.log(res)
@@ -150,7 +150,10 @@ const Reserve: React.FC<ReservationFormProps> = ({
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({id: bus.busRouteId})
+      body: JSON.stringify({
+        stationid:selectedMarker?.id,
+        busrouteid: bus.busRouteId
+      })
     })
       .then(res => {
         res.json().then(res => {
