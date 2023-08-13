@@ -267,6 +267,14 @@ const Reserve: React.FC<ReservationFormProps> = ({
                   결제하기
                 </button>
               </Link>
+              <button
+              onClick={() => {
+                window.history.back();
+              }}
+              className="block mt-4 text-lime-500 cursor-pointer"
+            >
+              지도로 돌아가기
+            </button>
               <Link to="/" className="block mt-4 text-lime-500">
                 메인 페이지로 이동하기
               </Link>
