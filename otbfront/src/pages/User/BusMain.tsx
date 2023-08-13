@@ -6,9 +6,9 @@ import QrReader from 'react-qr-scanner';
 const BusMain: React.FC = () => {
   const [qrData, setQrData] = useState('');
 
-  const handleScan = (data: string | null) => {
-    if (data) {
-      setQrData(data);
+  const handleScan = (data: { text: string } | null) => {
+    if (data && data.text) {
+      setQrData(data.text); // text 필드 추출하여 저장
     }
   };
 
