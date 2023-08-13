@@ -70,3 +70,4 @@ otbback/src/test/
 .vscode/
 
 package-lock.json
+otbfront/package-lock.json

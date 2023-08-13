@@ -73,6 +73,14 @@ export default function Pay() {
             </button>
             {/* 3항 연산자로 QR 코드 렌더링 여닫음 */}
             {showQRCode ? <QRCode value={`금액: ${price}`} /> : null}
+            <button
+              onClick={() => {
+                window.history.back();
+              }}
+              className="block mt-4 text-lime-500 cursor-pointer"
+            >
+              버스 목록으로 돌아가기
+            </button>
             <Link to="/" className="block mt-4 text-lime-500">
               메인 페이지로 이동하기
             </Link>

@@ -69,10 +69,10 @@ const Reserve: React.FC<ReservationFormProps> = ({
       )
     )
     setSelectedDestination(filteredDestination[0] || '')
-    if (selectedMarker?.id) {
+    if (jwtbool) {
       fetchData()
     }
-  }, [selectedMarker])
+  }, [jwt])
 
   //헤더에 토큰 뺐음. 토큰 추가하니까 jwt자체에서 오류검사 실시해서 통과가 안됨
   const fetchData = () => {
@@ -184,18 +184,18 @@ const Reserve: React.FC<ReservationFormProps> = ({
               <h1 className="mb-8 text-4xl text-center text-lime-500">정류장</h1>
               {selectedMarker && (
                 <ul>
-                  <h2>정류장 정보</h2>
+                  {/*<h2>정류장 정보</h2>*/}
                   <p>정류장 이름: {selectedMarker.place}</p>
                   <p>정류장 ID: {selectedMarker.id}</p>
-                  <p>위도: {selectedMarker.lat}</p>
-                  <p>경도: {selectedMarker.lng}</p>
+                  {/*<p>위도: {selectedMarker.lat}</p>*/}
+                  {/*<p>경도: {selectedMarker.lng}</p>*/}
                 </ul>
               )}
             </div>
             <div>
               {currentBusArrivalInfo.length > 0 ? (
                 <div>
-                  <h2 className="mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
+                  <h2 className="text-center mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
                   <ul>
                     {currentBusArrivalInfo.map((bus: any, index: number) => (
                       <li
@@ -241,10 +241,11 @@ const Reserve: React.FC<ReservationFormProps> = ({
                 <p>버스 도착 정보가 없습니다.</p>
               )}
             </div>
+            <center>
             {selectedBus && (
               <div>
                 <label htmlFor="destination">
-                  {selectedBus.rtNm}, {selectedBus.busRouteId} 노선 버스 하차지 :
+                  {selectedBus.rtNm} 노선 버스 하차지 :
                 </label>
                 <select
                   id="destination"
@@ -261,15 +262,27 @@ const Reserve: React.FC<ReservationFormProps> = ({
                 </select>
               </div>
             )}
-            <center>
+
+            {selectedDestination && ( // 선택된 목적지가 truthy한지 확인
               <Link to="/pay">
                 <button className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600">
                   결제하기
                 </button>
               </Link>
-              <Link to="/" className="block mt-4 text-lime-500">
-                메인 페이지로 이동하기
-              </Link>
+            )}
+
+            <button
+              onClick={() => {
+                window.history.back();
+              }}
+              className="block mt-4 text-lime-500 cursor-pointer"
+            >
+              지도로 돌아가기
+            </button>
+
+            <Link to="/" className="block mt-4 text-lime-500">
+              메인 페이지로 이동하기
+            </Link>
             </center>
           </div>
         </div>
