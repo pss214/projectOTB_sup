@@ -3,8 +3,7 @@ import {Link} from '../../components'
 import {useLocation} from 'react-router-dom'
 import * as U from '../../utils'
 import {SERVER_URL} from '../../server'
-import BUS_STOP from '../../busStop'
-import {error} from 'console'
+import {useNavigate} from 'react-router-dom'
 
 interface Bus {
   rtNm: string
@@ -48,11 +47,8 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 6
   const location = useLocation()
-  // const queryParams = new URLSearchParams(location.search)
-  // const lat = queryParams.get('lat')
-  // const lng = queryParams.get('lng')
-  // const place = queryParams.get('place')
-  // const id = queryParams.get('id')
+  const navigate = useNavigate()
+
   const selectedMarker = location.state
     ? (location.state as {selectedMarker: BusStop}).selectedMarker
     : null
@@ -82,7 +78,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({stationid:selectedMarker?.id})
+        body: JSON.stringify({stationid: selectedMarker?.id})
       }).then(res => {
         res.json().then(res => {
           console.log(res)
@@ -126,18 +122,38 @@ const Reserve: React.FC<ReservationFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const reservationData = {
-      startingStation,
-      busNumber: selectedBus?.rtNm || '',
-      route: selectedBus?.busRouteId || '',
-      destination: selectedDestination,
-      name,
-      seats
-    }
-
     const jwtPromise = U.readStringP('jwt').then(jwt => {
       setJwt(jwt ?? '')
     })
+  }
+
+  const handleReserve = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch(SERVER_URL + '/reservation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`
+        },
+        body: JSON.stringify({
+          depart_station: selectedMarker?.place,
+          arrive_station: selectedDestination,
+          busnumber: selectedBus?.rtNm,
+          busNumberPlate: selectedBus?.busRouteId,
+          name
+        })
+      })
+      if (response.ok) {
+        console.log('예약 성공')
+        navigate('/pay')
+      } else {
+        console.error('예약 실패', response.statusText)
+      }
+    } catch (error) {
+      console.log('예약 중에 오류가 발생..', error)
+    }
   }
 
   const handleBusSelection = (bus: Bus) => {
@@ -151,7 +167,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        stationid:selectedMarker?.id,
+        stationid: selectedMarker?.id,
         busrouteid: bus.busRouteId
       })
     })
@@ -198,7 +214,9 @@ const Reserve: React.FC<ReservationFormProps> = ({
             <div>
               {currentBusArrivalInfo.length > 0 ? (
                 <div>
-                  <h2 className="text-center mb-4 text-2xl text-lime-500">버스 도착 정보</h2>
+                  <h2 className="text-center mb-4 text-2xl text-lime-500">
+                    버스 도착 정보
+                  </h2>
                   <ul>
                     {currentBusArrivalInfo.map((bus: any, index: number) => (
                       <li
@@ -245,47 +263,48 @@ const Reserve: React.FC<ReservationFormProps> = ({
               )}
             </div>
             <center>
-            {selectedBus && (
-              <div>
-                <label htmlFor="destination">
-                  {selectedBus.rtNm} 노선 버스 하차지 :
-                </label>
-                <select
-                  id="destination"
-                  value={selectedDestination}
-                  onChange={handleDestinationChange}
-                  required>
-                  <option value="" disabled>
-                    정류장 선택
-                  </option>
-                  {/* 여깁니다 여기 */}
-                  {matchingDestinations.map((D: any, index: number) => (
-                    <option key={index}>{D.stationNm}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+              {selectedBus && (
+                <div>
+                  <label htmlFor="destination">
+                    {selectedBus.rtNm} 노선 버스 하차지 :
+                  </label>
+                  <select
+                    id="destination"
+                    value={selectedDestination}
+                    onChange={handleDestinationChange}
+                    required>
+                    <option value="" disabled>
+                      정류장 선택
+                    </option>
+                    {/* 여깁니다 여기 */}
+                    {matchingDestinations.map((D: any, index: number) => (
+                      <option key={index}>{D.stationNm}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-            {selectedDestination && ( // 선택된 목적지가 truthy한지 확인
-              <Link to="/pay">
-                <button className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600">
-                  결제하기
+              {selectedDestination && ( // 선택된 목적지가 truthy한지 확인
+                // <Link to="/pay">
+                <button
+                  onClick={handleReserve}
+                  className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600">
+                  예약하기
                 </button>
+                // </Link>
+              )}
+
+              <button
+                onClick={() => {
+                  window.history.back()
+                }}
+                className="block mt-4 text-lime-500 cursor-pointer">
+                지도로 돌아가기
+              </button>
+
+              <Link to="/" className="block mt-4 text-lime-500">
+                메인 페이지로 이동하기
               </Link>
-            )}
-
-            <button
-              onClick={() => {
-                window.history.back();
-              }}
-              className="block mt-4 text-lime-500 cursor-pointer"
-            >
-              지도로 돌아가기
-            </button>
-
-            <Link to="/" className="block mt-4 text-lime-500">
-              메인 페이지로 이동하기
-            </Link>
             </center>
           </div>
         </div>

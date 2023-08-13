@@ -45,7 +45,7 @@ export default function RoutesSetup() {
             destinationStations={[]}
             startingStation={''}
             onReservationSuccess={function (): void {
-              throw new Error('Function not implemented.')
+              throw new Error('기능 작동 하지 않음.')
             }}
           />
         }
