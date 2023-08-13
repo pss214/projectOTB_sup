@@ -241,10 +241,11 @@ const Reserve: React.FC<ReservationFormProps> = ({
                 <p>버스 도착 정보가 없습니다.</p>
               )}
             </div>
+            <center>
             {selectedBus && (
               <div>
                 <label htmlFor="destination">
-                  {selectedBus.rtNm}, {selectedBus.busRouteId} 노선 버스 하차지 :
+                  {selectedBus.rtNm} 노선 버스 하차지 :
                 </label>
                 <select
                   id="destination"
@@ -261,13 +262,16 @@ const Reserve: React.FC<ReservationFormProps> = ({
                 </select>
               </div>
             )}
-            <center>
+
+            {selectedDestination && ( // 선택된 목적지가 truthy한지 확인
               <Link to="/pay">
                 <button className="flex-center ml-4 mr-4 btn btn-primary text-white border-lime-600 bg-lime-600">
                   결제하기
                 </button>
               </Link>
-              <button
+            )}
+
+            <button
               onClick={() => {
                 window.history.back();
               }}
@@ -275,9 +279,10 @@ const Reserve: React.FC<ReservationFormProps> = ({
             >
               지도로 돌아가기
             </button>
-              <Link to="/" className="block mt-4 text-lime-500">
-                메인 페이지로 이동하기
-              </Link>
+
+            <Link to="/" className="block mt-4 text-lime-500">
+              메인 페이지로 이동하기
+            </Link>
             </center>
           </div>
         </div>
