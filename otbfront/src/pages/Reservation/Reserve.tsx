@@ -69,10 +69,10 @@ const Reserve: React.FC<ReservationFormProps> = ({
       )
     )
     setSelectedDestination(filteredDestination[0] || '')
-    if (selectedMarker?.id) {
+    if (jwtbool) {
       fetchData()
     }
-  }, [selectedMarker])
+  }, [jwt])
 
   //헤더에 토큰 뺐음. 토큰 추가하니까 jwt자체에서 오류검사 실시해서 통과가 안됨
   const fetchData = () => {
