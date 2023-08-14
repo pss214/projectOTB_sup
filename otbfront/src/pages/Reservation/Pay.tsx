@@ -4,7 +4,7 @@ import {nanoid} from 'nanoid'
 import {Link} from '../../components'
 import QRCode from 'qrcode.react'
 import {SERVER_URL} from '../../server'
-import {useNavigate} from 'react-router-dom'
+import {Navigate, useLocation, useNavigate} from 'react-router-dom'
 import * as U from '../../utils'
 
 const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
@@ -20,6 +20,8 @@ export default function Pay() {
   const [jwt, setJwt] = useState<string>('')
   const [jwtbool, setJwtbool] = useState<boolean>(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const reuninum = location.state
 
   useEffect(() => {
     ;(async () => {
@@ -60,9 +62,14 @@ export default function Pay() {
         Authorization: `otb ${jwt}`
       },
       body: JSON.stringify({
-        payment: true
+        rtuinum: reuninum
       })
-    })
+    }).then(res=>res.json().then(res=>{
+      if(res.status==201){
+        alert("결제가 완료되었습니다")
+        navigate("/mypage")
+      }
+    }))
   }
 
   return (

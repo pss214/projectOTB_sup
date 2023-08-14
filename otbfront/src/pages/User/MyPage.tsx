@@ -7,14 +7,27 @@ import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts';
 import QRCode from 'qrcode.react'; // QRCode 라이브러리를 가져옵니다.
+import Reserve from '../Reservation/Reserve';
 
+interface reserve{
+  rt_id:string,
+  rtuinum : string,
+  depart_station:string,
+  arrive_station:string,
+  busnumber:string
+}
 const MyPage: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
   const [jwt, setJwt] = useState<string>('');
   const [jwtbool, setJwtbool] = useState<boolean>(false);
   const [showQRCode, setShowQRCode] = useState<boolean>(false); // QR 코드를 표시할지 여부를 추적하는 상태
   const { logout } = useAuth();
-
+  const [reservelist, setReservelist]= useState<reserve[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 1
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentBusArrivalInfo = reservelist.slice(indexOfFirstItem, indexOfLastItem)
   useEffect(() => {
     U.readStringP('jwt').then((jwt) => {
       setJwt(jwt ?? '');
@@ -32,6 +45,7 @@ const MyPage: React.FC = () => {
           setUser(res.data.data[0]);
         })
         .catch((error) => {});
+      getreserve()
     }
   }, [jwt]);
 
@@ -61,6 +75,18 @@ const MyPage: React.FC = () => {
   };
 
   const [showEditForm, setShowEditForm] = useState(false);
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  const goToNextPage = () => {
+    if (indexOfLastItem < reservelist.length) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
 
   const toggleEditForm = () => {
     setShowEditForm((prevState) => !prevState);
@@ -105,6 +131,41 @@ const MyPage: React.FC = () => {
         console.log(error.data);
       });
   };
+  const delreserve = ()=>{
+    if (window.confirm('삭제하시겠습니까?')) {
+      fetch(SERVER_URL + '/reservation/'+currentBusArrivalInfo[itemsPerPage-1].rtuinum, {
+        method:"DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`,
+        }
+        })
+        .then((res) => {res.json().then(res=>{
+          if (res.status == 201) {
+            alert('삭제되었습니다');
+            window.location.reload();
+          }
+        })
+          
+        })
+        .catch((error) => {
+          alert('오류! 다시 입력해주세요.');
+        });
+    } else {
+      // 삭제 취소
+    }
+  }
+  const getreserve = ()=>{
+    fetch(SERVER_URL+"/reservation",{
+      method:"GET",
+      headers:{
+        'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`
+      }
+    }).then(res=>res.json().then(res=>{
+      setReservelist(res.data[0])
+    }))
+  }
 
   return (
     <div>
@@ -122,7 +183,7 @@ const MyPage: React.FC = () => {
       <div className="flex flex-col min-h-screen border-gray-300 rounded-xl shadow-xl bg-gray-100 border">
         <div className="flex flex-col items-center  flex-1 max-w-sm px-2 mx-auto">
           <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
-            <div>
+            <div className='text-center'>
               <h1 className="mb-8 text-4xl text-center text-lime-500">
                 마이 페이지
               </h1>
@@ -189,11 +250,45 @@ const MyPage: React.FC = () => {
                 </div>
               )}
               {showQRCode && user && (
-                <div className="mt-4 text-center">
-                <h2 className="text-2xl text-lime-500">내 결제 정보</h2>
-                <div className="flex justify-center">
-                  <QRCode value={`Username: ${user.username}, Email: ${user.email}`} />
+              <div className="mt-4 text-center">
+                <h2 className="text-2xl text-center text-lime-500 mt-4">내 예약 정보</h2>
+                {currentBusArrivalInfo.length>0?(
+                <div>
+                  <div className="flex justify-center">
+                    <div>
+                      <ul>
+                        {currentBusArrivalInfo.map((reserve:any, index:number)=>(
+                          <li key={index} style={{alignItems: 'center'}}>
+                            <span>{reserve.depart_station}→</span>
+                            <span>{reserve.arrive_station}</span>
+                            <span>{reserve.busnumber} {showQRCode?<QRCode value={reserve.rtuinum} />:null}</span>
+                            <button className="btn btn-orange mr-2"
+                            onClick={delreserve}>삭제</button>
+                          </li>
+                          
+                        ))}
+                      </ul>
+                    </div>
+                    
+                  </div>
+                  
+                        
+                        <button
+                          className="btn btn-orange mr-2"
+                          onClick={goToPreviousPage}
+                          disabled={currentPage === 1}>
+                          이전
+                        </button>
+                        <button
+                          className="btn btn-orange"
+                          onClick={goToNextPage}
+                          disabled={indexOfLastItem >= reservelist.length}>
+                          다음
+                        </button>
                 </div>
+                ) : (
+                  <p>예약 정보가 없습니다</p>
+                )}
               </div>
               )}
             </div>

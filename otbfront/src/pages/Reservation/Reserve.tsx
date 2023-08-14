@@ -10,6 +10,7 @@ interface Bus {
   busRouteId: string
   arrmsg1: string
   arrmsg2: string
+  vehId1 : string
 }
 
 interface BusStop {
@@ -129,7 +130,6 @@ const Reserve: React.FC<ReservationFormProps> = ({
 
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault()
-
     try {
       const response = await fetch(SERVER_URL + '/reservation', {
         method: 'POST',
@@ -138,22 +138,25 @@ const Reserve: React.FC<ReservationFormProps> = ({
           Authorization: `otb ${jwt}`
         },
         body: JSON.stringify({
-          depart_station: selectedMarker?.place,
+          depart_station: selectedMarker?.id,
           arrive_station: selectedDestination,
           busnumber: selectedBus?.rtNm,
-          busNumberPlate: selectedBus?.busRouteId,
-          name
+          busnumberplate: selectedBus?.vehId1,
         })
-      })
-      if (response.ok) {
-        console.log('예약 성공')
-        navigate('/pay')
-      } else {
-        console.error('예약 실패', response.statusText)
-      }
-    } catch (error) {
-      console.log('예약 중에 오류가 발생..', error)
-    }
+      }).then(res=>res.json().then(res=>{
+        const reuninum = res.data[0]
+        if(res.status==201){
+          console.log(res)
+          navigate('/pay',{
+            state: reuninum
+          })
+        }else {
+          console.error('예약 실패', res.data[0])
+        }
+      })) 
+        } catch (error) {
+        console.log('예약 중에 오류가 발생..', error)
+      } 
   }
 
   const handleBusSelection = (bus: Bus) => {
@@ -278,7 +281,7 @@ const Reserve: React.FC<ReservationFormProps> = ({
                     </option>
                     {/* 여깁니다 여기 */}
                     {matchingDestinations.map((D: any, index: number) => (
-                      <option key={index}>{D.stationNm}</option>
+                      <option key={index} value={D.arsId}>{D.stationNm}</option>
                     ))}
                   </select>
                 </div>
