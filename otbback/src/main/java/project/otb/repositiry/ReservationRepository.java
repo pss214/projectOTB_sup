@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    Reservation findByUsername(String username);
-//    List<Reservation> findByBusNumberPlate(String busNumberPlate);
+    List<Reservation> findByUsername(String username);
+    Reservation findByrtuinum(String rtuinum);
+    List<Reservation> findBybusnumberplate(String busnumberplate);
 }

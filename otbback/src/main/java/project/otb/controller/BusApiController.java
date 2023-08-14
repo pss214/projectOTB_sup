@@ -64,7 +64,7 @@ public class BusApiController {
     public ResponseEntity<?> BusLiveByRoute(@RequestBody StationDTO dto){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).message("완료되었습니다")
-                .data(List.of(busApiService.GetBusLiveByRoute(dto.getBusid())))
+                .data(List.of(busApiService.GetBusLiveByRoute(dto.getBusrouteid())))
                 .build());
     }
 }

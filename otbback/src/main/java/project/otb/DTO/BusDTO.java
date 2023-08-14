@@ -21,5 +21,6 @@ public class BusDTO {
     private String busnumberplate;
     @Schema(description = "버스 Token",nullable = true)
     private String token;
+    @Schema(description = "버스유저 Type",nullable = true)
     private String type;
 }

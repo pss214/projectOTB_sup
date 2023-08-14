@@ -20,8 +20,11 @@ public class Reservation {
     @Column(name = "ast")
     private String arrive_station;
     private String busnumber;
-    @Column(name = "bu_num")
-    private String BusNumberPlate;
+    private String busnumberplate;
     private boolean payment;
     private String username;
+
+    public void updatePay(boolean payment){
+        this.payment = payment;
+    }
 }

@@ -14,4 +14,12 @@ public class BusLiveByRouteDTO{
     String arrmsg1; // 도착 예정 시간(메세지)
     String stationNm1; //버스의 지금 정류장 위치
     String nstnId1; //도착 예정 버스의 지금 정류장 ID
+    boolean station_in;
+    boolean station_out;
+    public void putstation_in(boolean station_in){
+        this.station_in = station_in;
+    }
+    public void putstation_out(boolean station_out){
+        this.station_out = station_out;
+    }
 }

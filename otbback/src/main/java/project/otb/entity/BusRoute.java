@@ -17,7 +17,12 @@ public class BusRoute {
     String route;
     @Column(length = 65534)
     String stationlist;
+    @Column(length = 65534)
+    String stationlive;
     public void updateStation(String stationlist){
         this.stationlist = stationlist;
+    }
+    public void updatelive(String stationlive){
+        this.stationlive = stationlive;
     }
 }

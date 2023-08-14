@@ -24,4 +24,10 @@ public class AdminController {
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.CREATED.value()).message(response).build());
     }
+    @GetMapping("/busstation")
+    public ResponseEntity<?> getBusStationApi(){
+        String response = busApiService.GetBusStationAPI();
+        return ResponseEntity.ok().body(ResponseDTO.builder()
+                .status(HttpStatus.CREATED.value()).message(response).build());
+    }
 }
