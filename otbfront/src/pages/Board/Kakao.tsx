@@ -73,7 +73,7 @@ function Kakao(): JSX.Element {
         // 사용자 위치에서 200m 이내의 버스 정류장만 필터링
         const filteredMarkers = BUS_STOP.filter(busStop => {
           const distance = calculateDistance(userLat, userLng, busStop.lat, busStop.lng)
-          return distance <= 3000
+          return distance <= 500
         })
 
         // 필터링된 버스 정류장에 대한 마커 생성
