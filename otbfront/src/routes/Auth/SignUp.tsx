@@ -97,6 +97,12 @@ export default function SignUp() {
             로그인하기
           </Link>
         </div>
+        <div className="mt-6 text-grey-dark">
+          버스 기사님이신가요?
+          <Link className="btn btn-link btn-primary text-lime-500" to="/SignUpDriver">
+            버스 기사 회원 가입
+          </Link>
+        </div>
       </div>
     </div>
   )

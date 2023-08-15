@@ -16,11 +16,6 @@ export default function App() {
       <DndProvider backend={HTML5Backend}>
         <BrowserRouter>
           <AuthProvider>
-            <div className="App">
-              {location.loaded
-                ? JSON.stringify(location)
-                : "위치를 찾을 수 없습니다."}
-            </div>
             <footer>
               <div className="text-center p-4 bg-lime-700 text-primary-100 fixed-bottom">
                 <p className="text-white">
