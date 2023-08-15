@@ -257,16 +257,18 @@ const MyPage: React.FC = () => {
                   <div className="flex justify-center">
                     <div>
                       <ul>
-                        {currentBusArrivalInfo.map((reserve:any, index:number)=>(
-                          <li key={index} style={{alignItems: 'center'}}>
-                            <span>{reserve.depart_station}→</span>
-                            <span>{reserve.arrive_station}</span>
-                            <span>{reserve.busnumber} {showQRCode?<QRCode value={reserve.rtuinum} />:null}</span>
-                            <button className="btn btn-orange mr-2"
-                            onClick={delreserve}>삭제</button>
-                          </li>
-                          
-                        ))}
+                        <center>
+                          {currentBusArrivalInfo.map((reserve:any, index:number)=>(
+                            <li key={index} style={{alignItems: 'center'}}>
+                              <span>{reserve.depart_station}→</span>
+                              <span>{reserve.arrive_station}</span>
+                              <span>{reserve.busnumber} {showQRCode?<QRCode value={reserve.rtuinum} />:null}</span>
+                              <button className="btn btn-orange mr-2"
+                              onClick={delreserve}>삭제</button>
+                            </li>
+                            
+                          ))}
+                          </center>
                       </ul>
                     </div>
                     
