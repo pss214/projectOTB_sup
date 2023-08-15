@@ -1,11 +1,16 @@
 package project.otb.DTO;
 
-import lombok.*;
 
-@Getter
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class BusRouteNmDTO {
+@AllArgsConstructor
+public class BusRouteNmDTO{
     String stationNm;
+    String arsId;
 }
