@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import {SERVER_URL} from '../../server/getServer'
 import {Link} from '../../components'
 import QrReader from 'react-qr-scanner'
@@ -20,22 +20,48 @@ const BusMain: React.FC = () => {
   const [qrScannerVisible, setQrScannerVisible] = useState(false) // QR 스캐너 표시 여부 상태 변수 추가
   const [boardingInfoVisible, setBoardingInfoVisible] = useState(false) // 승하차 정보 보기 상태 변수 추가
   const [reservations, setReservations] = useState<Reservelist[]>([])
+  const [reservation, setReservation] = useState<Reservelist|null>(null)
   const [jwt, setJwt] = useState<string>('')
-  const [jwtbool, setJwtbool] = useState<boolean>(false)
-
+  const [jwtbool, setJwtbool] = useState<boolean>(true)
+  const [count,setCount]= useState<number>(0)
   useEffect(() => {
-    U.readStringP('jwt').then(jwt => {
-      setJwt(jwt ?? '')
-      setJwtbool(true)
-    })
-    // if (jwtbool) {
-
-    // }
-  }, [jwt])
+    if(jwtbool){
+      U.readStringP('jwt').then(jwt => {
+        setJwt(jwt ?? '')
+        setJwtbool(false)
+      })
+    }
+    if(count <reservations.length){
+      setTimeout(() => {
+        setCount(count+1)
+        setReservation(reservations[count])
+      }, 3000);
+    }
+    
+         
+  },[jwt,count])
 
   const handleScan = (data: {text: string} | null) => {
     if (data && data.text) {
-      setQrData(data.text) // text 필드 추출하여 저장
+      fetch(SERVER_URL+'/bus-driver/scan',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`,
+        },
+        body: JSON.stringify({
+          rtuinum: data.text
+        })
+      }).then(res=>{res.json().then(res=>{
+        if(res.status==201){
+          setQrData(res.data[0].username+"님 반갑습니다!");
+          setTimeout(() => {
+            setQrData("")
+          }, 3000);
+        }
+      })}).catch(err=>{
+        setQrData("예약정보가 없습니다.")
+      })      
     }
   }
 
@@ -61,15 +87,19 @@ const BusMain: React.FC = () => {
         },
         body: JSON.stringify(U.readObjectP)
       })
-        .then(res => res.json())
+        .then(res => res.json()
         .then(res => {
-          setReservations(res.data)
           console.log(res)
-        })
+          setReservations(res.data[0])
+          setReservation(reservations[0])
+          setCount(0)
+        }))
+        
     } catch (error) {
       console.error('오류 발생', error)
     }
   }
+
   return (
     <div>
       <div className="flex justify-between bg-lime-200">
@@ -115,7 +145,7 @@ const BusMain: React.FC = () => {
                   style={{width: '100%'}}
                 />
                 <div className="mt-4">
-                  {qrData && <p className="text-lime-500">스캔된 데이터: {qrData}</p>}
+                  {qrData && <p className="text-lime-500">{qrData}</p>}
                 </div>
               </>
             )}
@@ -123,13 +153,11 @@ const BusMain: React.FC = () => {
               {boardingInfoVisible && (
                 <div className="mt-4">
                   <p className="text-lime-500">승하차 정보</p>
-                  {reservations.map((reservation, index) => (
-                    <div key={index} className="border p-2 mt-2 bg-white rounded shadow">
-                      <p>예약자명:{reservation.username}</p>
-                      <p>출발 정류장:{reservation.station_in}</p>
-                      <p>도착 정류장:{reservation.station_out}</p>
+                    <div className="border p-2 mt-2 bg-white rounded shadow">
+                      <p>{reservation?.stNm}</p>
+                      <p>승차:{reservation?.station_in.toString()}</p>
+                      <p>하차:{reservation?.station_out.toString()}</p>
                     </div>
-                  ))}
                 </div>
               )}
             </center>
