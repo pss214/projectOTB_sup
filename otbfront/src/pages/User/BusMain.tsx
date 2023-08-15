@@ -1,12 +1,37 @@
-import React, {useState, useCallback} from 'react'
+import React, {useState, useCallback, useEffect} from 'react'
 import {SERVER_URL} from '../../server/getServer'
 import {Link} from '../../components'
 import QrReader from 'react-qr-scanner'
+import * as U from '../../utils'
+import {userInfo} from 'os'
+import ReservationForm from '../Reservation/ReservationForm'
 
+interface Reservelist {
+  username: string
+  stNm: string
+  rtNm: number
+  plainNo1: string
+  station_in: boolean
+  station_out: boolean
+  payment: boolean
+}
 const BusMain: React.FC = () => {
   const [qrData, setQrData] = useState('')
   const [qrScannerVisible, setQrScannerVisible] = useState(false) // QR 스캐너 표시 여부 상태 변수 추가
   const [boardingInfoVisible, setBoardingInfoVisible] = useState(false) // 승하차 정보 보기 상태 변수 추가
+  const [reservations, setReservations] = useState<Reservelist[]>([])
+  const [jwt, setJwt] = useState<string>('')
+  const [jwtbool, setJwtbool] = useState<boolean>(false)
+
+  useEffect(() => {
+    U.readStringP('jwt').then(jwt => {
+      setJwt(jwt ?? '')
+      setJwtbool(true)
+    })
+    // if (jwtbool) {
+
+    // }
+  }, [jwt])
 
   const handleScan = (data: {text: string} | null) => {
     if (data && data.text) {
@@ -25,7 +50,26 @@ const BusMain: React.FC = () => {
     // 로그아웃 후 리다이렉션
     window.location.href = '/' // 메인 페이지로 리다이렉션 (필요에 따라 경로 변경)
   }
-
+  const handleReserveList = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch(SERVER_URL + '/bus-driver/get-inout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `otb ${jwt}`
+        },
+        body: JSON.stringify(U.readObjectP)
+      })
+        .then(res => res.json())
+        .then(res => {
+          setReservations(res.data)
+          console.log(res)
+        })
+    } catch (error) {
+      console.error('오류 발생', error)
+    }
+  }
   return (
     <div>
       <div className="flex justify-between bg-lime-200">
@@ -52,9 +96,14 @@ const BusMain: React.FC = () => {
               </button>
               <button
                 className="btn btn-link text-lime-500"
-                onClick={() => setBoardingInfoVisible(!boardingInfoVisible)} // 승하차 정보 버튼 열고 닫기
+                onClick={() => {
+                  setBoardingInfoVisible(!boardingInfoVisible)
+                }} // 승하차 정보 버튼 열고 닫기
               >
                 {boardingInfoVisible ? '승하차 정보 닫기' : '승하차 정보'}
+              </button>
+              <button className="btn btn-link text-lime-500" onClick={handleReserveList}>
+                정보가져오기
               </button>
             </div>
             {qrScannerVisible && ( // QR 스캐너와 스캔된 데이터의 조건부 렌더링
@@ -74,7 +123,13 @@ const BusMain: React.FC = () => {
               {boardingInfoVisible && (
                 <div className="mt-4">
                   <p className="text-lime-500">승하차 정보</p>
-                  {/* 여기에 승하차 정보 넣으시면 됩니다.*/}
+                  {reservations.map((reservation, index) => (
+                    <div key={index} className="border p-2 mt-2 bg-white rounded shadow">
+                      <p>예약자명:{reservation.username}</p>
+                      <p>출발 정류장:{reservation.station_in}</p>
+                      <p>도착 정류장:{reservation.station_out}</p>
+                    </div>
+                  ))}
                 </div>
               )}
             </center>
