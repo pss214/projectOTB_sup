@@ -39,7 +39,7 @@ export default function Board() {
   // 지도가 열려있을 때만 카카오지도 컴포넌트를 렌더링하도록 수정
   return (
     <section className="mt-4">
-      <Title>원하시는 서비스를 선택하세요.</Title>
+      <Title>지도를 열어 버스를 탑승하세요.</Title>
       <DragDropContext onDragEnd={onDragEnd}>
         <ListDroppable className="flex flex-row p-2 mt-4">
           <div className="space-x-4">

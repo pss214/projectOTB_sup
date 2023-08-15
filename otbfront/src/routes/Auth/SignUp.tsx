@@ -28,11 +28,22 @@ export default function SignUp() {
     return emailRegex.test(email)
   }
 
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const createAccount = useCallback(() => {
     if (!validateEmail(email)) {
       alert('올바른 이메일 형식을 입력해주세요.')
       return
     }
+
+    if (!validatePassword(password)) {
+      alert('비밀번호는 영문 대소문자, 숫자, 특수문자를 포함하여 최소 8자 이상이어야 합니다.');
+      return;
+    }
+    
     if (password === confirmPassword) {
       signup(username, email, password, () => navigate('/'))
     } else alert('비밀번호가 일치하여야 합니다.')
@@ -95,6 +106,12 @@ export default function SignUp() {
           이미 계정이 있으신가요?
           <Link className="btn btn-link btn-primary text-lime-500" to="/login/">
             로그인하기
+          </Link>
+        </div>
+        <div className="mt-6 text-grey-dark">
+          버스 기사님이신가요?
+          <Link className="btn btn-link btn-primary text-lime-500" to="/SignUpDriver">
+            버스 기사 회원 가입
           </Link>
         </div>
       </div>
