@@ -1,7 +1,6 @@
 package project.otb.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +8,7 @@ import project.otb.DTO.ReservationDTO;
 import project.otb.api.BusApiService;
 import project.otb.entity.Bus;
 import project.otb.repositiry.BusRepository;
+import project.otb.repositiry.BusStationRepository;
 import project.otb.repositiry.ReservationRepository;
 import project.otb.entity.Reservation;
 
@@ -22,13 +22,15 @@ public class ReservationService {
     private final BusApiService busApiService;
     private final BusRepository busRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BusStationRepository busStationRepository;
 
 
-    public ReservationService(ReservationRepository reservationRepository, BusApiService busApiService, BusService busService, BusRepository busRepository, PasswordEncoder passwordEncoder) {
+    public ReservationService(ReservationRepository reservationRepository, BusApiService busApiService, BusService busService, BusRepository busRepository, PasswordEncoder passwordEncoder, BusStationRepository busStationRepository) {
         this.reservationRepository = reservationRepository;
         this.busApiService = busApiService;
         this.busRepository = busRepository;
         this.passwordEncoder = passwordEncoder;
+        this.busStationRepository = busStationRepository;
     }
 
     public ReservationDTO saveReservation(ReservationDTO dto, User user) {
@@ -59,7 +61,16 @@ public class ReservationService {
     }
     public List<Reservation> getReservationInfo(User dto) {
         List<Reservation> reservation = reservationRepository.findByUsername(dto.getUsername());
+
         if (reservation != null) {
+            for (int i = 0; i < reservation.size(); i++) {
+                reservation.set(i,Reservation.builder()
+                        .arrive_station(busStationRepository.findBystationuniid(reservation.get(i).getArrive_station()).getStationname())
+                        .depart_station(busStationRepository.findBystationuniid(reservation.get(i).getArrive_station()).getStationname())
+                        .busnumberplate(reservation.get(i).getBusnumberplate())
+                        .busnumber(reservation.get(i).getBusnumber())
+                        .build());
+            }
             return reservation;
         } else {
             throw new RuntimeException("예약정보 없음");
