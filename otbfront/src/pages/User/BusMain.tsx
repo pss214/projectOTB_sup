@@ -151,15 +151,19 @@ const BusMain: React.FC = () => {
             )}
             <center>
               {boardingInfoVisible && (
-                <div className="mt-4">
-                  <p className="text-lime-500">승하차 정보</p>
-                    <div className="border p-2 mt-2 bg-white rounded shadow">
-                      <p>{reservation?.stNm}</p>
-                      <p>승차:{reservation?.station_in.toString()}</p>
-                      <p>하차:{reservation?.station_out.toString()}</p>
-                    </div>
+              <div className="mt-4">
+                <p className="text-lime-500 font-bold text-xl">승하차 정보</p>
+                <div className="border p-2 mt-2 bg-white rounded shadow">
+                  <p>{reservation?.stNm}</p>
+                  <p className={`text-lg font-bold ${reservation?.station_in.toString() === 'false' ? 'text-red-500' : 'text-blue-500'}`}>
+                    승차: {reservation?.station_in.toString()}
+                  </p>
+                  <p className={`text-lg font-bold ${reservation?.station_out.toString() === 'false' ? 'text-red-500' : 'text-blue-500'}`}>
+                    하차: {reservation?.station_out.toString()}
+                  </p>
                 </div>
-              )}
+              </div>
+            )}
             </center>
             <center>
               <button className="btn btn-link text-lime-500" onClick={handleLogout}>
