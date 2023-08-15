@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import project.otb.DTO.ReservationDTO;
 import project.otb.DTO.ResponseDTO;
+import project.otb.DTO.StationDTO;
 import project.otb.api.BusApiService;
 import project.otb.service.ReservationService;
 
@@ -69,6 +70,7 @@ public class ReservationController {
                             .build());
         }
     }
+
     @PostMapping("/pay")
     @Operation(summary = "결제 유무",description = "유저가 예약 한 후 선결제한 것을 저장하는 api 입니다.")
     @ApiResponses(value ={
@@ -110,4 +112,3 @@ public class ReservationController {
         }
     }
 }
-

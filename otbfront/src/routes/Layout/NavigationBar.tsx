@@ -33,13 +33,6 @@ export default function NavigationBar() {
             회원 가입
           </RRLink>
         )}
-        {!loggedUser && (
-          <RRLink
-            to="/signupdriver"
-            className="flex ml-2 btn btn-primary  text-white border-lime-600 bg-lime-600">
-            버스 기사 회원 가입
-          </RRLink>
-        )}
         {loggedUser && (
           <RRLink
             to="/mypage"

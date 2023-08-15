@@ -1,5 +1,6 @@
 package project.otb.DTO;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,3 +17,4 @@ public class BusStationDTO{
     String arrmsg2;
     String vehId1;
 }
+

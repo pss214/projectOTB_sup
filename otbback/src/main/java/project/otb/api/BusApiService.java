@@ -11,6 +11,7 @@ import project.otb.entity.BusStation;
 import project.otb.repositiry.BusRouteRepository;
 import project.otb.repositiry.BusStationRepository;
 
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -225,6 +226,7 @@ public class BusApiService {
         BusStopInformationDTO busdto = pretty.fromJson(api, BusStopInformationDTO.class);
         List<BusStationDTO> res = new ArrayList<>();
         for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
+
             res.add(i, BusStationDTO.builder().busRouteId(busdto.getMsgBody().itemList.get(i).busRouteId)
                             .rtNm(busdto.getMsgBody().itemList.get(i).rtNm)
                             .arrmsg1(busdto.getMsgBody().itemList.get(i).arrmsg1)
@@ -294,6 +296,7 @@ public class BusApiService {
         }
         return res;
     }
+
     public String GetBusRoutePlaceNum(String dto){
         String api = readBusPlaceNum(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
