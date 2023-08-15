@@ -133,7 +133,7 @@ const BusMain: React.FC = () => {
                 {boardingInfoVisible ? '승하차 정보 닫기' : '승하차 정보'}
               </button>
               <button className="btn btn-link text-lime-500" onClick={handleReserveList}>
-                정보가져오기
+                더블 클릭으로 정보가져오기
               </button>
             </div>
             {qrScannerVisible && ( // QR 스캐너와 스캔된 데이터의 조건부 렌더링
