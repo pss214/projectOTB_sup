@@ -15,9 +15,9 @@ public class BusRoute {
     Long id;
     String routeid;
     String route;
-    @Column(length = 65534)
+    @Column(columnDefinition = "TEXT",length = 65534)
     String stationlist;
-    @Column(length = 65534)
+    @Column(columnDefinition = "TEXT",length = 65534)
     String stationlive;
     public void updateStation(String stationlist){
         this.stationlist = stationlist;
