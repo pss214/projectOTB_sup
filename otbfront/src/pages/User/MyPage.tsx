@@ -1,13 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { SERVER_URL } from '../../server/getServer';
-import { Link } from '../../components';
-import * as U from '../../utils';
-import axios from 'axios';
-import type { ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts';
-import QRCode from 'qrcode.react'; // QRCode 라이브러리를 가져옵니다.
-import Reserve from '../Reservation/Reserve';
+
+import React, {useState, useCallback, useEffect} from 'react'
+import {SERVER_URL} from '../../server/getServer'
+import {Link} from '../../components'
+import * as U from '../../utils'
+import axios from 'axios'
+import type {ChangeEvent} from 'react'
+import Login from '../../routes/Auth/Login'
 
 interface reserve{
   rt_id:string,
@@ -81,6 +79,7 @@ const MyPage: React.FC = () => {
       setCurrentPage(currentPage - 1)
     }
   }
+
 
   const goToNextPage = () => {
     if (indexOfLastItem < reservelist.length) {

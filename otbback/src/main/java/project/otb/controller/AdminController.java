@@ -10,6 +10,7 @@ import project.otb.api.BusApiService;
 
 @RestController
 @RequestMapping("/admin")
+
 public class AdminController {
     private final BusApiService busApiService;
 
@@ -20,6 +21,12 @@ public class AdminController {
     @GetMapping("/busroute")
     public ResponseEntity<?> getBusRouteApi(){
         String response = busApiService.GetBusRouteApi();
+        return ResponseEntity.ok().body(ResponseDTO.builder()
+                .status(HttpStatus.CREATED.value()).message(response).build());
+    }
+    @GetMapping("/busstation")
+    public ResponseEntity<?> getBusStationApi(){
+        String response = busApiService.GetBusStationAPI();
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.CREATED.value()).message(response).build());
     }

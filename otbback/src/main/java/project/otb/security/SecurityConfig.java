@@ -22,7 +22,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final String[] allowedUrls = {"/user/**"};
+    private final String[] allowedUrls = {"/user/**","/bus/**"};
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }

@@ -50,6 +50,7 @@ public class UserService {
                     .username(user.getUsername())
                     .email(user.getEmail())
                     .token(token)
+                    .type("user")
                     .build();
         } else {
             return null;
@@ -68,15 +69,16 @@ public class UserService {
         else{
             throw new RuntimeException("회원 정보 없음");
         }
-
     }
     public void putUserInfo(org.springframework.security.core.userdetails.User user, UserDTO dto){
         User saveuser = userRepository.findByUsername(user.getUsername());
-        if(dto.getEmail()!=null){
-            saveuser.setEmail(dto.getEmail());
+        if(dto.getEmail() != null){
+            saveuser.updateUser(dto.getEmail(), saveuser.getPassword());
+            userRepository.save(saveuser);
         }
         if(dto.getPassword()!=null){
-            saveuser.setPassword(passwordEncoder.encode(dto.getPassword()));
+            saveuser.updateUser(saveuser.getEmail(), passwordEncoder.encode(dto.getPassword()));
+            userRepository.save(saveuser);
         }
 
     }

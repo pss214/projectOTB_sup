@@ -1,14 +1,12 @@
 package project.otb.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Builder
-@Data
+@Getter
 @Entity
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 @NoArgsConstructor
@@ -28,4 +26,9 @@ public class User {
     private LocalDateTime Created_Date;
     @Column(name = "MD")
     private LocalDateTime modified_Date;
+
+    public void updateUser(String email, String password){
+        this.email = email;
+        this.password = password;
+    }
 }
