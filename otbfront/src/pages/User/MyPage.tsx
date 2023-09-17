@@ -6,6 +6,7 @@ import * as U from '../../utils'
 import axios from 'axios'
 import type {ChangeEvent} from 'react'
 import Login from '../../routes/Auth/Login'
+import QRCode from 'qrcode.react'
 
 interface reserve{
   rt_id:string,
