@@ -17,9 +17,9 @@ public class AdminController {
     public AdminController(BusApiService busApiService) {
         this.busApiService = busApiService;
     }
-
     @GetMapping("/busroute")
     public ResponseEntity<?> getBusRouteApi(){
+
         String response = busApiService.GetBusRouteApi();
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.CREATED.value()).message(response).build());
