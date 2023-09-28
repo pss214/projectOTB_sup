@@ -44,7 +44,7 @@ public class UserService {
     public UserDTO login(final LoginDto dto) {
         User user = userRepository.findByUsername(dto.getUsername());
         if(user!=null&&passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
+            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "ROLE_USER"));
 
             return UserDTO.builder()
                     .username(user.getUsername())

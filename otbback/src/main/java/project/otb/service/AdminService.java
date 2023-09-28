@@ -1,14 +1,19 @@
 package project.otb.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.otb.DTO.AdminDTO;
 import project.otb.DTO.LoginDto;
+import project.otb.DTO.ResponseDTO;
+import project.otb.api.BusApiService;
 import project.otb.entity.*;
 import project.otb.repositiry.*;
 import project.otb.security.TokenProvider;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdminService {
@@ -18,25 +23,27 @@ public class AdminService {
     private final BusStationRepository busStationRepository;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final BusApiService busApiService;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
     public AdminService(AdminRepository adminRepository, BusRepository busRepository, BusRouteRepository busRouteRepository,
                         BusStationRepository busStationRepository, ReservationRepository reservationRepository, UserRepository userRepository,
-                        PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+                        BusApiService busApiService, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
         this.adminRepository = adminRepository;
         this.busRepository = busRepository;
         this.busRouteRepository = busRouteRepository;
         this.busStationRepository = busStationRepository;
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
+        this.busApiService = busApiService;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
     }
     public AdminDTO AdminLogin(final LoginDto dto){
         Admin admin = adminRepository.findByAdminname(dto.getUsername());
         if(admin!=null&& passwordEncoder.matches(dto.getPassword(), admin.getPassword())) {
-            String token = tokenProvider.createToken(String.format("%s:%s", admin.getAdminname(), "ADMIN"));
+            String token = tokenProvider.createToken(String.format("%s:%s", admin.getAdminname(), "ROLE_ADMIN"));
 
             return AdminDTO.builder()
                     .adminname(admin.getAdminname())
@@ -49,62 +56,45 @@ public class AdminService {
             return null;
         }
     }
-    public List<User> AdminUserList (org.springframework.security.core.userdetails.User user){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            return userRepository.findAll();
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public List<User> AdminUserList (){
+        return userRepository.findAll();
     }
-    public List<Bus> AdminBusList (org.springframework.security.core.userdetails.User user){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            return busRepository.findAll();
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public List<Bus> AdminBusList (){
+        return busRepository.findAll();
     }
-    public List<Reservation> AdminReservationList (org.springframework.security.core.userdetails.User user){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            return reservationRepository.findAll();
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public List<Reservation> AdminReservationList (){
+        return reservationRepository.findAll();
     }
-    public List<BusRoute> AdminBusRouteList (org.springframework.security.core.userdetails.User user){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            return busRouteRepository.findAll();
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public List<BusRoute> AdminBusRouteList (){
+        return busRouteRepository.findAll();
     }
-    public List<BusStation> AdminBusStationList (org.springframework.security.core.userdetails.User user){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            return busStationRepository.findAll();
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public List<BusStation> AdminBusStationList (){
+        return busStationRepository.findAll();
     }
-    public String UserDelete (org.springframework.security.core.userdetails.User user, Long id){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            userRepository.deleteById(id);
-            return "삭제 완료";
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public String UserDelete (Long id){
+        Optional<User> user=userRepository.findById(id);
+        userRepository.deleteById(id);
+        return user.get().getUsername();
     }
-    public String BusDelete (org.springframework.security.core.userdetails.User user, Long id){
-        Admin admin = adminRepository.findByAdminname(user.getUsername());
-        if(admin!=null){
-            userRepository.deleteById(id);
-            return "삭제 완료";
-        }else {
-            throw new RuntimeException("오류!");
-        }
+    public String BusDelete (Long id){
+        Optional<Bus> bus = busRepository.findById(id);
+        userRepository.deleteById(id);
+        return "삭제 완료";
+    }
+    public String BusStationAllDlete(){
+        busStationRepository.deleteAll();
+        return "삭제 완료";
+    }
+    public String BusRouteAllDelete(){
+        busRouteRepository.deleteAll();
+        return "삭제 완료";
+    }
+    public String getBusRouteApi(){
+        String response = busApiService.GetBusRouteApi();
+        return response;
+    }
+    public String getBusStationApi(){
+        String response = busApiService.GetBusStationAPI();
+        return response;
     }
 }

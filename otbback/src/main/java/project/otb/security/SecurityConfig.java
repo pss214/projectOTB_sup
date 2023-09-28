@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,18 +15,20 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final TokenProvider tokenProvider;
     private final String[] allowedUrls = {"/user/**","/bus/**","/admin/signin"};
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, TokenProvider tokenProvider) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.tokenProvider = tokenProvider;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,7 +49,8 @@ public class SecurityConfig {
 
                                 .anyRequest().authenticated())
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .apply(new JwtConfig(tokenProvider));
 //        http
 //                // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
 //                .csrf(csrf -> csrf.disable())
