@@ -2,7 +2,6 @@ import type {ChangeEvent} from 'react'
 import {useState, useCallback, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
-import * as U from '../../utils'
 
 type LoginFormType = Record<'username' | 'password', string>
 const initialFormState = {username: '', password: ''}

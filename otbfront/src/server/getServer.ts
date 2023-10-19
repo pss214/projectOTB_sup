@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://back.otb.kr'
+export const SERVER_URL = 'http://localhost:8080'

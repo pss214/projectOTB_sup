@@ -8,7 +8,7 @@ export default function NoMatch() {
   // 이전 페이지로 돌아가는 함수
   const goBack = useCallback(() => {
     // 이전 페이지로 돌아가기
-    navigate(-1);
+    navigate("/");
   }, [navigate]);
 
   // 홈 페이지로 이동하는 함수

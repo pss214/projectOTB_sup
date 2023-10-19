@@ -46,33 +46,48 @@ public class AdminController {
                 .status(HttpStatus.CREATED.value()).message(adminService.getBusStationApi()).build());
     }
     @GetMapping("/userlist")
-    public ResponseEntity<?> getUserList(){
+    public ResponseEntity<?> getUserList(@AuthenticationPrincipal User user){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).data(List.of(adminService.AdminUserList())).message(" User 데이터를 가져왔습니다.").build());
     }
     @GetMapping("/buslist")
-    public ResponseEntity<?> getBusList(){
+    public ResponseEntity<?> getBusList(@AuthenticationPrincipal User user){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).data(List.of(adminService.AdminBusList())).message(" Bus 데이터를 가져왔습니다.").build());
     }
+    @GetMapping("/reservationlist")
+    public ResponseEntity<?> getReservationList(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok().body(ResponseDTO.builder()
+                .status(HttpStatus.OK.value()).data(List.of(adminService.AdminReservationList())).message(" 예약 데이터를 가져왔습니다.").build());
+    }
     @GetMapping("/busroutelist")
-    public ResponseEntity<?> getBusRouteList(){
+    public ResponseEntity<?> getBusRouteList(@AuthenticationPrincipal User user){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).data(List.of(adminService.AdminBusRouteList())).message(" BusRoute 데이터를 가져왔습니다.").build());
     }
     @GetMapping("/busstationlist")
-    public ResponseEntity<?> getBusStationList(){
+    public ResponseEntity<?> getBusStationList(@AuthenticationPrincipal User user){
         return ResponseEntity.ok().body(ResponseDTO.builder()
                 .status(HttpStatus.OK.value()).data(List.of(adminService.AdminBusStationList())).message(" BusStation 데이터를 가져왔습니다.").build());
     }
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<?> DeleteUserId(@PathVariable Long id){
+    public ResponseEntity<?> DeleteUserId(@AuthenticationPrincipal User user, @PathVariable Long id){
         return ResponseEntity.created(URI.create("/admin/user")).body(ResponseDTO.builder()
                 .status(HttpStatus.CREATED.value()).message(adminService.UserDelete(id)+"데이터를 삭제했습니다.").build());
     }
     @DeleteMapping("/bus/{id}")
-    public ResponseEntity<?> DeleteBusId(@PathVariable Long id){
+    public ResponseEntity<?> DeleteBusId(@AuthenticationPrincipal User user,@PathVariable Long id){
         return ResponseEntity.created(URI.create("/admin/bus")).body(ResponseDTO.builder()
-                .status(HttpStatus.CREATED.value()).message(adminService.UserDelete(id)+"데이터를 삭제했습니다.").build());
+                .status(HttpStatus.CREATED.value()).message(adminService.BusDelete(id)+"데이터를 삭제했습니다.").build());
+    }
+    @DeleteMapping("/busstationall")
+    public ResponseEntity<?> DeleteBusStationAll(@AuthenticationPrincipal User user){
+        return ResponseEntity.created(URI.create("/admin/busstationall")).body(ResponseDTO.builder()
+                .status(HttpStatus.CREATED.value()).message("버스 정류장 "+adminService.BusStationAllDlete()).build());
+    }
+    @DeleteMapping("/busrouteall")
+    public ResponseEntity<?> DeleteBusRouteAll(@AuthenticationPrincipal User user){
+        return ResponseEntity.created(URI.create("/admin/busrouteall")).body(ResponseDTO.builder()
+                .status(HttpStatus.CREATED.value()).message("버스 정보 "+adminService.BusRouteAllDelete()).build());
     }
 }

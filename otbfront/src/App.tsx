@@ -5,11 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts';
 import RoutesSetup from './routes/RoutesSetup';
 import { useStore } from './store';
-import useGeoLocation from './useGeolocation';
 
 export default function App() {
   const store = useStore();
-  const location = useGeoLocation();
 
   return (
     <ReduxProvider store={store}>
