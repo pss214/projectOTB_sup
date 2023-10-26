@@ -34,13 +34,10 @@ export default function RoutesSetup() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/signupdriver" element={<SignUpDriver />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/" />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/busmain" element={<BusMain />} />
       <Route path='/admin' element={<AdminLogin/>}/>
       <Route path='/adminpage' element={<AdminPage/>}/>
-      <Route path="/" element={<NewsPage />} />
-      <Route path="/:category" element={<NewsPage />} />
       <Route
         path="/reserve"
         element={
