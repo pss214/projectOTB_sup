@@ -1,17 +1,18 @@
 import {Link} from 'react-router-dom';
 import {Button} from '../../theme/daisyui';
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Categories from '../../pages/News/Categories';
 import NewsList from '../../pages/News/NewsList';
 import {useAuth} from '../../contexts';
 
 export default function Promotion() {
-  const [category, setCategory] = useState<string>('all');
+  const [category, setCategory] = useState<string>('');
   const onSelect = useCallback((category: string) => setCategory(category), []);
-
   const {loggedUser} = useAuth();
   const [showPopup, setShowPopup] = useState<boolean>(!loggedUser);
-
+  useEffect(()=>{
+    setCategory("all");
+  },[])
   return (
     <section className="w-full mt-4 bg-gray-100 p-8 rounded-lg shadow-md">
       <div className="flex justify-center">
