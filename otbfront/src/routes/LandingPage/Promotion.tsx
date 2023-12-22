@@ -50,5 +50,5 @@ export default function Promotion() {
         <NewsList category={category} />
       </div>
     </section>
-  );
+  )
 }
