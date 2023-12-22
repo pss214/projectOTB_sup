@@ -113,6 +113,9 @@ otbapp/app.*.symbols
 otbapp/app.*.map.json
 
 # Android Studio will place build artifacts here
-otbapp//android/app/debug
-otbapp//android/app/profile
-otbapp//android/app/release
+otbapp/android/app/debug
+otbapp/android/app/profile
+otbapp/android/app/release
+
+/.vscode/
+/.idea/
