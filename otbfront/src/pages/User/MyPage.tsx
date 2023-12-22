@@ -1,13 +1,11 @@
-import React, {useState, useCallback, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import {SERVER_URL} from '../../server/getServer'
 import {Link} from '../../components'
 import * as U from '../../utils'
 import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
-import type {ChangeEvent} from 'react'
-import Login from '../../routes/Auth/Login'
-import {useAuth} from '../../contexts'
 import QRCode from 'qrcode.react'
+import { useAuth } from '../../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 interface reserve {
   rt_id: string

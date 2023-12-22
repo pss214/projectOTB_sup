@@ -14,6 +14,8 @@ import MyPage from '../pages/User/MyPage'
 import Reserve from '../pages/Reservation/Reserve'
 import BusMain from '../pages/User/BusMain'
 import Pay from '../pages/Reservation/Pay'
+import AdminLogin from '../pages/admin/adminlogin'
+import AdminPage from '../pages/admin/adminpage'
 export default function RoutesSetup() {
   return (
     <Routes>
@@ -32,11 +34,10 @@ export default function RoutesSetup() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/signupdriver" element={<SignUpDriver />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/" />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/busmain" element={<BusMain />} />
-      <Route path="/" element={<NewsPage />} />
-      <Route path="/:category" element={<NewsPage />} />
+      <Route path='/admin' element={<AdminLogin/>}/>
+      <Route path='/adminpage' element={<AdminPage/>}/>
       <Route
         path="/reserve"
         element={
@@ -59,7 +60,6 @@ export default function RoutesSetup() {
           </RequireAuth>
         }
       />
-      <Route path="*" element={<NoMatch />} />
     </Routes>
   )
 }

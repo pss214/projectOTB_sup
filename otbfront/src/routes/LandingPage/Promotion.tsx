@@ -1,17 +1,18 @@
-import {Link} from 'react-router-dom'
-import {Div} from '../../components'
-import {Button} from '../../theme/daisyui'
-import {useCallback, useState} from 'react'
-import Categories from '../../pages/News/Categories'
-import NewsList from '../../pages/News/NewsList'
-import {useAuth} from '../../contexts'
+import {Link} from 'react-router-dom';
+import {Button} from '../../theme/daisyui';
+import {useCallback, useEffect, useState} from 'react';
+import Categories from '../../pages/News/Categories';
+import NewsList from '../../pages/News/NewsList';
+import {useAuth} from '../../contexts';
 
 export default function Promotion() {
-  const [category, setCategory] = useState<string>('all')
-  const onSelect = useCallback((category: string) => setCategory(category), [])
-  const {loggedUser} = useAuth()
-  const [showPopup, setShowPopup] = useState<boolean>(!loggedUser)
-
+  const [category, setCategory] = useState<string>('');
+  const onSelect = useCallback((category: string) => setCategory(category), []);
+  const {loggedUser} = useAuth();
+  const [showPopup, setShowPopup] = useState<boolean>(!loggedUser);
+  useEffect(()=>{
+    setCategory("all");
+  },[])
   return (
     <section className="w-full mt-4 bg-gray-100 p-8 rounded-lg shadow-md">
       <div className="flex justify-center">
@@ -21,6 +22,7 @@ export default function Promotion() {
           </Button>
         </Link>
       </div>
+      {/* 팝업창을 표시할지 여부 확인 */}
       {showPopup && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75">
           <center>
@@ -42,6 +44,7 @@ export default function Promotion() {
         </div>
       )}
       <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">뉴스</h2>
+
       <div className="mt-6">
         <Categories category={category} onSelect={onSelect} />
         <NewsList category={category} />

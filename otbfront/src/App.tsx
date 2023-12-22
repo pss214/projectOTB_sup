@@ -5,11 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts';
 import RoutesSetup from './routes/RoutesSetup';
 import { useStore } from './store';
-import useGeoLocation from './useGeolocation';
 
 export default function App() {
   const store = useStore();
-  const location = useGeoLocation();
 
   return (
     <ReduxProvider store={store}>
@@ -19,8 +17,7 @@ export default function App() {
             <footer>
               <div className="text-center p-4 bg-lime-700 text-primary-100 fixed-bottom">
                 <p className="text-white">
-                  OTB(우비) 프런트 : 김동욱, 안장훈 / 백 : 박성수, 강선혁 Git : //
-                  https://github.com/DwKmm3/projectOTB
+                  OTB(우비) Github : https://github.com/DwKmm3/projectOTB
                 </p>
               </div>
             </footer>

@@ -1,10 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {SERVER_URL} from '../../server/getServer'
-import {Link} from '../../components'
 import QrReader from 'react-qr-scanner'
 import * as U from '../../utils'
-import {userInfo} from 'os'
-import ReservationForm from '../Reservation/ReservationForm'
 
 interface Reservelist {
   username: string

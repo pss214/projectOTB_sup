@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import {useEffect, useState} from 'react'
 import NewsItem from './NewsItem'
+import { SERVER_URL } from '../../server'
 
 interface Article {
   title: string
@@ -29,16 +30,22 @@ interface Props {
 export default function NewsList({category}: Props) {
   const [articles, setArticles] = useState<Article[] | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-
+  const [url, setUrl] = useState<string>('')
   useEffect(() => {
     async function fetchData(): Promise<void> {
       setLoading(true)
       try {
         const query = category === 'all' ? '' : `&category=${category}`
-        const url = `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=71e24a4b43ac4a689f929182c81dc940`
-        const response = await fetch(url)
+        if(query === ''){
+          
+          setUrl(SERVER_URL+`/news`);
+        }else{
+          setUrl(SERVER_URL+`/news/${query}`);
+        }
+        const response = await fetch(url,{method:"GET",headers:{'Content-Type': 'application/json'}})
+        console.log(response);
         const data = await response.json()
-        setArticles(data.articles.slice(0, 2))
+        setArticles(data.data[0].articles.slice(0, 2))
       } catch (e) {
         console.log(e)
       }

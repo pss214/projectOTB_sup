@@ -11,6 +11,7 @@ import project.otb.security.TokenProvider;
 import project.otb.repositiry.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -28,7 +29,7 @@ public class UserService {
     }
 
     public User create(final UserDTO dto){
-        if(userRepository.existsByUsername(dto.getUsername())&&busRepository.existsBybusNumberPlate(dto.getUsername())){
+        if(userRepository.existsByUsername(dto.getUsername())&&busRepository.existsBybusNumberPlate(dto.getUsername())&& Objects.equals(dto.getUsername(), "admin")){
             throw new RuntimeException("아이디가 존재합니다!");
         }
         else{
@@ -44,7 +45,7 @@ public class UserService {
     public UserDTO login(final LoginDto dto) {
         User user = userRepository.findByUsername(dto.getUsername());
         if(user!=null&&passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "USER"));
+            String token = tokenProvider.createToken(String.format("%s:%s", user.getUsername(), "ROLE_USER"));
 
             return UserDTO.builder()
                     .username(user.getUsername())

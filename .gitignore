@@ -71,3 +71,51 @@ otbback/src/test/
 
 package-lock.json
 otbfront/package-lock.json
+
+### otbapp ###
+# Miscellaneous
+otbapp/*.class
+otbapp/*.log
+otbapp/*.pyc
+otbapp/*.swp
+otbapp/.DS_Store
+otbapp/.atom/
+otbapp/.buildlog/
+otbapp/.history
+otbapp/.svn/
+otbapp/migrate_working_dir/
+
+# IntelliJ related
+otbapp/*.iml
+otbapp/*.ipr
+otbapp/*.iws
+otbapp/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+otbapp/**/doc/api/
+otbapp/**/ios/Flutter/.last_build_id
+otbapp/.dart_tool/
+otbapp/.flutter-plugins
+otbapp/.flutter-plugins-dependencies
+otbapp/.pub-cache/
+otbapp/.pub/
+otbapp//build/
+
+# Symbolication related
+otbapp/app.*.symbols
+
+# Obfuscation related
+otbapp/app.*.map.json
+
+# Android Studio will place build artifacts here
+otbapp/android/app/debug
+otbapp/android/app/profile
+otbapp/android/app/release
+
+/.vscode/
+/.idea/

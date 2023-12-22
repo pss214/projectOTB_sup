@@ -2,7 +2,6 @@ import type {ChangeEvent} from 'react'
 import {useState, useCallback, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
-import * as U from '../../utils'
 
 type LoginFormType = Record<'username' | 'password', string>
 const initialFormState = {username: '', password: ''}
@@ -19,6 +18,11 @@ export default function Login() {
   const navigate = useNavigate()
   const {login} = useAuth()
 
+  const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      loginAccount(); // Enter 입력이 되면 클릭 이벤트 실행
+    }
+  };
   const loginAccount = useCallback(() => {
     login(username, password, () => navigate('/'))
   }, [username, password, navigate, login])
@@ -45,6 +49,7 @@ export default function Login() {
             placeholder="비밀번호를 입력해주세요."
             value={password}
             onChange={changed('password')}
+            onKeyPress={handleOnKeyPress}
           />
 
           <button

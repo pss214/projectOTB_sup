@@ -28,6 +28,7 @@ type ContextType = {
     callback?: Callback
   ) => void
   login: (username: string, password: string, callback?: Callback) => void
+  admin_login: (username: string, password: string, callback?: Callback) => void
   logout: (callback?: Callback) => void
   mypage: (jwt: string, callback?: Callback) => void
   reservation: (username: string, busnumber: string, callback?: Callback) => void
@@ -44,6 +45,7 @@ export const AuthContext = createContext<ContextType>({
   ) => {},
   login: (username: string, password: string, callback?: Callback) => {},
   logout: (callback?: Callback) => {},
+  admin_login: (username: string, password: string, callback?: Callback) => {},
   mypage(jwt: string, callback?: Callback) {},
   reservation: (username: string, busnumber: string, callback?: Callback) => {}
 })
@@ -156,6 +158,34 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     },
     []
   )
+  const admin_login= useCallback(async (username: string, password: string, callback?: Callback) => {
+    const admin = {username, password}
+    try {
+    await axios({
+      method: 'POST',
+      timeout: 4000,
+      url: SERVER_URL + '/admin/signin',
+      headers: {'Context-Type': 'application/json'},
+      data: {
+        username: username,
+        password: password
+      }
+    }).then(res => {
+      console.log(res.data)
+      if (res.data.status == 200) {
+        localStorage.setItem("jwt",res.data.data[0].token)
+        U.writeStringP('jwt', res.data.data[0].token)
+        setJwt(res.data.data[0].token)
+        setLoggedUser({username, password})
+        U.writeObjectP('admin', admin).finally(() => callback && callback())
+        navigate('/adminpage')
+      }
+    })
+    }catch {
+      alert('아이디나 비밀번호를 확인하세요')
+    }
+  },
+  [])
   const reservation = useCallback(
     (username: string, busnumber: string, callback?: Callback) => {
       const user = {username, busnumber}
@@ -246,6 +276,7 @@ export const AuthProvider: FC<PropsWithChildren<AuthProviderProps>> = ({children
     signupdriver,
     login,
     logout,
+    admin_login,
     reservation,
     mypage
   }

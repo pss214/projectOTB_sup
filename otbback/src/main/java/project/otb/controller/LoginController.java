@@ -19,6 +19,7 @@ import project.otb.entity.User;
 import project.otb.service.BusService;
 import project.otb.service.UserService;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class LoginController {
     public ResponseEntity<?> createUser(@RequestBody UserDTO dto){
         try {
             userService.create(dto);
-            return ResponseEntity.ok().body(ResponseDTO.builder()
+            return ResponseEntity.created(URI.create("/user/signup")).body(ResponseDTO.builder()
                     .status(HttpStatus.CREATED.value()).message("회원가입이 완료되었습니다").build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO.builder()
@@ -89,7 +90,7 @@ public class LoginController {
     public ResponseEntity<?> createBus(@RequestBody BusDTO dto){
         try {
             busService.create(dto);
-            return ResponseEntity.ok().body(ResponseDTO.builder()
+            return ResponseEntity.created(URI.create("/bussignup")).body(ResponseDTO.builder()
                     .status(HttpStatus.CREATED.value()).message("회원가입이 완료되었습니다").build());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ResponseDTO

@@ -69,6 +69,7 @@ public class ReservationService {
                         .depart_station(busStationRepository.findBystationuniid(reservation.get(i).getArrive_station()).getStationname())
                         .busnumberplate(reservation.get(i).getBusnumberplate())
                         .busnumber(reservation.get(i).getBusnumber())
+                                .rtuinum(reservation.get(i).getRtuinum())
                         .build());
             }
             return reservation;
