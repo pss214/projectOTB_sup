@@ -104,7 +104,7 @@ otbapp/.flutter-plugins
 otbapp/.flutter-plugins-dependencies
 otbapp/.pub-cache/
 otbapp/.pub/
-otbapp//build/
+otbapp/build/
 
 # Symbolication related
 otbapp/app.*.symbols
