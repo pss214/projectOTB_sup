@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'NavigationPage.dart';
+import 'my_home_page.dart';
 import 'find_road.dart';
 
 class AppMenu extends StatefulWidget {
@@ -19,7 +19,12 @@ class _AppMenuState extends State<AppMenu> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('OTB'),
+          title: InkWell(
+            onTap: () {
+              print('OTB tapped');
+            },
+            child: Text('OTB'),
+          ),
           centerTitle: true,
           elevation: 0.0,
           actions: <Widget>[
