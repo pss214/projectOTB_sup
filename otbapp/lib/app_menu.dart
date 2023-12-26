@@ -21,7 +21,9 @@ class _AppMenuState extends State<AppMenu> {
         appBar: AppBar(
           title: InkWell(
             onTap: () {
-              print('OTB tapped');
+              setState(() {
+                currentPage = 'home';
+              });
             },
             child: Text('OTB'),
           ),
