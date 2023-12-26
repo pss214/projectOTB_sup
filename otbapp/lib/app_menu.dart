@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'my_home_page.dart';
+import 'NavigationPage.dart';
 
-class appMenu extends StatelessWidget {
+class AppMenu extends StatefulWidget {
+  @override
+  _AppMenuState createState() => _AppMenuState();
+}
+
+class _AppMenuState extends State<AppMenu> {
+  String currentPage = 'home';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,29 +53,39 @@ class appMenu extends StatelessWidget {
               ),
               ListTile(
                 title: Text('길찾기'),
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    currentPage = 'navigation';
+                  });
+                },
               ),
               ListTile(
                 title: Text('버스 이용하기'),
-                onTap: () {},
+                onTap: () {
+                  print('버스 이용하기 tapped');
+                },
               ),
               ExpansionTile(
                 title: Text('게시판'),
                 children: [
                   ListTile(
                     title: Text('공지사항'),
-                    onTap: () {},
+                    onTap: () {
+                      print('공지사항 tapped');
+                    },
                   ),
                   ListTile(
                     title: Text('자유게시판'),
-                    onTap: () {},
+                    onTap: () {
+                      print('자유게시판 tapped');
+                    },
                   ),
                 ],
               ),
             ],
           ),
         ),
-        body: MyHomePage(),
+        body: currentPage == 'navigation' ? NavigationPage() : MyHomePage(),
       ),
     );
   }
