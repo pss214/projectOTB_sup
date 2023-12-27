@@ -37,13 +37,13 @@ public class AdminController {
     @GetMapping("/getbusroute")
     public ResponseEntity<?> getBusRouteApi(){
         return ResponseEntity.created(URI.create("/admin/busroute")).body(ResponseDTO.builder()
-                .status(HttpStatus.CREATED.value()).message(adminService.getBusRouteApi()).build());
+                .status(HttpStatus.CREATED.value()).message(busApiService.GetBusRouteApi()).build());
 
     }
     @GetMapping("/getbusstation")
     public ResponseEntity<?> getBusStationApi(@AuthenticationPrincipal User user){
         return ResponseEntity.created(URI.create("/admin/getbusstation")).body(ResponseDTO.builder()
-                .status(HttpStatus.CREATED.value()).message(adminService.getBusStationApi()).build());
+                .status(HttpStatus.CREATED.value()).message(busApiService.GetBusStationAPI()).build());
     }
     @GetMapping("/userlist")
     public ResponseEntity<?> getUserList(@AuthenticationPrincipal User user){
