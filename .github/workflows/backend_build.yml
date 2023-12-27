@@ -45,7 +45,7 @@ jobs:
 
       - name: docker image build
         run: |
-          docker build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/otb_back_spring .
+          docker build --platform linux/arm64 -t pss214/otb_back_spring .
       - name: docker Hub push
         run:
           docker push pss214/otb_back_spring
