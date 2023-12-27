@@ -11,6 +11,7 @@ class AppMenu extends StatefulWidget {
 }
 
 class _AppMenuState extends State<AppMenu> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String currentPage = 'home';
 
   @override
@@ -20,95 +21,85 @@ class _AppMenuState extends State<AppMenu> {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: InkWell(
-            onTap: () {
-              setState(() {
-                currentPage = 'home';
-              });
-            },
-            child: Text('OTB'),
-          ),
-          centerTitle: true,
-          elevation: 0.0,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {},
-            )
-          ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                height: 120,
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.lightGreen,
-                  ),
-                  child: Text(
-                    '서비스 메뉴',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                  ),
-                ),
-              ),
-              ListTile(
-                title: Text('길찾기'),
+      home: Builder(
+        builder: (BuildContext context) {
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: InkWell(
                 onTap: () {
                   setState(() {
-                    currentPage = 'navigation';
+                    currentPage = 'home';
                   });
                 },
+                child: Text('OTB'),
               ),
-              ListTile(
-                title: Text('버스 이용하기'),
-                onTap: () {
-                    setState(() {
-                      currentPage = 'bus';
-                    });
-                  print('버스 이용하기 tapped');
-                },
-              ),
-              ExpansionTile(
-                title: Text('게시판'),
-                children: [
+              centerTitle: true,
+              elevation: 0.0,
+              actions: <Widget>[
+              ],
+            ),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  Container(
+                    height: 120,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.lightGreen,
+                      ),
+                      child: Text(
+                        '서비스 메뉴',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
                   ListTile(
-                    title: Text('공지사항'),
+                    title: Text('길찾기'),
                     onTap: () {
-                      setState(() {
-                        currentPage = 'notice';
-                      });
-                      print('공지사항 tapped');
+                      _navigateToPage('navigation', context);
                     },
                   ),
                   ListTile(
-                    title: Text('자유게시판'),
+                    title: Text('버스 이용하기'),
                     onTap: () {
-                      setState(() {
-                        currentPage = 'freeBoard';
-                      });
-                      print('자유게시판 tapped');
+                      _navigateToPage('bus', context);
+                      print('버스 이용하기 tapped');
                     },
+                  ),
+                  ExpansionTile(
+                    title: Text('게시판'),
+                    children: [
+                      ListTile(
+                        title: Text('공지사항'),
+                        onTap: () {
+                          _navigateToPage('notice', context);
+                          print('공지사항 tapped');
+                        },
+                      ),
+                      ListTile(
+                        title: Text('자유게시판'),
+                        onTap: () {
+                          _navigateToPage('freeBoard', context);
+                          print('자유게시판 tapped');
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        body: _getPage(),
+            ),
+            body: _getPage(),
+          );
+        },
       ),
     );
   }
+
   Widget _getPage() {
     switch (currentPage) {
       case 'navigation':
@@ -122,5 +113,12 @@ class _AppMenuState extends State<AppMenu> {
       default:
         return MyHomePage();
     }
+  }
+
+  void _navigateToPage(String page, BuildContext context) {
+    setState(() {
+      currentPage = page;
+    });
+    Navigator.of(context).pop();
   }
 }
