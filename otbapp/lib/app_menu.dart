@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'my_home_page.dart';
 import 'find_road.dart';
+import 'reserveBus.dart';
+import 'notice.dart';
+import 'free_board.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -70,6 +73,9 @@ class _AppMenuState extends State<AppMenu> {
               ListTile(
                 title: Text('버스 이용하기'),
                 onTap: () {
+                    setState(() {
+                      currentPage = 'bus';
+                    });
                   print('버스 이용하기 tapped');
                 },
               ),
@@ -79,12 +85,18 @@ class _AppMenuState extends State<AppMenu> {
                   ListTile(
                     title: Text('공지사항'),
                     onTap: () {
+                      setState(() {
+                        currentPage = 'notice';
+                      });
                       print('공지사항 tapped');
                     },
                   ),
                   ListTile(
                     title: Text('자유게시판'),
                     onTap: () {
+                      setState(() {
+                        currentPage = 'freeBoard';
+                      });
                       print('자유게시판 tapped');
                     },
                   ),
@@ -93,8 +105,22 @@ class _AppMenuState extends State<AppMenu> {
             ],
           ),
         ),
-        body: currentPage == 'navigation' ? NavigationPage() : MyHomePage(),
+        body: _getPage(),
       ),
     );
+  }
+  Widget _getPage() {
+    switch (currentPage) {
+      case 'navigation':
+        return NavigationPage();
+      case 'bus':
+        return BusReservePage();
+      case 'notice':
+        return NoticePage();
+      case 'freeBoard':
+        return FreeBoardPage();
+      default:
+        return MyHomePage();
+    }
   }
 }
