@@ -4,6 +4,8 @@ import 'find_road.dart';
 import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
+import 'login.dart';
+import 'signin.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -37,6 +39,24 @@ class _AppMenuState extends State<AppMenu> {
               centerTitle: true,
               elevation: 0.0,
               actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogIn()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignIn()),
+                    );
+                  },
+                )
               ],
             ),
             drawer: Drawer(
@@ -119,6 +139,6 @@ class _AppMenuState extends State<AppMenu> {
     setState(() {
       currentPage = page;
     });
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(); // Close the drawer
   }
 }
