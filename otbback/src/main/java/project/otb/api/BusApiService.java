@@ -197,7 +197,7 @@ public class BusApiService {
             }
             return "버스노선정보 리스트를 저장했습니다!";
         } catch (Throwable e) {
-            return e.getMessage();
+            throw new RuntimeException(e.getMessage()+"\n버스 노선 정보를 가져오지 못했습니다");
         }
     }
     public String GetBusStationAPI(){
@@ -215,7 +215,7 @@ public class BusApiService {
             }
             return "버스정류장정보 리스트를 저장했습니다!";
         }catch (IOException e){
-            throw new RuntimeException("버스 정보를 가져오지 못했습니다");
+            throw new RuntimeException(e.getMessage()+"\n버스 정류장 정보를 가져오지 못했습니다");
         }
 
 
