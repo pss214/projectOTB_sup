@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'notice.dart';
+import 'free_board.dart';
 
 final dummyItems = [
   'https://cdn.pixabay.com/photo/2018/11/12/18/44/thanksgiving-3811492_1280.jpg',
@@ -45,33 +47,34 @@ class mainPageBody extends StatelessWidget {
     );
   }
 
-  Widget _buildNoticeOfficial() {
-    final items = List.generate(1, (i) {//갯수 조절
-      return ListTile(
-        leading: Icon(Icons.notifications_none),
-        title: Text('[공지 사항] n번 버스 운행 중 고장으로 x정류장에서 차고지 행'),//예시입니다 여기에 게시판 연동해서 실시간으로 띄워야 하는 곳
-      );
-    });
-
-    return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: items,
+  Widget _buildNoticeOfficial(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NoticePage()), // Replace NoticePage with your actual notice page class
+        );
+      },
+      child: _buildNoticeListTile('[공지 사항] n번 버스 운행 중 고장으로 x정류장에서 차고지 행'),
     );
   }
 
-  Widget _buildNoticeFree() {
-    final items = List.generate(1, (i) {
-      return ListTile(
-        leading: Icon(Icons.notifications_none),
-        title: Text('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
-      );
-    });
+  Widget _buildNoticeFree(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FreeBoardPage()), // Replace FreeBoardPage with your actual free board page class
+        );
+      },
+      child: _buildNoticeListTile('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
+    );
+  }
 
-    return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: items,
+  Widget _buildNoticeListTile(String title) {
+    return ListTile(
+      leading: Icon(Icons.notifications_none),
+      title: Text(title),
     );
   }
 }
