@@ -3,6 +3,10 @@
         android:label="otbapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+                  android:value="키 값"/>
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
