@@ -6,6 +6,8 @@ import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
 import 'signin.dart';
+//TestBus
+import 'Bus_Arrival_Page.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -110,6 +112,14 @@ class _AppMenuState extends State<AppMenu> {
                       ),
                     ],
                   ),
+                  //TestBus
+                  ListTile(
+                    title: Text('(테스트) 버스 이용하기'),
+                    onTap: () {
+                      _navigateToPage('TestBus', context);
+                      print('(테스트) 버스 이용하기 tapped');
+                    },
+                  ),
                 ],
               ),
             ),
@@ -130,6 +140,9 @@ class _AppMenuState extends State<AppMenu> {
         return NoticePage();
       case 'freeBoard':
         return FreeBoardPage();
+        //TestBus
+      case 'TestBus':
+        return ReserveApp();
       default:
         return MyHomePage();
     }
