@@ -15,8 +15,8 @@ class mainPageBody extends StatelessWidget {
     return ListView(
       children: <Widget>[
         _buildNews(),
-        _buildNoticeOfficial(),
-        _buildNoticeFree(),
+        _buildNoticeOfficial(context),
+        _buildNoticeFree(context),
       ],
     );
   }
