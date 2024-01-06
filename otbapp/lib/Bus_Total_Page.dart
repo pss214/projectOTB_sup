@@ -50,7 +50,8 @@ class _TotalPageState extends State<TotalPage>{
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('예약페이지'),
+        title: Text('버스 탑승 선결제 정보입니다.'),
+        backgroundColor: Colors.orangeAccent,
       ),
       body:Center(
         child: Column(
