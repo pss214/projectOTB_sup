@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '회원가입',
-      home: SignInbus(),
+      home: SignUpbus(),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -16,12 +16,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SignInbus extends StatefulWidget {
+class SignUpbus extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignInbus> {
+class _SignInState extends State<SignUpbus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
