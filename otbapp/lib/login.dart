@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'signin.dart';
+import 'signup.dart';
 
 void main() => runApp(MyApp());
 
@@ -110,7 +110,7 @@ class _LogInState extends State<LogIn> {
                           // 회원가입 버튼 눌렀을 때 수행할 작업 추가해야하는 곳
                           Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignIn()),
+                          MaterialPageRoute(builder: (context) => SignUp()),
     );
     },
 

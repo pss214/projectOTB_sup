@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
-
   void showError(String message) {
     setState(() {
       errorMessage = message;
@@ -169,7 +168,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     polylinePoints = PolylinePoints();
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
