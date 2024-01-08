@@ -51,7 +51,6 @@ class _ReserveWidgetState extends State<MyReserveApp> {
     super.initState();
     fetchPost();
   }
-
   List<List<Info>> chunkPages(List<Info> list, int chunkSize) {
     List<List<Info>> chunks = [];
     for (var i = 0; i < list.length; i += 5) {//개수 조절 여기서 하면 됩니다
