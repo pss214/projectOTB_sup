@@ -14,7 +14,6 @@ class ReserveApp extends StatelessWidget {
     );
   }
 }
-
 class MyReserveApp extends StatefulWidget {
   @override
   _ReserveWidgetState createState() => _ReserveWidgetState();

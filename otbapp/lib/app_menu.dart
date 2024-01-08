@@ -5,7 +5,7 @@ import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
-import 'signup.dart';
+import 'signin.dart';
 //TestBus
 import 'Bus_Arrival_Page.dart';
 
@@ -55,13 +55,15 @@ class _AppMenuState extends State<AppMenu> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUp()),
+                      MaterialPageRoute(builder: (context) => SignIn()),
                     );
                   },
                 )
               ],
             ),
-            drawer: Drawer(
+            
+            /*
+          drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
@@ -69,17 +71,55 @@ class _AppMenuState extends State<AppMenu> {
                     height: 120,
                     child: DrawerHeader(
                       decoration: BoxDecoration(
-                        color: Colors.lightGreen,
-                      ),
-                      child: Text(
-                        '서비스 메뉴',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
+                    color: Colors.lightGreen,
+                  ),
+                  child: Text(
+                    '서비스 메뉴',
+                    style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+            ),*/
+            //위 코드는 로그인 하지 않은 유저에게 보여지는 코드
+            
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  Container(
+                    color: Colors.lightGreen[400],
+                    padding: EdgeInsets.only(top: 40, bottom: 20, left: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '서비스 메뉴',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            /*fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,*/
+                          ),
                         ),
-                      ),
+                        UserAccountsDrawerHeader(
+                          currentAccountPicture: CircleAvatar(
+                            backgroundImage: AssetImage('images/images1.png'),
+                            backgroundColor: Colors.white,
+                          ),
+                          accountName: Text("USERNAME"), //로그인 유저 이름
+                          accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
+                          decoration: BoxDecoration(
+                            color: Colors.lightGreen[400],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
+                  //카테고리 선택 메뉴들
                   ListTile(
                     title: Text('길찾기'),
                     onTap: () {
