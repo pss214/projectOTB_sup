@@ -2,40 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BusReservePage(),
-    );
-  }
-}
-
-class BusReservePage extends StatefulWidget {
-  @override
-  _MyMapState createState() => _MyMapState();
-}
-
-class _MyMapState extends State<BusReservePage> {
-  late GoogleMapController mapController;
-  Location location = Location();
-
+class BusReservePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test'),
+        title: Text('버스 탑승하기'),
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(0.0, 0.0),
-          zoom: 11.0,
+      body: MyApp(),
+    );
+  }
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late GoogleMapController mapController;
+  Location location = Location();
+  LatLng _center = LatLng(0.0, 0.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 11.0,
+          ),
+          myLocationEnabled: true,
+          compassEnabled: true,
         ),
-        myLocationEnabled: true,
-        compassEnabled: true,
       ),
     );
   }
@@ -50,19 +53,23 @@ class _MyMapState extends State<BusReservePage> {
   void _getCurrentLocation() async {
     try {
       var currentLocation = await location.getLocation();
+      setState(() {
+        _center = LatLng(
+          currentLocation.latitude ?? 0.0,
+          currentLocation.longitude ?? 0.0,
+        );
+      });
+
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            target: LatLng(
-              currentLocation.latitude ?? 0.0,
-              currentLocation.longitude ?? 0.0,
-            ),
+            target: _center,
             zoom: 11.0,
           ),
         ),
       );
     } catch (e) {
-      print("내위치값을 가져오지 못했습니다.: $e");
+      print("내 위치값을 가져오지 못했습니다.: $e");
     }
   }
 }
