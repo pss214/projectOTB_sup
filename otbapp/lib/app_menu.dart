@@ -5,7 +5,7 @@ import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
-import 'signin.dart';
+import 'signup.dart';
 //TestBus
 import 'Bus_Arrival_Page.dart';
 
@@ -55,7 +55,7 @@ class _AppMenuState extends State<AppMenu> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => SignUp()),
                     );
                   },
                 )
