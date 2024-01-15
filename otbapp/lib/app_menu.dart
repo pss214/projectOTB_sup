@@ -8,6 +8,8 @@ import 'login.dart';
 import 'signin.dart';
 //TestBus
 import 'Bus_Arrival_Page.dart';
+//TestPay
+import 'pay.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -61,8 +63,7 @@ class _AppMenuState extends State<AppMenu> {
                 )
               ],
             ),
-            
-            /*
+          /*
           drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -83,7 +84,6 @@ class _AppMenuState extends State<AppMenu> {
               ),
             ),*/
             //위 코드는 로그인 하지 않은 유저에게 보여지는 코드
-            
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -106,7 +106,7 @@ class _AppMenuState extends State<AppMenu> {
                         ),
                         UserAccountsDrawerHeader(
                           currentAccountPicture: CircleAvatar(
-                            backgroundImage: AssetImage('images/images1.png'),
+                            //backgroundImage: AssetImage('images/images1.png'),
                             backgroundColor: Colors.white,
                           ),
                           accountName: Text("USERNAME"), //로그인 유저 이름
@@ -160,6 +160,13 @@ class _AppMenuState extends State<AppMenu> {
                       print('(테스트) 버스 이용하기 tapped');
                     },
                   ),
+                  ListTile(
+                    title: Text('(테스트) 결제창'),
+                    onTap: () {
+                      _navigateToPage('TestPay', context);
+                      print('(테스트) 결제창 tapped');
+                    },
+                  ),
                 ],
               ),
             ),
@@ -183,6 +190,9 @@ class _AppMenuState extends State<AppMenu> {
         //TestBus
       case 'TestBus':
         return ReserveApp();
+        //TestPay
+      case 'TestPay':
+        return PayMenu();
       default:
         return MyHomePage();
     }
@@ -192,6 +202,6 @@ class _AppMenuState extends State<AppMenu> {
     setState(() {
       currentPage = page;
     });
-    Navigator.of(context).pop(); // Close the drawer
+    Navigator.of(context).pop();
   }
 }
