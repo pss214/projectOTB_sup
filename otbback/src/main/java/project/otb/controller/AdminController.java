@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import project.otb.dto.LoginDto;
 import project.otb.dto.ResponseDTO;
-import project.otb.api.BusApiService;
+import project.otb.service.BusApiService;
 import project.otb.service.AdminService;
 
 import java.net.URI;

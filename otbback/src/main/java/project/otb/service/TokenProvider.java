@@ -1,4 +1,4 @@
-package project.otb.security;
+package project.otb.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

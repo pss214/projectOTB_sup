@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.otb.dto.ResponseDTO;
-import project.otb.api.NewsService;
+import project.otb.service.NewsService;
 
 import java.util.List;
 

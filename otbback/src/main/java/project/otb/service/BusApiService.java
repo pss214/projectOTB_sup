@@ -1,12 +1,15 @@
-package project.otb.api;
+package project.otb.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import project.otb.dto.BusLiveByRouteDTO;
 import project.otb.dto.BusRouteNmDTO;
 import project.otb.dto.BusStationDTO;
+import project.otb.dto.apidto.*;
 import project.otb.entity.BusRoute;
 import project.otb.entity.BusStation;
 import project.otb.repository.BusRouteRepository;
@@ -191,8 +194,8 @@ public class BusApiService {
             BusRouteApiDTO busdto = pretty.fromJson(api, BusRouteApiDTO.class);
             for (int i = 0; i < busdto.getBusRoute().getList_total_count(); i++) {
                 project.otb.entity.BusRoute busRoute = BusRoute.builder()
-                        .route(busdto.getBusRoute().getRow().get(i).ROUTE)
-                        .routeid(busdto.getBusRoute().getRow().get(i).ROUTE_ID)
+                        .route(busdto.getBusRoute().getRow().get(i).getROUTE())
+                        .routeid(busdto.getBusRoute().getRow().get(i).getROUTE_ID())
                         .build();
                 busRouteRepository.save(busRoute);
             }
@@ -203,14 +206,15 @@ public class BusApiService {
     }
     public String GetBusStationAPI(){
         try {
-            ClassPathResource file = new ClassPathResource("busstionlist.json");
+            ClassPathResource resource = new ClassPathResource("busstionlist.json");
+            Reader reader = new InputStreamReader(resource.getInputStream());
             Gson pretty = new GsonBuilder().setPrettyPrinting().create();
-            BusStationApiDTO busdto = pretty.fromJson(file.getInputStream().toString(), BusStationApiDTO.class);
+            BusStationApiDTO busdto = pretty.fromJson(reader, BusStationApiDTO.class);
             for (int i = 0; i < busdto.getDATA().size(); i++) {
                 BusStation busStation = BusStation.builder()
-                        .stationid(busdto.getDATA().get(i).sttn_id)
-                        .stationuniid(busdto.getDATA().get(i).sttn_no)
-                        .stationname(busdto.getDATA().get(i).sttn_nm)
+                        .stationid(busdto.getDATA().get(i).getSttn_id())
+                        .stationuniid(busdto.getDATA().get(i).getSttn_no())
+                        .stationname(busdto.getDATA().get(i).getSttn_nm())
                         .build();
                 busStationRepository.save(busStation);
             }
@@ -226,13 +230,13 @@ public class BusApiService {
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
         BusStopInformationDTO busdto = pretty.fromJson(api, BusStopInformationDTO.class);
         List<BusStationDTO> res = new ArrayList<>();
-        for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
+        for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
 
-            res.add(i, BusStationDTO.builder().busRouteId(busdto.getMsgBody().itemList.get(i).busRouteId)
-                            .rtNm(busdto.getMsgBody().itemList.get(i).rtNm)
-                            .arrmsg1(busdto.getMsgBody().itemList.get(i).arrmsg1)
-                            .arrmsg2(busdto.getMsgBody().itemList.get(i).arrmsg2)
-                            .vehId1(busdto.getMsgBody().itemList.get(i).vehId1)
+            res.add(i, BusStationDTO.builder().busRouteId(busdto.getMsgBody().getItemList().get(i).getBusRouteId())
+                            .rtNm(busdto.getMsgBody().getItemList().get(i).getRtNm())
+                            .arrmsg1(busdto.getMsgBody().getItemList().get(i).getArrmsg1())
+                            .arrmsg2(busdto.getMsgBody().getItemList().get(i).getArrmsg2())
+                            .vehId1(busdto.getMsgBody().getItemList().get(i).getVehId1())
                             .build());
         }
         return res;
@@ -243,12 +247,12 @@ public class BusApiService {
         if(bus.getStationlist()!=null){
             BusStationRouteDTO busdto = pretty.fromJson(bus.getStationlist(), BusStationRouteDTO.class);
             List<BusRouteNmDTO> res = new ArrayList<>();
-            for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).arsId, station)){
-                    for (int j = i; j < busdto.getMsgBody().itemList.size();j++) {
+            for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
+                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).getArsId(), station)){
+                    for (int j = i; j < busdto.getMsgBody().getItemList().size(); j++) {
                         res.add(j-i, BusRouteNmDTO.builder()
-                                .stationNm(busdto.getMsgBody().getItemList().get(j).stationNm)
-                                .arsId(busdto.getMsgBody().getItemList().get(j).arsId)
+                                .stationNm(busdto.getMsgBody().getItemList().get(j).getStationNm())
+                                .arsId(busdto.getMsgBody().getItemList().get(j).getArsId())
                                 .build());
                     }
                     break;
@@ -262,12 +266,12 @@ public class BusApiService {
             busRouteRepository.save(bus);
             BusStationRouteDTO busdto = pretty.fromJson(api, BusStationRouteDTO.class);
             List<BusRouteNmDTO> res = new ArrayList<>();
-            for (int i = 0; i < busdto.getMsgBody().itemList.size(); i++) {
-                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).arsId, station)){
-                    for (int j = i; j < busdto.getMsgBody().itemList.size();j++) {
+            for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
+                if(Objects.equals(busdto.getMsgBody().getItemList().get(i).getArsId(), station)){
+                    for (int j = i; j < busdto.getMsgBody().getItemList().size(); j++) {
                         res.add(j-i, BusRouteNmDTO.builder()
-                                .stationNm(busdto.getMsgBody().getItemList().get(j).stationNm)
-                                .arsId(busdto.getMsgBody().getItemList().get(j).arsId)
+                                .stationNm(busdto.getMsgBody().getItemList().get(j).getStationNm())
+                                .arsId(busdto.getMsgBody().getItemList().get(j).getArsId())
                                 .build());
                     }
                     break;
@@ -286,13 +290,13 @@ public class BusApiService {
         List<BusLiveByRouteDTO> res = new ArrayList<>();
         for (int i = 0; i < busdto.getMsgBody().getItemList().size(); i++) {
             res.add(BusLiveByRouteDTO.builder()
-                    .stNm(busdto.getMsgBody().getItemList().get(i).stNm)
-                    .rtNm(busdto.getMsgBody().getItemList().get(i).rtNm)
-                    .arsId(busdto.getMsgBody().getItemList().get(i).arsId)
-                    .plainNo1(busdto.getMsgBody().getItemList().get(i).plainNo1)
-                    .arrmsg1(busdto.getMsgBody().getItemList().get(i).arrmsg1)
-                    .stationNm1(busdto.getMsgBody().getItemList().get(i).stationNm1)
-                    .nstnId1(busdto.getMsgBody().getItemList().get(i).nstnId1)
+                    .stNm(busdto.getMsgBody().getItemList().get(i).getStNm())
+                    .rtNm(busdto.getMsgBody().getItemList().get(i).getRtNm())
+                    .arsId(busdto.getMsgBody().getItemList().get(i).getArsId())
+                    .plainNo1(busdto.getMsgBody().getItemList().get(i).getPlainNo1())
+                    .arrmsg1(busdto.getMsgBody().getItemList().get(i).getArrmsg1())
+                    .stationNm1(busdto.getMsgBody().getItemList().get(i).getStationNm1())
+                    .nstnId1(busdto.getMsgBody().getItemList().get(i).getNstnId1())
                     .build());
         }
         return res;
@@ -302,6 +306,6 @@ public class BusApiService {
         String api = readBusPlaceNum(dto);
         Gson pretty = new GsonBuilder().setPrettyPrinting().create();
         BusRoutePlateDTO busdto = pretty.fromJson(api, BusRoutePlateDTO.class);
-        return busdto.getMsgBody().getItemList().get(0).plainNo;
+        return busdto.getMsgBody().getItemList().get(0).getPlainNo();
     }
 }

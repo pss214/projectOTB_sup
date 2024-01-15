@@ -1,8 +1,9 @@
-package project.otb.api;
+package project.otb.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Service;
+import project.otb.dto.apidto.NewsDTO;
 
 import java.io.BufferedReader;
 import java.io.IOException;

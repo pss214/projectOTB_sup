@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.otb.dto.ResponseDTO;
 import project.otb.dto.StationDTO;
-import project.otb.api.BusApiService;
+import project.otb.service.BusApiService;
 
 import java.util.List;
 

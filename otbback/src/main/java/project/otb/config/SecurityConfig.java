@@ -1,4 +1,4 @@
-package project.otb.security;
+package project.otb.config;
 
 
 import org.springframework.context.annotation.Bean;
@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import project.otb.service.TokenProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TokenProvider tokenProvider;
-    private final String[] allowedUrls = {"/user/**","/bus/**","/admin/signin"};
+    private final String[] allowedUrls = {"/user/**","/bus/**","/admin/signin","/error/**"};
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, TokenProvider tokenProvider) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.tokenProvider = tokenProvider;
