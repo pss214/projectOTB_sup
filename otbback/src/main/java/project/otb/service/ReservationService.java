@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import project.otb.DTO.ReservationDTO;
 import project.otb.api.BusApiService;
 import project.otb.entity.Bus;
-import project.otb.repositiry.BusRepository;
-import project.otb.repositiry.BusStationRepository;
-import project.otb.repositiry.ReservationRepository;
+import project.otb.repository.BusRepository;
+import project.otb.repository.BusStationRepository;
+import project.otb.repository.ReservationRepository;
 import project.otb.entity.Reservation;
 
 import java.time.LocalDateTime;

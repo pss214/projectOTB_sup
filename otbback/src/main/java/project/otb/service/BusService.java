@@ -11,11 +11,11 @@ import project.otb.DTO.ReservationDTO;
 import project.otb.api.BusApiService;
 import project.otb.entity.Bus;
 import project.otb.entity.Reservation;
-import project.otb.repositiry.BusRouteRepository;
-import project.otb.repositiry.ReservationRepository;
-import project.otb.repositiry.UserRepository;
+import project.otb.repository.BusRouteRepository;
+import project.otb.repository.ReservationRepository;
+import project.otb.repository.UserRepository;
 import project.otb.security.TokenProvider;
-import project.otb.repositiry.BusRepository;
+import project.otb.repository.BusRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

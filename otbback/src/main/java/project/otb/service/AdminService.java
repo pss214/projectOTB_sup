@@ -1,15 +1,12 @@
 package project.otb.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.otb.DTO.AdminDTO;
 import project.otb.DTO.LoginDto;
-import project.otb.DTO.ResponseDTO;
 import project.otb.api.BusApiService;
 import project.otb.entity.*;
-import project.otb.repositiry.*;
+import project.otb.repository.*;
 import project.otb.security.TokenProvider;
 
 import java.util.List;

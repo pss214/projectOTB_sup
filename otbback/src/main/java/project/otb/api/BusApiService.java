@@ -8,8 +8,8 @@ import project.otb.DTO.BusRouteNmDTO;
 import project.otb.DTO.BusStationDTO;
 import project.otb.entity.BusRoute;
 import project.otb.entity.BusStation;
-import project.otb.repositiry.BusRouteRepository;
-import project.otb.repositiry.BusStationRepository;
+import project.otb.repository.BusRouteRepository;
+import project.otb.repository.BusStationRepository;
 
 
 import java.io.*;
