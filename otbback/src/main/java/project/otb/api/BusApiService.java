@@ -2,6 +2,7 @@ package project.otb.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import project.otb.DTO.BusLiveByRouteDTO;
 import project.otb.DTO.BusRouteNmDTO;
@@ -202,9 +203,9 @@ public class BusApiService {
     }
     public String GetBusStationAPI(){
         try {
-            Reader reader = new FileReader("./src/main/resources/busstionlist.json");
+            ClassPathResource file = new ClassPathResource("busstionlist.json");
             Gson pretty = new GsonBuilder().setPrettyPrinting().create();
-            BusStationApiDTO busdto = pretty.fromJson(reader, BusStationApiDTO.class);
+            BusStationApiDTO busdto = pretty.fromJson(file.getInputStream().toString(), BusStationApiDTO.class);
             for (int i = 0; i < busdto.getDATA().size(); i++) {
                 BusStation busStation = BusStation.builder()
                         .stationid(busdto.getDATA().get(i).sttn_id)
