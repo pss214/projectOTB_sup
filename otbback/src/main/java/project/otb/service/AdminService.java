@@ -2,8 +2,8 @@ package project.otb.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import project.otb.DTO.AdminDTO;
-import project.otb.DTO.LoginDto;
+import project.otb.dto.AdminDTO;
+import project.otb.dto.LoginDto;
 import project.otb.api.BusApiService;
 import project.otb.entity.*;
 import project.otb.repository.*;

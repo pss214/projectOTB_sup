@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import project.otb.DTO.ReservationDTO;
-import project.otb.DTO.ResponseDTO;
+import project.otb.dto.ReservationDTO;
+import project.otb.dto.ResponseDTO;
 import project.otb.service.BusService;
 
 import java.util.List;

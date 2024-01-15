@@ -1,4 +1,4 @@
-package project.otb.DTO;
+package project.otb.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BusStationDTO{
-    String rtNm;
-    String busRouteId;
-    String arrmsg1;
-    String arrmsg2;
-    String vehId1;
+public class BusRouteNmDTO{
+    String stationNm;
+    String arsId;
 }
-

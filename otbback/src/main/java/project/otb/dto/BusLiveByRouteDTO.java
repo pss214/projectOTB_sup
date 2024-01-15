@@ -1,4 +1,4 @@
-package project.otb.DTO;
+package project.otb.dto;
 
 import lombok.*;
 

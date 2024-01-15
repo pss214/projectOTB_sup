@@ -12,14 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import project.otb.DTO.ResponseDTO;
-import project.otb.DTO.UserDTO;
+import project.otb.dto.ResponseDTO;
+import project.otb.dto.UserDTO;
 import project.otb.service.UserService;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/member")

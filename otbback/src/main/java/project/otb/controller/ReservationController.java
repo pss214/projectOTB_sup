@@ -11,9 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import project.otb.DTO.ReservationDTO;
-import project.otb.DTO.ResponseDTO;
-import project.otb.DTO.StationDTO;
+import project.otb.dto.ReservationDTO;
+import project.otb.dto.ResponseDTO;
 import project.otb.api.BusApiService;
 import project.otb.service.ReservationService;
 

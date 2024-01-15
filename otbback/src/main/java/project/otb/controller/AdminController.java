@@ -6,8 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import project.otb.DTO.LoginDto;
-import project.otb.DTO.ResponseDTO;
+import project.otb.dto.LoginDto;
+import project.otb.dto.ResponseDTO;
 import project.otb.api.BusApiService;
 import project.otb.service.AdminService;
 

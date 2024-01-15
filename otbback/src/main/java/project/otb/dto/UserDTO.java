@@ -1,7 +1,6 @@
-package project.otb.DTO;
+package project.otb.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nonnull;
 import lombok.*;
 
 import java.time.LocalDateTime;
