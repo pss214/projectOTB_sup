@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'my_home_page.dart';
 import 'find_road.dart';
-import 'reserveBus.dart';
+import 'Bus_Select_Start_Page.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
 import 'signup.dart';
 //TestBus
-import 'Bus_Arrival_Page.dart';
+import 'Bus_Arrival_Info_Page.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -106,7 +106,7 @@ class _AppMenuState extends State<AppMenu> {
                         ),
                         UserAccountsDrawerHeader(
                           currentAccountPicture: CircleAvatar(
-                            backgroundImage: AssetImage('images/images1.png'),
+                            backgroundImage: AssetImage('assets/images/images1.png'),
                             backgroundColor: Colors.white,
                           ),
                           accountName: Text("USERNAME"), //로그인 유저 이름

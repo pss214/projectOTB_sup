@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Bus_Stop_Info.dart';
-import 'Bus_Total_Page.dart';
+import 'Bus_Total__Info_Page.dart';
 
 class SelectPage extends StatefulWidget {
   final String busNm; // routeName
@@ -10,6 +10,8 @@ class SelectPage extends StatefulWidget {
   final String busVehId; // vehId
   final String arrivalMsg1; // arrmsg1
   final String arrivalMsg2; // arrmsg2
+  final String selectedStopNo;
+
 
   SelectPage({
     required this.busNm,
@@ -17,6 +19,9 @@ class SelectPage extends StatefulWidget {
     required this.arrivalMsg1,
     required this.arrivalMsg2,
     required this.busVehId,
+    required this.selectedStopNo,
+
+
   });
 
   @override
@@ -24,6 +29,7 @@ class SelectPage extends StatefulWidget {
     busNm: busNm,
     busId: busId,
     busVehId: busVehId,
+    selectedStopNo:selectedStopNo,
   );
 }
 
@@ -31,8 +37,9 @@ class _SelectPageState extends State<SelectPage> {
   final String busId;
   final String busVehId;
   final String busNm;
+  final String selectedStopNo;
   _SelectPageState(
-      {required this.busNm, required this.busId, required this.busVehId});
+      {required this.busNm, required this.busId, required this.busVehId, required this.selectedStopNo});
 
   List<BusStop> datas = [];
   String selectedStop = '';
@@ -42,7 +49,7 @@ class _SelectPageState extends State<SelectPage> {
       "Content-Type": "application/json",
       //"Authorization": "otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJjb2xhYmVhcjc1NCIsImlhdCI6MTcwNDQyNDE3MSwiZXhwIjoxNzA0NDM0OTcxfQ.UuXXamzlmHLP07whzkpGra3du0tZh24uTmRwesMXQefimbiVasqohFJmzE_vDzMbazt5l_ce6dd6T_BeNqHt7g",
     };
-    var data = {"busrouteid": busId, "stationid": "22014"}; //
+    var data = {"busrouteid": busId, "stationid": selectedStopNo}; //
     var url = Uri.parse('http://bak10172.asuscomm.com:10001/bus/route-name');
     var response = await http.post(
         url, body: json.encode(data), headers: headers);
