@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
-import 'signup.dart';
+import 'package:fluttertest/app_menu.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+
+
+void main() => runApp(const MyApp());
+
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '로그인',
-      home: LogIn(),
+      home: FutureBuilder(
+        future: checkTokenExistence(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // 토큰이 있으면 메인 화면으로 이동
+            return snapshot.data == true ? const AppMenu() : const LogIn();
+          } else {
+            // 아직 토큰 검사가 완료되지 않았으면 로딩 화면 등을 표시
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -18,40 +37,151 @@ class MyApp extends StatelessWidget {
 }
 
 class LogIn extends StatefulWidget {
+  const LogIn({super.key});
+
   @override
   State<LogIn> createState() => _LogInState();
 }
+class Userjwt {
+  final String token;
 
+  Userjwt(this.token);
+
+  factory Userjwt.fromJson(dynamic json) {
+    try {
+      final data = (json['data'] as List).cast<Map>();
+      final token = data.first['token'];
+
+      if (token is String) {
+        return Userjwt(token);
+      } else {
+        throw Exception('');
+      }
+    } catch (_) {
+      return Userjwt('');
+    }
+  }
+
+  @override
+  String toString() {
+    return 'Userjwt{token: $token}';
+  }
+}
 class _LogInState extends State<LogIn> {
+
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+
+  void signIn() async {
+    String id = idController.text;
+    String password = passwordController.text;
+
+    var data = {
+      "username": id,
+      "password": password,
+    };
+
+    try {
+      var response = await http.post(
+        Uri.parse('http://bak10172.asuscomm.com:10001/user/signin'),
+        body: json.encode(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      print("응답 코드: ${response.statusCode}");
+      print("응답 본문: ${response.body}");
+
+      if (response.statusCode == 200) {
+        print("로그인 성공");
+
+
+        var jsonResponse = json.decode(response.body);
+        Userjwt userjwt = Userjwt.fromJson(jsonResponse);
+        String jwtToken = userjwt.token;
+
+        //로그인 성공 후 토큰 값 출력하는 코드
+        print('토큰 값: $jwtToken');
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwtToken', jwtToken);
+
+        // 로그인 성공 후 로컬 스토리지에 저장된 토큰 값 확인
+        await checkTokenExistence();
+
+        if (jwtToken.isNotEmpty) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwtToken', jwtToken);
+
+        } else {
+          print('토큰 값이 유효하지 않습니다.');
+        }
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AppMenu()), // MainPageBody로 이동
+        );
+      } else {
+        print("로그인 실패");
+        showAlertDialog(context, "로그인 실패", "아이디와 비밀번호를 확인해주세요.");
+      }
+    } catch (e) {
+      print("로그인 에러: $e");
+    }
+  }
+
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+
+          },
+          child: const Text('확인'),
+        ),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('로그인'),
+        title: const Text('로그인'),
         elevation: 0.0,
-        backgroundColor: Colors.lightGreen, // 여기에서 앱 바 색상 변경
+        backgroundColor: Colors.lightGreen,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.home), // 홈 아이콘 (변경 여부 있음)
+          icon: const Icon(Icons.home),
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
         ),
-        actions: <Widget>[],
-        // 임시
+        actions: const <Widget>[],
       ),
       body: Column(
         children: [
-          Padding(padding: EdgeInsets.only(top: 50)),
-          Center(
+          const Padding(padding: EdgeInsets.only(top: 50)),
+          const Center(
             child: Image(
-              image: AssetImage('image/otb.png'),//이미지 경로
+              image: AssetImage('image/otb.png'),
               width: 170.0,
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 20.0),
-            padding: EdgeInsets.all(20.0),
+            margin: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
               color: Colors.white,
@@ -60,7 +190,7 @@ class _LogInState extends State<LogIn> {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 3,
                   blurRadius: 7,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -68,58 +198,62 @@ class _LogInState extends State<LogIn> {
               child: Theme(
                 data: ThemeData(
                   primaryColor: Colors.grey,
-                  inputDecorationTheme: InputDecorationTheme(
+                  inputDecorationTheme: const InputDecorationTheme(
                     labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0),
                   ),
                 ),
                 child: Column(
                   children: [
                     TextField(
-                      decoration: InputDecoration(labelText: '아이디',
-                      hintText: "아이디를 입력해주세요"),
+                      controller: idController,
+                      decoration: const InputDecoration(
+                        labelText: '아이디',
+                        hintText: '아이디를 입력해주세요.',
+                      ),
                       keyboardType: TextInputType.emailAddress,
                     ),
                     TextField(
-                      decoration:
-                      InputDecoration(labelText: '비밀번호',
-                      hintText: "비밀번호를 입력해주세요."),
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        labelText: '비밀번호',
+                        hintText: '비밀번호를 입력해주세요.',
+                      ),
                       keyboardType: TextInputType.text,
                       obscureText: true,
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                     SizedBox(
                       width: double.infinity,
                       child: TextButton(
-                        onPressed: () {
-                          // 로그인 버튼 눌렀을 때 수행할 작업 추가
-                        },
-                        child: Text(
+                        onPressed: signIn,
+                        style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                        ),
+                        child: const Text(
                           '로그인',
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
                         ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                        ),
                       ),
                     ),
-                    SizedBox(height: 10.0), // 로긘과 회원가입 사이의 공백범위
+                    const SizedBox(height: 10.0),
                     SizedBox(
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-                          // 회원가입 버튼 눌렀을 때 수행할 작업 추가해야하는 곳
+                          // 회원가입 버튼 눌렀을 때 수행할 작업 추가
                           Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUp()),
-    );
-    },
-
-                        child: Text(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignUp()),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                        ),
+                        child: const Text(
                           '회원가입',
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.orangeAccent),
                         ),
                       ),
                     ),
@@ -132,4 +266,37 @@ class _LogInState extends State<LogIn> {
       ),
     );
   }
+}
+
+// 추가 코드
+class SignUp extends StatelessWidget {
+  const SignUp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 회원가입 화면 구현
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('회원가입'),
+        // 다른 액션 등을 추가할 수 있습니다.
+      ),
+      body: const Center(
+        child: Text('회원가입 화면'),
+      ),
+    );
+  }
+}
+Future<bool> checkTokenExistence() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? storedToken = prefs.getString('jwtToken');
+
+  if (storedToken != null && storedToken.isNotEmpty) {
+    print('로컬 스토리지에 저장된 토큰 값: $storedToken');
+    // 여기에 추가적인 작업을 수행할 수도 있습니다.
+  } else {
+    print('로컬 스토리지에 저장된 토큰이 없거나 비어 있습니다.');
+    // 여기에 추가적인 작업을 수행할 수도 있습니다.
+  }
+
+  return storedToken != null && storedToken.isNotEmpty;
 }

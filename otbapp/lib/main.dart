@@ -1,4 +1,4 @@
 import 'package:flutter/material.dart';
 import 'app_menu.dart';
 
-void main() => runApp(AppMenu());
+void main() => runApp(const AppMenu());

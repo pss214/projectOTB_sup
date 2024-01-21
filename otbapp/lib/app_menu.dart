@@ -5,11 +5,13 @@ import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
-import 'signin.dart';
+import 'signup.dart' as SignUpPage;
 //TestBus
 import 'Bus_Arrival_Page.dart';
 
 class AppMenu extends StatefulWidget {
+  const AppMenu({super.key});
+
   @override
   _AppMenuState createState() => _AppMenuState();
 }
@@ -36,26 +38,26 @@ class _AppMenuState extends State<AppMenu> {
                     currentPage = 'home';
                   });
                 },
-                child: Text('OTB'),
+                child: const Text('OTB'),
               ),
               centerTitle: true,
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: const Icon(Icons.menu),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LogIn()),
+                      MaterialPageRoute(builder: (context) => const LogIn()),
                     );
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignUpPage.SignUp()),
                     );
                   },
                 )
@@ -90,11 +92,11 @@ class _AppMenuState extends State<AppMenu> {
                 children: [
                   Container(
                     color: Colors.lightGreen[400],
-                    padding: EdgeInsets.only(top: 40, bottom: 20, left: 16),
+                    padding: const EdgeInsets.only(top: 40, bottom: 20, left: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '서비스 메뉴',
                           style: TextStyle(
                             color: Colors.white,
@@ -105,12 +107,12 @@ class _AppMenuState extends State<AppMenu> {
                           ),
                         ),
                         UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
+                          currentAccountPicture: const CircleAvatar(
                             backgroundImage: AssetImage('images/images1.png'),
                             backgroundColor: Colors.white,
                           ),
-                          accountName: Text("USERNAME"), //로그인 유저 이름
-                          accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
+                          accountName: const Text("USERNAME"), //로그인 유저 이름
+                          accountEmail: const Text("USER@Email.com"), //로그인 유저 이메일
                           decoration: BoxDecoration(
                             color: Colors.lightGreen[400],
                           ),
@@ -121,30 +123,30 @@ class _AppMenuState extends State<AppMenu> {
 
                   //카테고리 선택 메뉴들
                   ListTile(
-                    title: Text('길찾기'),
+                    title: const Text('길찾기'),
                     onTap: () {
                       _navigateToPage('navigation', context);
                     },
                   ),
                   ListTile(
-                    title: Text('버스 이용하기'),
+                    title: const Text('버스 이용하기'),
                     onTap: () {
                       _navigateToPage('bus', context);
                       print('버스 이용하기 tapped');
                     },
                   ),
                   ExpansionTile(
-                    title: Text('게시판'),
+                    title: const Text('게시판'),
                     children: [
                       ListTile(
-                        title: Text('공지사항'),
+                        title: const Text('공지사항'),
                         onTap: () {
                           _navigateToPage('notice', context);
                           print('공지사항 tapped');
                         },
                       ),
                       ListTile(
-                        title: Text('자유게시판'),
+                        title: const Text('자유게시판'),
                         onTap: () {
                           _navigateToPage('freeBoard', context);
                           print('자유게시판 tapped');
@@ -154,7 +156,7 @@ class _AppMenuState extends State<AppMenu> {
                   ),
                   //TestBus
                   ListTile(
-                    title: Text('(테스트) 버스 이용하기'),
+                    title: const Text('(테스트) 버스 이용하기'),
                     onTap: () {
                       _navigateToPage('TestBus', context);
                       print('(테스트) 버스 이용하기 tapped');
@@ -173,18 +175,18 @@ class _AppMenuState extends State<AppMenu> {
   Widget _getPage() {
     switch (currentPage) {
       case 'navigation':
-        return NavigationPage();
+        return const NavigationPage();
       case 'bus':
-        return BusReservePage();
+        return const BusReservePage();
       case 'notice':
-        return NoticePage();
+        return const NoticePage();
       case 'freeBoard':
-        return FreeBoardPage();
+        return const FreeBoardPage();
         //TestBus
       case 'TestBus':
-        return ReserveApp();
+        return const ReserveApp();
       default:
-        return MyHomePage();
+        return const MyHomePage();
     }
   }
 

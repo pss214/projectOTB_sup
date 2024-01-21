@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '마이 페이지',
-      home: MyPage(),
+      home: const MyPage(),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyPage extends StatefulWidget {
+  const MyPage({super.key});
+
   @override
   State<MyPage> createState() => _MyPageState();
 }
@@ -28,12 +32,12 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('마이 페이지'),
+        title: const Text('마이 페이지'),
         elevation: 0.0,
         backgroundColor: Colors.lightGreen,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.home),
+          icon: const Icon(Icons.home),
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
@@ -44,21 +48,21 @@ class _MyPageState extends State<MyPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               '회원 정보',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20.0,
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              padding: EdgeInsets.all(16.0),
-              child: Column(
+              padding: const EdgeInsets.all(16.0),
+              child: const Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +106,7 @@ class _MyPageState extends State<MyPage> {
                 ],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -112,82 +116,82 @@ class _MyPageState extends State<MyPage> {
                       isEditing = !isEditing;
                     });
                   },
-                  child: Text(
-                    '수정하기',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.orangeAccent,
+                    backgroundColor: Colors.orangeAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ),
+                  ),
+                  child: const Text(
+                    '수정하기',
+                    style: TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // 회원 탈퇴 버튼 눌렀을 때 실행되는 기능 추가
                   },
-                  child: Text(
-                    '회원 탈퇴',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.orangeAccent,
+                    backgroundColor: Colors.orangeAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ),
+                  ),
+                  child: const Text(
+                    '회원 탈퇴',
+                    style: TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // QR 보기 버튼 눌렀을 때 실행되는 기능 추가
                   },
-                  child: Text(
-                    'QR 보기',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.orangeAccent,
+                    backgroundColor: Colors.orangeAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                   ),
+                  child: const Text(
+                    'QR 보기',
+                    style: TextStyle(fontSize: 16.0, color: Colors.white),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             if (isEditing)
               Column(
                 children: [
-                  TextField(
+                  const TextField(
                     decoration: InputDecoration(
                       hintText: '새로운 아이디',
                     ),
                   ),
-                  TextField(
+                  const TextField(
                     decoration: InputDecoration(
                       hintText: '새로운 비밀번호',
                     ),
                   ),
-                  TextField(
+                  const TextField(
                     decoration: InputDecoration(
                       hintText: '비밀번호 확인',
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
                       // 저장 버튼 눌렀을 때 실행되는 기능 추가
                     },
-                    child: Text(
-                      '저장 하기',
-                      style: TextStyle(fontSize: 16.0, color: Colors.white),
-                    ),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.orangeAccent,
+                      backgroundColor: Colors.orangeAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
                       ),
+                    ),
+                    child: const Text(
+                      '저장 하기',
+                      style: TextStyle(fontSize: 16.0, color: Colors.white),
                     ),
                   ),
                 ],

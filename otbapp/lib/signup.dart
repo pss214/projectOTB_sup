@@ -3,15 +3,17 @@ import 'signupbus.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '회원가입',
-      home: SignUp(),
+      home: const SignUp(),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -20,6 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
   @override
   State<StatefulWidget> createState() => _SignUpState();
 }
@@ -71,10 +75,10 @@ class _SignUpState extends State<SignUp> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("비밀번호가 일치하지 않습니다."),
+          title: const Text("비밀번호가 일치하지 않습니다."),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: const Text("확인"),
               onPressed: () {
                 Navigator.of(context).pop(); // 경고창 닫기
               },
@@ -90,10 +94,10 @@ class _SignUpState extends State<SignUp> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("회원가입이 완료되었습니다."),
+          title: const Text("회원가입이 완료되었습니다."),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: const Text("확인"),
               onPressed: () {
                 Navigator.of(context).popUntil((route) => route.isFirst); // 처음 페이지로 이동
               },
@@ -108,31 +112,31 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입'),
+        title: const Text('회원가입'),
         elevation: 0.0,
         backgroundColor: Colors.lightGreen,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.home),
+          icon: const Icon(Icons.home),
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
         ),
-        actions: <Widget>[],
+        actions: const <Widget>[],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(padding: EdgeInsets.only(top: 50)),
-            Center(
+            const Padding(padding: EdgeInsets.only(top: 50)),
+            const Center(
               child: Image(
                 image: AssetImage('image/otb.png'),
                 width: 170.0,
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20.0),
-              padding: EdgeInsets.all(20.0),
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
                 color: Colors.white,
@@ -141,7 +145,7 @@ class _SignUpState extends State<SignUp> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 3,
                     blurRadius: 7,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -149,7 +153,7 @@ class _SignUpState extends State<SignUp> {
                 child: Theme(
                   data: ThemeData(
                     primaryColor: Colors.grey,
-                    inputDecorationTheme: InputDecorationTheme(
+                    inputDecorationTheme: const InputDecorationTheme(
                       labelStyle: TextStyle(color: Colors.teal, fontSize: 15.0),
                     ),
                   ),
@@ -157,7 +161,7 @@ class _SignUpState extends State<SignUp> {
                     children: [
                       TextField(
                         controller: idController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: '아이디',
                           hintText: '아이디를 입력해주세요.',
                         ),
@@ -165,7 +169,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextField(
                         controller: emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'E-Mail',
                           hintText: '이메일을 입력해주세요.',
                         ),
@@ -173,7 +177,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextField(
                         controller: passwordController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: '비밀번호',
                           hintText: '비밀번호를 입력해주세요.',
                         ),
@@ -181,7 +185,7 @@ class _SignUpState extends State<SignUp> {
                         obscureText: true,
                       ),
                       TextField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: '비밀번호 확인',
                           hintText: '비밀번호를 입력해주세요.',
                         ),
@@ -200,38 +204,38 @@ class _SignUpState extends State<SignUp> {
                           }
                         },
                       ),
-                      SizedBox(height: 40.0),
+                      const SizedBox(height: 40.0),
                       SizedBox(
                         width: double.infinity,
                         child: TextButton(
                           onPressed: signUp,
-                          child: Text(
-                            '회원가입',
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
-                          ),
                           style: ButtonStyle(
                             backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.orangeAccent),
                           ),
+                          child: const Text(
+                            '회원가입',
+                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       SizedBox(
                         width: double.infinity,
                         child: TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SignUpbus()),
+                              MaterialPageRoute(builder: (context) => const SignUpbus()),
                             );
                           },
-                          child: Text(
-                            '버스기사 전용 회원가입',
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
-                          ),
                           style: ButtonStyle(
                             backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                          ),
+                          child: const Text(
+                            '버스기사 전용 회원가입',
+                            style: TextStyle(color: Colors.white, fontSize: 18.0),
                           ),
                         ),
                       ),

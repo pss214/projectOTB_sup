@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class BusReservePage extends StatelessWidget {
+  const BusReservePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('버스 탑승하기'),
+        title: const Text('버스 탑승하기'),
       ),
-      body: MyApp(),
+      body: const MyApp(),
     );
   }
 }

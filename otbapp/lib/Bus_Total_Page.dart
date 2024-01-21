@@ -9,7 +9,7 @@ class TotalPage extends StatefulWidget {
   final String vehId;
   final String busId;
 
-  TotalPage({
+  const TotalPage({super.key, 
     required this.start,
     required this.arrive,
     required this.vehId,
@@ -69,7 +69,7 @@ class _TotalPageState extends State<TotalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('버스 탑승 선결제 정보입니다.'),
+        title: const Text('버스 탑승 선결제 정보입니다.'),
         backgroundColor: Colors.orangeAccent,
       ),
       body: Center(
@@ -95,7 +95,7 @@ class _TotalPageState extends State<TotalPage> {
                 onPressed: () {
                   fetchReserve();
                 },
-                child: Text("통신상태확인용"),
+                child: const Text("통신상태확인용"),
               ),
             ),
           ],
