@@ -44,7 +44,7 @@ class _AppMenuState extends State<AppMenu> {
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: Icon(Icons.login),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -53,7 +53,7 @@ class _AppMenuState extends State<AppMenu> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: Icon(Icons.assignment_ind),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -121,12 +121,14 @@ class _AppMenuState extends State<AppMenu> {
 
                   //카테고리 선택 메뉴들
                   ListTile(
+                    leading: Icon(Icons.navigation),
                     title: Text('길찾기'),
                     onTap: () {
                       _navigateToPage('navigation', context);
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.bus_alert),
                     title: Text('버스 이용하기'),
                     onTap: () {
                       _navigateToPage('bus', context);
@@ -137,6 +139,7 @@ class _AppMenuState extends State<AppMenu> {
                     title: Text('게시판'),
                     children: [
                       ListTile(
+                        leading: Icon(Icons.notifications_none),
                         title: Text('공지사항'),
                         onTap: () {
                           _navigateToPage('notice', context);
@@ -144,6 +147,7 @@ class _AppMenuState extends State<AppMenu> {
                         },
                       ),
                       ListTile(
+                        leading: Icon(Icons.edit),
                         title: Text('자유게시판'),
                         onTap: () {
                           _navigateToPage('freeBoard', context);
