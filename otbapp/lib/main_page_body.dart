@@ -67,13 +67,20 @@ class mainPageBody extends StatelessWidget {
           MaterialPageRoute(builder: (context) => FreeBoardPage()), // Replace FreeBoardPage with your actual free board page class
         );
       },
-      child: _buildNoticeListTile('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
+      child: _buildFreeBoardTile('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
     );
   }
 
   Widget _buildNoticeListTile(String title) {
     return ListTile(
       leading: Icon(Icons.notifications_none),
+      title: Text(title),
+    );
+  }
+  
+  Widget _buildFreeBoardTile(String title) {
+    return ListTile(
+      leading: Icon(Icons.edit),
       title: Text(title),
     );
   }
