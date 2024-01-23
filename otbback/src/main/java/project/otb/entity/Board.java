@@ -25,4 +25,7 @@ public class Board {
     private int views;
     private String type;
     private LocalDate date;
+    public void addview(){
+        this.views++;
+    }
 }
