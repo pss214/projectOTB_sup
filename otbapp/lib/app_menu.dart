@@ -32,13 +32,25 @@ class _AppMenuState extends State<AppMenu> {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: InkWell(
+              title: GestureDetector(
                 onTap: () {
                   setState(() {
                     currentPage = 'home';
                   });
                 },
-                child: Text('OTB'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,//가로 정렬을 중앙으로 설정
+                   crossAxisAlignment: CrossAxisAlignment.center,//세로 정렬을 중앙으로 설정
+                  children: [
+                    Image.asset(
+                      'assets/otblogogogo.png',
+                      width: 72,//이미지의 가로 크기
+                      height: 72,//이미지의 세로 크기
+                    ),
+                    /*SizedBox(width: 8),
+                    Text('OTB'),*/
+                  ],
+                ),
               ),
               centerTitle: true,
               elevation: 0.0,
