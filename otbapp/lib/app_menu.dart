@@ -10,6 +10,7 @@ import 'signin.dart';
 import 'Bus_Arrival_Page.dart';
 //TestPay
 import 'pay.dart';
+import 'my_profile_page.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -115,16 +116,24 @@ class _AppMenuState extends State<AppMenu> {
                             fontWeight: FontWeight.bold,
                             color: Colors.black,*/
                           ),
-                        ),
-                        UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
-                            //backgroundImage: AssetImage('images/images1.png'),
-                            backgroundColor: Colors.white,
-                          ),
-                          accountName: Text("USERNAME"), //로그인 유저 이름
-                          accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
-                          decoration: BoxDecoration(
-                            color: Colors.lightGreen[400],
+                        ),  
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyProfilePage()),
+                          );
+                        },
+                        child:UserAccountsDrawerHeader(
+                            currentAccountPicture: CircleAvatar(
+                              backgroundColor: Colors.white,
+                            ),
+                            accountName: Text("USERNAME"), //로그인 유저 이름
+                            accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
+                            decoration: BoxDecoration(
+                              color: Colors.lightGreen[400],
+                            ),
                           ),
                         ),
                       ],
