@@ -32,9 +32,9 @@ public class PayService {
                 .quantity(1)
                 .total_amount(1450)
                 .tax_free_amount(200)
-                .approval_url("http://localhost:8080/pay/success")
-                .cancel_url("http://localhost:8080/pay/cancel")
-                .fail_url("http://localhost:8080/pay/fail")
+                .approval_url("http://bak10172.asuscomm:10001/pay/success")
+                .cancel_url("http://bak10172.asuscomm:10001/pay/cancel")
+                .fail_url("http://bak10172.asuscomm:10001/pay/fail")
                 .build();
         String url = "https://open-api.kakaopay.com/online/v1/payment/ready";
 
