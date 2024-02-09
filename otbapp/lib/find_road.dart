@@ -5,14 +5,18 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
+Set<Marker> _markers = {};
+
 class NavigationPage extends StatelessWidget {
+  const NavigationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('길찾기'),
+        title: const Text('길찾기'),
       ),
-      body: MyApp(),
+      body: const MyApp(),
     );
   }
 }
@@ -32,8 +36,8 @@ class _MyAppState extends State<MyApp> {
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
 
-  TextEditingController _startLocationController = TextEditingController();
-  TextEditingController _destinationLocationController = TextEditingController();
+  final TextEditingController _startLocationController = TextEditingController();
+  final TextEditingController _destinationLocationController = TextEditingController();
 
   String errorMessage = ''; //에러 메시지를 저장할 변수
 
@@ -45,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       errorMessage = message;
     });
     //에러 메시지를 일정 시간 후에 지우기 위해 타이머 추가
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       setState(() {
         errorMessage = '';
       });
@@ -59,20 +63,19 @@ class _MyAppState extends State<MyApp> {
       LatLng sourceLocation = await getLocationCoordinates(_startLocationController.text);
       LatLng destinationLocation = await getLocationCoordinates(_destinationLocationController.text);
 
-      String drivingApiUrl =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${sourceLocation.latitude},${sourceLocation.longitude}&destination=${destinationLocation.latitude},${destinationLocation.longitude}&mode=driving&key=$apiKey';
+      Marker sourceMarker = Marker(
+        markerId: MarkerId('sourceMarker'),
+        position: sourceLocation,
+        infoWindow: InfoWindow(title: '출발지'),
+      );
 
-      final drivingResponse = await http.get(Uri.parse(drivingApiUrl));
-      if (drivingResponse.statusCode == 200) {
-        Map<String, dynamic> drivingData = jsonDecode(drivingResponse.body);
-        List<dynamic> drivingRoutes = drivingData['routes'];
-        if (drivingRoutes.isNotEmpty) {
-          _polylines.clear();
+      Marker destinationMarker = Marker(
+        markerId: MarkerId('destinationMarker'),
+        position: destinationLocation,
+        infoWindow: InfoWindow(title: '도착지'),
+      );
 
-          Map<String, dynamic> drivingRoute = drivingRoutes[0];
-          Map<String, dynamic> drivingPolyline = drivingRoute['overview_polyline'];
-          String drivingPoints = drivingPolyline['points'];
-
+/*
           polylineCoordinates = polylinePoints.decodePolyline(drivingPoints).cast<LatLng>();
           List<LatLng> convertedDrivingCoordinates = [];
 
@@ -82,58 +85,85 @@ class _MyAppState extends State<MyApp> {
 
           setState(() {
             Polyline drivingPolyline = Polyline(
-              polylineId: PolylineId('drivingPoly'),
+              polylineId: const PolylineId('drivingPoly'),
               color: Colors.blue,
               points: convertedDrivingCoordinates,
               width: 3,
             );
+            */
+      setState(() {
+        _markers.clear();
+        _markers.add(sourceMarker);
+        _markers.add(destinationMarker);
+      });
 
-            _polylines.add(drivingPolyline);
-          });
-        }
-      }
+      LatLngBounds bounds = calculateBounds();
+      mapController.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 50.0),
+      );
 
-      String transitApiUrl =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${sourceLocation.latitude},${sourceLocation.longitude}&destination=${destinationLocation.latitude},${destinationLocation.longitude}&mode=transit&key=$apiKey';
+      String drivingApiUrl =
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${sourceLocation.latitude},${sourceLocation.longitude}&destination=${destinationLocation.latitude},${destinationLocation.longitude}&mode=$mode&key=$apiKey';
 
-      final transitResponse = await http.get(Uri.parse(transitApiUrl));
-      if (transitResponse.statusCode == 200) {
-        Map<String, dynamic> transitData = jsonDecode(transitResponse.body);
-        List<dynamic> transitRoutes = transitData['routes'];
-        if (transitRoutes.isNotEmpty) {
-          Map<String, dynamic> transitRoute = transitRoutes[0];
-          Map<String, dynamic> transitPolyline = transitRoute['overview_polyline'];
-          String transitPoints = transitPolyline['points'];
+      final response = await http.get(Uri.parse(drivingApiUrl));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        List<dynamic> routes = data['routes'];
+        if (routes.isNotEmpty) {
+          Map<String, dynamic> route = routes[0];
+          Map<String, dynamic> overviewPolyline = route['overview_polyline'];
+          String points = overviewPolyline['points'];
 
-          polylineCoordinates = polylinePoints.decodePolyline(transitPoints).cast<LatLng>();
-          List<LatLng> convertedTransitCoordinates = [];
+          polylineCoordinates = polylinePoints.decodePolyline(points).cast<LatLng>();
+          List<LatLng> convertedCoordinates = [];
 
           for (LatLng coordinate in polylineCoordinates) {
-            convertedTransitCoordinates.add(LatLng(coordinate.latitude, coordinate.longitude));
+            convertedCoordinates.add(LatLng(coordinate.latitude, coordinate.longitude));
           }
 
           setState(() {
-            Polyline transitPolyline = Polyline(
-              polylineId: PolylineId('transitPoly'),
-              color: Colors.green,
-              points: convertedTransitCoordinates,
+            Polyline newPolyline = Polyline(
+              polylineId: PolylineId('newPoly'),
+              color: mode == 'transit' ? Colors.green : Colors.blue,
+              points: convertedCoordinates,
               width: 3,
             );
 
-            _polylines.add(transitPolyline);
+            _polylines.clear();
+            _polylines.add(newPolyline);
           });
+
+          if (mode == 'transit') {
+            List<dynamic> legs = route['legs'];
+            if (legs.isNotEmpty) {
+              Map<String, dynamic> leg = legs[0];
+              List<dynamic> steps = leg['steps'];
+              if (steps.isNotEmpty) {
+                String transitDetails = '';
+                for (int i = 0; i < steps.length; i++) {
+                  Map<String, dynamic> step = steps[i];
+                  Map<String, dynamic>? transitDetailsMap = step['transit_details'];
+                  if (transitDetailsMap != null) {
+                    String lineName = transitDetailsMap['line']['name'];
+                    String departureStop = transitDetailsMap['departure_stop']['name'];
+                    String arrivalStop = transitDetailsMap['arrival_stop']['name'];
+                    transitDetails += 'Take $lineName from $departureStop to $arrivalStop.\n';
+                  }
+                }
+                showError(transitDetails);
+              }
+            }
+          }
         }
       }
     } catch (e) {
-      // Handle errors
-      showError('정확한 장소를 입력해주세요.');
+      showError('길찾기 오류가 발생했거나 정확한 장소를 입력해주세요.');
     }
   }
 
-
   Future<LatLng> getLocationCoordinates(String address) async {
     try {
-      final apiKey = 'APIKEY';
+      const apiKey = 'APIKEY';
       final encodedAddress = Uri.encodeComponent(address);
 
       final apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedAddress&key=$apiKey';
@@ -159,7 +189,7 @@ class _MyAppState extends State<MyApp> {
       }
     } catch (e) {
       print('Error in getLocationCoordinates: $e'); //디버깅용 출력
-      throw e; //에러를 상위로 전달
+      rethrow; //에러를 상위로 전달
     }
   }
 
@@ -181,19 +211,20 @@ class _MyAppState extends State<MyApp> {
                 zoom: 11.0,
               ),
               polylines: _polylines,
+              markers: _markers,
             ),
-            //에러 메시지 표시
+            // 에러 메시지 표시
             Positioned(
               top: 16,
               left: 16,
               right: 16,
               child: errorMessage.isNotEmpty
                   ? Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 color: Colors.red,
                 child: Text(
                   errorMessage,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               )
                   : Container(),
@@ -204,15 +235,19 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   TextField(
                     controller: _startLocationController,
-                    decoration: InputDecoration(labelText: '출발지'),
+                    decoration: const InputDecoration(labelText: '출발지'),
                   ),
                   TextField(
                     controller: _destinationLocationController,
-                    decoration: InputDecoration(labelText: '도착지'),
+                    decoration: const InputDecoration(labelText: '도착지'),
                   ),
                   ElevatedButton(
-                    onPressed: getPolylines,
-                    child: Text('길찾기'),
+                    onPressed: () => getPolylines('driving'),
+                    child: Text('자동차 길찾기'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => getPolylines('transit'),
+                    child: Text('대중교통 길찾기'),
                   ),
                 ],
               ),

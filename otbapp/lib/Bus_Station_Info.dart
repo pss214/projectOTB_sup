@@ -1,4 +1,3 @@
-import 'Bus_Arrival_Info.dart';
 
 class Reservation{
    String StartStation;

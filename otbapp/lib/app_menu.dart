@@ -5,13 +5,16 @@ import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
-import 'signup.dart';
+import 'signup.dart' as SignUpPage;
 //TestBus
 import 'Bus_Arrival_Page.dart';
 //TestPay
 import 'pay.dart';
+import 'my_profile_page.dart';
 
 class AppMenu extends StatefulWidget {
+  const AppMenu({super.key});
+
   @override
   _AppMenuState createState() => _AppMenuState();
 }
@@ -32,38 +35,52 @@ class _AppMenuState extends State<AppMenu> {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: InkWell(
+              title: GestureDetector(
                 onTap: () {
                   setState(() {
                     currentPage = 'home';
                   });
                 },
-                child: Text('OTB'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,//가로 정렬을 중앙으로 설정
+                   crossAxisAlignment: CrossAxisAlignment.center,//세로 정렬을 중앙으로 설정
+                  children: [
+                    Image.asset(
+                      'assets/otblogogogo.png',
+                      width: 72,//이미지의 가로 크기
+                      height: 72,//이미지의 세로 크기
+                    ),
+                    /*SizedBox(width: 8),
+                    Text('OTB'),*/
+                  ],
+                ),
               ),
               centerTitle: true,
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  //icon: const Icon(Icons.menu), //실행해보고 택 1
+                  icon: Icon(Icons.login),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LogIn()),
+                      MaterialPageRoute(builder: (context) => const LogIn()),
                     );
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  //icon: const Icon(Icons.more_vert), //실행해보고 택 1
+                  icon: Icon(Icons.assignment_ind),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUp()),
+                      MaterialPageRoute(builder: (context) => const SignUpPage.SignUp()),
                     );
                   },
                 )
               ],
             ),
-            /*
+          /*
           drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -90,11 +107,11 @@ class _AppMenuState extends State<AppMenu> {
                 children: [
                   Container(
                     color: Colors.lightGreen[400],
-                    padding: EdgeInsets.only(top: 40, bottom: 20, left: 16),
+                    padding: const EdgeInsets.only(top: 40, bottom: 20, left: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '서비스 메뉴',
                           style: TextStyle(
                             color: Colors.white,
@@ -104,15 +121,23 @@ class _AppMenuState extends State<AppMenu> {
                             color: Colors.black,*/
                           ),
                         ),
-                        UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
-                            //backgroundImage: AssetImage('images/images1.png'),
-                            backgroundColor: Colors.white,
-                          ),
-                          accountName: Text("USERNAME"), //로그인 유저 이름
-                          accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
-                          decoration: BoxDecoration(
-                            color: Colors.lightGreen[400],
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyProfilePage()),
+                          );
+                        },
+                        child:UserAccountsDrawerHeader(
+                            currentAccountPicture: CircleAvatar(
+                              backgroundColor: Colors.white,
+                            ),
+                            accountName: Text("USERNAME"), //로그인 유저 이름
+                            accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
+                            decoration: BoxDecoration(
+                              color: Colors.lightGreen[400],
+                            ),
                           ),
                         ),
                       ],
@@ -121,12 +146,14 @@ class _AppMenuState extends State<AppMenu> {
 
                   //카테고리 선택 메뉴들
                   ListTile(
+                    leading: Icon(Icons.navigation),
                     title: Text('길찾기'),
                     onTap: () {
                       _navigateToPage('navigation', context);
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.bus_alert),
                     title: Text('버스 이용하기'),
                     onTap: () {
                       _navigateToPage('bus', context);
@@ -134,9 +161,10 @@ class _AppMenuState extends State<AppMenu> {
                     },
                   ),
                   ExpansionTile(
-                    title: Text('게시판'),
+                    title: const Text('게시판'),
                     children: [
                       ListTile(
+                        leading: Icon(Icons.notifications_none),
                         title: Text('공지사항'),
                         onTap: () {
                           _navigateToPage('notice', context);
@@ -144,6 +172,7 @@ class _AppMenuState extends State<AppMenu> {
                         },
                       ),
                       ListTile(
+                        leading: Icon(Icons.edit),
                         title: Text('자유게시판'),
                         onTap: () {
                           _navigateToPage('freeBoard', context);
@@ -154,7 +183,7 @@ class _AppMenuState extends State<AppMenu> {
                   ),
                   //TestBus
                   ListTile(
-                    title: Text('(테스트) 버스 이용하기'),
+                    title: const Text('(테스트) 버스 이용하기'),
                     onTap: () {
                       _navigateToPage('TestBus', context);
                       print('(테스트) 버스 이용하기 tapped');
@@ -180,21 +209,21 @@ class _AppMenuState extends State<AppMenu> {
   Widget _getPage() {
     switch (currentPage) {
       case 'navigation':
-        return NavigationPage();
+        return const NavigationPage();
       case 'bus':
-        return BusReservePage();
+        return const BusReservePage();
       case 'notice':
-        return NoticePage();
+        return const NoticePage();
       case 'freeBoard':
-        return FreeBoardPage();
-    //TestBus
+        return const FreeBoardPage();
+        //TestBus
       case 'TestBus':
         return ReserveApp();
-    //TestPay
+        //TestPay
       case 'TestPay':
         return PayMenu();
       default:
-        return MyHomePage();
+        return const MyHomePage();
     }
   }
 

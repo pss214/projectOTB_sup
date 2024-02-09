@@ -13,6 +13,6 @@ class Info {
 
   @override
   String toString() {
-    return '{ ${this.rtNm}, ${this.busRouteId}, ${this.arrmsg1}, ${this.arrmsg2}, ${this.vehId1}';
+    return '{ $rtNm, $busRouteId, $arrmsg1, $arrmsg2, $vehId1';
   }
 }
