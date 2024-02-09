@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertest/Bus_Arrival_Info_Page.dart';
+import 'package:fluttertest/Bus_Arrival_Page.dart';
 import 'package:fluttertest/Bus_Stop_Model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -137,7 +137,7 @@ class _MyMapState extends State<BusReservePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test'),
+        title: Text('Stop Select'),
       ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
