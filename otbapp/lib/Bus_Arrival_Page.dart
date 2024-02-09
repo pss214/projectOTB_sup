@@ -2,36 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Bus_Arrival_Info.dart';
-import 'Bus_Select_Page.dart';
+import 'Bus_Select_Arrival_Page.dart';
 
-void main() => runApp(const ReserveApp());
+void main() => runApp(ReserveApp());
 
 class ReserveApp extends StatelessWidget {
-  const ReserveApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyReserveApp(),
+    return MaterialApp(
+      home: MyReserveApp(selectedStopNo: '', selectedStopName: ''),
     );
   }
 }
 class MyReserveApp extends StatefulWidget {
-  const MyReserveApp({super.key});
+  final String selectedStopNo;
+  final String selectedStopName;
 
+  MyReserveApp({required this.selectedStopNo,required this.selectedStopName});
   @override
   _ReserveWidgetState createState() => _ReserveWidgetState();
 }
 
 class _ReserveWidgetState extends State<MyReserveApp> {
-  final List<Info> _datas = [];
+  List<Info> _datas = [];
 
   dynamic fetchPost() async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
       //"Authorization": "otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJjb2xhYmVhcjc1NCIsImlhdCI6MTcwNDQyNDE3MSwiZXhwIjoxNzA0NDM0OTcxfQ.UuXXamzlmHLP07whzkpGra3du0tZh24uTmRwesMXQefimbiVasqohFJmzE_vDzMbazt5l_ce6dd6T_BeNqHt7g",
     };
-    var data = {"stationid": "22014"};
+    var data = {"stationid": widget.selectedStopNo};
     var url = Uri.parse('http://bak10172.asuscomm.com:10001/bus/information');
     var response = await http.post(
         url, body: json.encode(data), headers: headers);
@@ -41,7 +41,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
       final List<Info> parsedResponse =
       dataObjsJson.map((a) => Info.fromJson(a)).toList();
       //print(dataObjsJson);
-      print(parsedResponse[2]);
+      //print(parsedResponse[2]);
       setState(() {
         _datas.clear();
         _datas.addAll(parsedResponse);
@@ -71,24 +71,24 @@ class _ReserveWidgetState extends State<MyReserveApp> {
     List<List<Info>> pages = chunkPages(_datas, 5);
 
     return Scaffold(
-      /*appBar: AppBar(
-        title: Text('도착 버스 목록'),
-      ),*/
+      appBar: AppBar(
+        title: Text("${widget.selectedStopName}",style: TextStyle(fontSize: 20)),
+      ),
       body: PageView.builder(
         itemCount: pages.length,
         itemBuilder: (context, pageIndex) {
           return SingleChildScrollView(
             child: Column(
               children: [
-                const Padding(padding: EdgeInsets.only(top: 20)),
+                Padding(padding: EdgeInsets.only(top: 20)),
                 Text(
                   "도착 버스 목록 - 페이지 ${pageIndex + 1}",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
+                Text(
                   "좌우로 넘겨 버스를 검색하세요.",
                   style: TextStyle(
                     fontSize: 10,
@@ -113,6 +113,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                                   busVehId: pages[pageIndex][index].vehId1,
                                   arrivalMsg1: pages[pageIndex][index].arrmsg1,
                                   arrivalMsg2: pages[pageIndex][index].arrmsg2,
+                                  selectedStopNo: widget.selectedStopNo,
                                 ),
                               ),
                             );
@@ -138,7 +139,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                     onPressed: () {
                       fetchPost();
                     },
-                    child: const Text("통신상태확인용"),
+                    child: Text("통신상태확인용"),
                   ),
                 ),
               ],

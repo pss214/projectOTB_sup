@@ -120,7 +120,7 @@ class _AppMenuState extends State<AppMenu> {
                             fontWeight: FontWeight.bold,
                             color: Colors.black,*/
                           ),
-                        ),  
+                        ),
                       SizedBox(height: 20),
                       GestureDetector(
                         onTap: () {
