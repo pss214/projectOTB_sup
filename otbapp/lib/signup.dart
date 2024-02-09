@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'signupbus.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 void main() => runApp(const MyApp());
@@ -40,7 +40,8 @@ class _SignUpState extends State<SignUp> {
     };
     print(data);
     var url = Uri.parse('http://bak10172.asuscomm.com:10001/user/signup');
-    var response = await http.post(url, body: json.encode(data), headers: headers);
+    var response =
+        await http.post(url, body: json.encode(data), headers: headers);
     if (response.statusCode == 201) {
       // 회원가입 성공 시 수행할 작업
       print("성공");
@@ -89,8 +90,8 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void showSuccessDialog(BuildContext context) {
-    showDialog(
+  Future<void> showSuccessDialog(BuildContext context) async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -99,13 +100,17 @@ class _SignUpState extends State<SignUp> {
             TextButton(
               child: const Text("확인"),
               onPressed: () {
-                Navigator.of(context).popUntil((route) => route.isFirst); // 처음 페이지로 이동
+                Navigator.of(context).pop();
               },
             ),
           ],
         );
       },
     );
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -210,35 +215,17 @@ class _SignUpState extends State<SignUp> {
                         child: TextButton(
                           onPressed: signUp,
                           style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.orangeAccent),
                           ),
                           child: const Text(
                             '회원가입',
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18.0),
                           ),
                         ),
                       ),
                       const SizedBox(height: 10.0),
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const SignUpbus()),
-                            );
-                          },
-                          style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.orangeAccent),
-                          ),
-                          child: const Text(
-                            '버스기사 전용 회원가입',
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
