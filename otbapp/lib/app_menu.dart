@@ -8,6 +8,9 @@ import 'login.dart';
 import 'signin.dart';
 //TestBus
 import 'Bus_Arrival_Page.dart';
+//TestPay
+import 'pay.dart';
+import 'my_profile_page.dart';
 
 class AppMenu extends StatefulWidget {
   @override
@@ -30,19 +33,31 @@ class _AppMenuState extends State<AppMenu> {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: InkWell(
+              title: GestureDetector(
                 onTap: () {
                   setState(() {
                     currentPage = 'home';
                   });
                 },
-                child: Text('OTB'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,//가로 정렬을 중앙으로 설정
+                   crossAxisAlignment: CrossAxisAlignment.center,//세로 정렬을 중앙으로 설정
+                  children: [
+                    Image.asset(
+                      'assets/otblogogogo.png',
+                      width: 72,//이미지의 가로 크기
+                      height: 72,//이미지의 세로 크기
+                    ),
+                    /*SizedBox(width: 8),
+                    Text('OTB'),*/
+                  ],
+                ),
               ),
               centerTitle: true,
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: Icon(Icons.login),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -51,7 +66,7 @@ class _AppMenuState extends State<AppMenu> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: Icon(Icons.assignment_ind),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -61,8 +76,7 @@ class _AppMenuState extends State<AppMenu> {
                 )
               ],
             ),
-            
-            /*
+          /*
           drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -83,7 +97,6 @@ class _AppMenuState extends State<AppMenu> {
               ),
             ),*/
             //위 코드는 로그인 하지 않은 유저에게 보여지는 코드
-            
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -103,16 +116,24 @@ class _AppMenuState extends State<AppMenu> {
                             fontWeight: FontWeight.bold,
                             color: Colors.black,*/
                           ),
-                        ),
-                        UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
-                            backgroundImage: AssetImage('images/images1.png'),
-                            backgroundColor: Colors.white,
-                          ),
-                          accountName: Text("USERNAME"), //로그인 유저 이름
-                          accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
-                          decoration: BoxDecoration(
-                            color: Colors.lightGreen[400],
+                        ),  
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyProfilePage()),
+                          );
+                        },
+                        child:UserAccountsDrawerHeader(
+                            currentAccountPicture: CircleAvatar(
+                              backgroundColor: Colors.white,
+                            ),
+                            accountName: Text("USERNAME"), //로그인 유저 이름
+                            accountEmail: Text("USER@Email.com"), //로그인 유저 이메일
+                            decoration: BoxDecoration(
+                              color: Colors.lightGreen[400],
+                            ),
                           ),
                         ),
                       ],
@@ -121,12 +142,14 @@ class _AppMenuState extends State<AppMenu> {
 
                   //카테고리 선택 메뉴들
                   ListTile(
+                    leading: Icon(Icons.navigation),
                     title: Text('길찾기'),
                     onTap: () {
                       _navigateToPage('navigation', context);
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.bus_alert),
                     title: Text('버스 이용하기'),
                     onTap: () {
                       _navigateToPage('bus', context);
@@ -137,6 +160,7 @@ class _AppMenuState extends State<AppMenu> {
                     title: Text('게시판'),
                     children: [
                       ListTile(
+                        leading: Icon(Icons.notifications_none),
                         title: Text('공지사항'),
                         onTap: () {
                           _navigateToPage('notice', context);
@@ -144,6 +168,7 @@ class _AppMenuState extends State<AppMenu> {
                         },
                       ),
                       ListTile(
+                        leading: Icon(Icons.edit),
                         title: Text('자유게시판'),
                         onTap: () {
                           _navigateToPage('freeBoard', context);
@@ -158,6 +183,13 @@ class _AppMenuState extends State<AppMenu> {
                     onTap: () {
                       _navigateToPage('TestBus', context);
                       print('(테스트) 버스 이용하기 tapped');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('(테스트) 결제창'),
+                    onTap: () {
+                      _navigateToPage('TestPay', context);
+                      print('(테스트) 결제창 tapped');
                     },
                   ),
                 ],
@@ -183,6 +215,9 @@ class _AppMenuState extends State<AppMenu> {
         //TestBus
       case 'TestBus':
         return ReserveApp();
+        //TestPay
+      case 'TestPay':
+        return PayMenu();
       default:
         return MyHomePage();
     }
@@ -192,6 +227,6 @@ class _AppMenuState extends State<AppMenu> {
     setState(() {
       currentPage = page;
     });
-    Navigator.of(context).pop(); // Close the drawer
+    Navigator.of(context).pop();
   }
 }
