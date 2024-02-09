@@ -14,12 +14,17 @@ class mainPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        _buildNews(),
-        _buildNoticeOfficial(context),
-        _buildNoticeFree(context),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Main Page'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          _buildNews(),
+          _buildNoticeOfficial(context),
+          _buildNoticeFree(context),
+        ],
+      ),
     );
   }
 
