@@ -1,13 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertest/app_menu.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 void main() => runApp(const MyApp());
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -42,6 +40,7 @@ class LogIn extends StatefulWidget {
   @override
   State<LogIn> createState() => _LogInState();
 }
+
 class Userjwt {
   final String token;
 
@@ -67,11 +66,10 @@ class Userjwt {
     return 'Userjwt{token: $token}';
   }
 }
-class _LogInState extends State<LogIn> {
 
+class _LogInState extends State<LogIn> {
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
 
   void signIn() async {
     String id = idController.text;
@@ -96,7 +94,6 @@ class _LogInState extends State<LogIn> {
       if (response.statusCode == 200) {
         print("로그인 성공");
 
-
         var jsonResponse = json.decode(response.body);
         Userjwt userjwt = Userjwt.fromJson(jsonResponse);
         String jwtToken = userjwt.token;
@@ -113,14 +110,18 @@ class _LogInState extends State<LogIn> {
         if (jwtToken.isNotEmpty) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('jwtToken', jwtToken);
-
         } else {
           print('토큰 값이 유효하지 않습니다.');
         }
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const AppMenu()), // MainPageBody로 이동
-        );
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //       builder: (context) => const AppMenu()), // MainPageBody로 이동
+        // );
       } else {
         print("로그인 실패");
         showAlertDialog(context, "로그인 실패", "아이디와 비밀번호를 확인해주세요.");
@@ -130,26 +131,22 @@ class _LogInState extends State<LogIn> {
     }
   }
 
-
   void showAlertDialog(BuildContext context, String title, String message) {
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-
-          },
-          child: const Text('확인'),
-        ),
-      ],
-    );
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        );
       },
     );
   }
@@ -227,8 +224,8 @@ class _LogInState extends State<LogIn> {
                       child: TextButton(
                         onPressed: signIn,
                         style: ButtonStyle(
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.orangeAccent),
                         ),
                         child: const Text(
                           '로그인',
@@ -244,12 +241,13 @@ class _LogInState extends State<LogIn> {
                           // 회원가입 버튼 눌렀을 때 수행할 작업 추가
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignUp()),
+                            MaterialPageRoute(
+                                builder: (context) => const SignUp()),
                           );
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.orangeAccent),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.orangeAccent),
                         ),
                         child: const Text(
                           '회원가입',
@@ -286,6 +284,7 @@ class SignUp extends StatelessWidget {
     );
   }
 }
+
 Future<bool> checkTokenExistence() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? storedToken = prefs.getString('jwtToken');
