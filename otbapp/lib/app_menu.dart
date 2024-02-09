@@ -5,7 +5,7 @@ import 'reserveBus.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'login.dart';
-import 'signin.dart';
+import 'signup.dart' as SignUpPage;
 //TestBus
 import 'Bus_Arrival_Page.dart';
 //TestPay
@@ -13,6 +13,8 @@ import 'pay.dart';
 import 'my_profile_page.dart';
 
 class AppMenu extends StatefulWidget {
+  const AppMenu({super.key});
+
   @override
   _AppMenuState createState() => _AppMenuState();
 }
@@ -57,20 +59,22 @@ class _AppMenuState extends State<AppMenu> {
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
+                  //icon: const Icon(Icons.menu), //실행해보고 택 1
                   icon: Icon(Icons.login),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LogIn()),
+                      MaterialPageRoute(builder: (context) => const LogIn()),
                     );
                   },
                 ),
                 IconButton(
+                  //icon: const Icon(Icons.more_vert), //실행해보고 택 1
                   icon: Icon(Icons.assignment_ind),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignUpPage.SignUp()),
                     );
                   },
                 )
@@ -103,11 +107,11 @@ class _AppMenuState extends State<AppMenu> {
                 children: [
                   Container(
                     color: Colors.lightGreen[400],
-                    padding: EdgeInsets.only(top: 40, bottom: 20, left: 16),
+                    padding: const EdgeInsets.only(top: 40, bottom: 20, left: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '서비스 메뉴',
                           style: TextStyle(
                             color: Colors.white,
@@ -157,7 +161,7 @@ class _AppMenuState extends State<AppMenu> {
                     },
                   ),
                   ExpansionTile(
-                    title: Text('게시판'),
+                    title: const Text('게시판'),
                     children: [
                       ListTile(
                         leading: Icon(Icons.notifications_none),
@@ -179,7 +183,7 @@ class _AppMenuState extends State<AppMenu> {
                   ),
                   //TestBus
                   ListTile(
-                    title: Text('(테스트) 버스 이용하기'),
+                    title: const Text('(테스트) 버스 이용하기'),
                     onTap: () {
                       _navigateToPage('TestBus', context);
                       print('(테스트) 버스 이용하기 tapped');
@@ -205,13 +209,13 @@ class _AppMenuState extends State<AppMenu> {
   Widget _getPage() {
     switch (currentPage) {
       case 'navigation':
-        return NavigationPage();
+        return const NavigationPage();
       case 'bus':
-        return BusReservePage();
+        return const BusReservePage();
       case 'notice':
-        return NoticePage();
+        return const NoticePage();
       case 'freeBoard':
-        return FreeBoardPage();
+        return const FreeBoardPage();
         //TestBus
       case 'TestBus':
         return ReserveApp();
@@ -219,7 +223,7 @@ class _AppMenuState extends State<AppMenu> {
       case 'TestPay':
         return PayMenu();
       default:
-        return MyHomePage();
+        return const MyHomePage();
     }
   }
 

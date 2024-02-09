@@ -11,7 +11,7 @@ class SelectPage extends StatefulWidget {
   final String arrivalMsg1; // arrmsg1
   final String arrivalMsg2; // arrmsg2
 
-  SelectPage({
+  const SelectPage({super.key, 
     required this.busNm,
     required this.busId,
     required this.arrivalMsg1,
@@ -88,7 +88,7 @@ class _SelectPageState extends State<SelectPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('도착 정류장 목록'),
+        title: const Text('도착 정류장 목록'),
         backgroundColor: Colors.orangeAccent,
       ),
       body: PageView.builder(
@@ -97,15 +97,15 @@ class _SelectPageState extends State<SelectPage> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                Padding(padding: EdgeInsets.only(top: 20)),
+                const Padding(padding: EdgeInsets.only(top: 20)),
                 Text(
                   "${pageIndex + 1}번째 페이지",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   "좌우로 넘겨 정류장을 선택하세요.",
                   style: TextStyle(
                     fontSize: 10,
@@ -149,7 +149,7 @@ class _SelectPageState extends State<SelectPage> {
                     onPressed: (){
                       fetchBus();
                     },
-                    child: Text("통신상태확인용"),
+                    child: const Text("통신상태확인용"),
                   ),
                 )
               ],

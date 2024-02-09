@@ -19,7 +19,7 @@ class _NoticePageState extends State<NoticePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항'),
+        title: const Text('공지사항'),
       ),
       body: Column(
         children: [

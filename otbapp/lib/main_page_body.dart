@@ -13,14 +13,21 @@ final dummyItems = [
 ];
 
 class mainPageBody extends StatelessWidget {
+  const mainPageBody({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        _buildNews(),
-        _buildNoticeOfficial(context),
-        _buildNoticeFree(context),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Main Page'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          _buildNews(),
+          _buildNoticeOfficial(context),
+          _buildNoticeFree(context),
+        ],
+      ),
     );
   }
 
@@ -58,7 +65,7 @@ class _MainPageBodyState extends State<mainPageBody> {
           builder: (BuildContext context) {
             return Container(
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.symmetric(horizontal: 5.0),
+              margin: const EdgeInsets.symmetric(horizontal: 5.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
@@ -78,7 +85,7 @@ class _MainPageBodyState extends State<mainPageBody> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NoticePage()), // Replace NoticePage with your actual notice page class
+          MaterialPageRoute(builder: (context) => const NoticePage()), // Replace NoticePage with your actual notice page class
         );
       },
       child: _buildNoticeListTile('[공지 사항] n번 버스 운행 중 고장으로 x정류장에서 차고지 행'),
@@ -90,7 +97,7 @@ class _MainPageBodyState extends State<mainPageBody> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FreeBoardPage()), // Replace FreeBoardPage with your actual free board page class
+          MaterialPageRoute(builder: (context) => const FreeBoardPage()), // Replace FreeBoardPage with your actual free board page class
         );
       },
       child: _buildFreeBoardTile('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
@@ -99,7 +106,7 @@ class _MainPageBodyState extends State<mainPageBody> {
 
   Widget _buildNoticeListTile(String title) {
     return ListTile(
-      leading: Icon(Icons.notifications_none),
+      leading: const Icon(Icons.notifications_none),
       title: Text(title),
     );
   }

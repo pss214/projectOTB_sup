@@ -4,23 +4,27 @@ import 'dart:convert';
 import 'Bus_Arrival_Info.dart';
 import 'Bus_Select_Page.dart';
 
-void main() => runApp(ReserveApp());
+void main() => runApp(const ReserveApp());
 
 class ReserveApp extends StatelessWidget {
+  const ReserveApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: MyReserveApp(),
     );
   }
 }
 class MyReserveApp extends StatefulWidget {
+  const MyReserveApp({super.key});
+
   @override
   _ReserveWidgetState createState() => _ReserveWidgetState();
 }
 
 class _ReserveWidgetState extends State<MyReserveApp> {
-  List<Info> _datas = [];
+  final List<Info> _datas = [];
 
   dynamic fetchPost() async {
     Map<String, String> headers = {
@@ -76,15 +80,15 @@ class _ReserveWidgetState extends State<MyReserveApp> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                Padding(padding: EdgeInsets.only(top: 20)),
+                const Padding(padding: EdgeInsets.only(top: 20)),
                 Text(
                   "도착 버스 목록 - 페이지 ${pageIndex + 1}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   "좌우로 넘겨 버스를 검색하세요.",
                   style: TextStyle(
                     fontSize: 10,
@@ -134,7 +138,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                     onPressed: () {
                       fetchPost();
                     },
-                    child: Text("통신상태확인용"),
+                    child: const Text("통신상태확인용"),
                   ),
                 ),
               ],
