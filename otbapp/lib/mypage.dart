@@ -1,9 +1,11 @@
+import 'dart:convert';  // json.decode를 사용하기 위해 추가
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+  const MyPage({Key? key}) : super(key: key);
 
   @override
   State<MyPage> createState() => _MyPageState();
@@ -27,6 +29,40 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   bool isEditing = false;
+  String memberName = '임시'; // 초기값
+
+  @override
+  void initState() {
+    super.initState();
+    // 페이지가 생성될 때 초기 회원 정보를 불러오는 메서드 호출
+    loadMemberInfo();
+  }
+
+  // 회원 정보를 불러오는 메서드
+  Future<void> loadMemberInfo() async {
+    try {
+      var response = await http.get(
+        Uri.parse('http://bak10172.asuscomm.com:10001/member'),
+        headers: {
+          'Authorization': 'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMzpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNzg4ODIyMCwiZXhwIjoxNzA3ODk5MDIwfQ.Sr4vSVjOxsBFgDdHIygIRqnLPzezCiCxGMfPFuT24D05SKG6MNZn_DVpgDnUCYVWj2xpxbNGdk-y2-JV5qN5Tw',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 응답을 받아왔을 때
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          memberName = responseData['member']; // 서버에서 받아온 회원 이름으로 업데이트
+        });
+      } else {
+        // 응답이 실패했을 때
+        print('Failed to load member info: ${response.statusCode}');
+      }
+    } catch (e) {
+      // 예외 처리
+      print('Error loading member info: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +98,7 @@ class _MyPageState extends State<MyPage> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: const EdgeInsets.all(16.0),
-              child: const Column(
+              child: Column(  // const 키워드 제거
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,7 +112,7 @@ class _MyPageState extends State<MyPage> {
                       ),
                       Expanded(
                         child: Text(
-                          '임시',
+                          memberName,
                           textAlign: TextAlign.end,
                           style: TextStyle(fontSize: 16.0),
                         ),
@@ -180,8 +216,14 @@ class _MyPageState extends State<MyPage> {
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // 저장 버튼 눌렀을 때 실행되는 기능 추가
+                      var response = await http.post(
+                        Uri.parse('http://bak10172.asuscomm.com/member'),
+                        headers: {
+                          'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMzpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNzgwNjczNiwiZXhwIjoxNzA3ODE3NTM2fQ.GLatMK44O4wza5Wp4QsAVDGQ9B_evsVt2o5SEVRzLrYazgK1AaNVlFMdy5ySvHnBtDawnxdaUjbzflhVwRvqCA',
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
