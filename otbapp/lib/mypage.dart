@@ -44,7 +44,7 @@ class _MyPageState extends State<MyPage> {
       var response = await http.get(
         Uri.parse('http://bak10172.asuscomm.com:10001/member'),
         headers: {
-          'Authorization': 'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMzpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNzg4ODIyMCwiZXhwIjoxNzA3ODk5MDIwfQ.Sr4vSVjOxsBFgDdHIygIRqnLPzezCiCxGMfPFuT24D05SKG6MNZn_DVpgDnUCYVWj2xpxbNGdk-y2-JV5qN5Tw',
+          'Authorization': 'otb ',
         },
       );
 
