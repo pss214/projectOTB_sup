@@ -49,7 +49,9 @@ dependencies:
   http: ^1.1.2
   carousel_slider: ^4.2.1
 
-  flutter_inappwebview: ^5.8.0
+  webview_flutter: ^4.7.0
+  dio: ^5.4.0
+#  receive_sharing_intent: ^1.6.7
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +79,7 @@ flutter:
   assets:
     - assets/json/
     - assets/images/
+    - assets/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
