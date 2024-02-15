@@ -1,6 +1,9 @@
 import 'dart:convert';  // json.decode를 사용하기 위해 추가
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:chapter07/reserveBus.dart';
+import 'package:flutter/gestures.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 
 void main() => runApp(const MyApp());
 
@@ -12,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '마이 페이지',
-      home: const MyPage(),
+      home: const MyProfilePage(),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -20,22 +23,94 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyPage extends StatefulWidget {
-  const MyPage({Key? key}) : super(key: key);
+class MyProfilePage extends StatefulWidget {
+  const MyProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<MyPage> createState() => _MyPageState();
+  State<MyProfilePage> createState() => _MyPageState();
 }
 
 class _MyPageState extends State<MyPage> {
   bool isEditing = false;
+  bool showQrCode = false;
   String memberName = '임시'; // 초기값
+
+  //버스 정보 받아오기
+  String start = '';
+  String arrive = '';
+  String busId = '';
+  String vehId = '';
 
   @override
   void initState() {
     super.initState();
     // 페이지가 생성될 때 초기 회원 정보를 불러오는 메서드 호출
     loadMemberInfo();
+    //요청 전에 초기화
+    start = '';
+    arrive = '';
+    busId = '';
+    vehId = '';
+    fetchInformation();//결제 정보 패치 받아오기
+  }
+
+  //QR
+  Future<void> fetchInformation() async {
+    try {
+      //서버 URL
+      var url = Uri.parse('http://bak10172.asuscomm.com:10001/reservation');
+
+      //HTTP 헤더 설정
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
+      };
+
+      //요청 데이터
+      var requestData = {
+        "depart_station": start,
+        "arrive_station": arrive,
+        "busnumber": busId,
+        "busnumberplate": vehId,
+      };
+
+      /*// HTTP POST 요청 보내기
+      var response = await http.post(url, body: json.encode(requestData), headers: headers);
+
+      // HTTP 상태 코드 확인
+      if (response.statusCode == 201) {
+        // 성공적으로 데이터를 받았을 때, JSON 디코딩하여 변수에 할당 (여기서는 필요한 작업이 없을 것 같습니다)
+        print('Reservation successful!');
+      } else {
+        print('Failed to make a reservation. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error making a reservation: $e');
+    }
+  }*/
+      // HTTP POST 요청 보내기
+      var response = await http.post(url, body: json.encode(requestData), headers: headers);
+
+      // HTTP 상태 코드 확인
+      if (response.statusCode == 201) {
+        // 성공적으로 데이터를 받았을 때, JSON 디코딩하여 변수에 할당
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Set the values for QR code data
+        setState(() {
+          start = responseData['depart_station'];
+          arrive = responseData['arrive_station'];
+          busId = responseData['busnumber'];
+          vehId = responseData['busnumberplate'];
+        });
+
+        print('Reservation successful!');
+      } else {
+        print('Failed to make a reservation. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error making a reservation: $e');
+    }
   }
 
   // 회원 정보를 불러오는 메서드
@@ -150,6 +225,7 @@ class _MyPageState extends State<MyPage> {
                   onPressed: () {
                     setState(() {
                       isEditing = !isEditing;
+                      showQrCode = false;//QR 코드 숨기기
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -180,7 +256,9 @@ class _MyPageState extends State<MyPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // QR 보기 버튼 눌렀을 때 실행되는 기능 추가
+                    setState(() {
+                      showQrCode = !showQrCode; // Show QR code when this button is pressed
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
@@ -188,11 +266,65 @@ class _MyPageState extends State<MyPage> {
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                   ),
-                  child: const Text(
-                    'QR 보기',
+                  child: Text(
+                    showQrCode ? 'QR 닫기' : 'QR 보기',
                     style: TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
-                ),
+                ),//통신 성공하면 이 코드 파기 후 아래 코드 쓰면 됩니다. 주석 바꿔서 써보면서 어떤 동작하는지는 파악하세요.
+                /*ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      if (start.isNotEmpty && arrive.isNotEmpty && busId.isNotEmpty && vehId.isNotEmpty) {
+                        showQrCode = !showQrCode;
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: '결제 내역이 없습니다. 결제 후 확인해주세요.',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '\n버스 결제하기',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BusReservePage(),
+                                          ),
+                                        );
+                                      },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            duration: Duration(seconds: 6),//메시지를 보여줄 시간
+                            backgroundColor: Colors.orangeAccent,
+                          ),
+                        );
+                      }
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                  ),
+                  child: Text(
+                    showQrCode ? 'QR 닫기' : 'QR 보기',
+                    style: TextStyle(fontSize: 16.0, color: Colors.white),
+                  ),
+                ),*/
               ],
             ),
             const SizedBox(height: 20.0),
@@ -236,6 +368,26 @@ class _MyPageState extends State<MyPage> {
                       style: TextStyle(fontSize: 16.0, color: Colors.white),
                     ),
                   ),
+                ],
+              ),
+            if (showQrCode)
+              Column(
+                children: [
+                  Center(
+                    child: BarcodeWidget(
+                      barcode: Barcode.qrCode(),
+                      color: Colors.black,
+                      data: 'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
+                      width: 200.0,
+                      height: 200.0,
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  //제대로 가져오는지 확인하기 위해 ('$변수명' 만 사용해도 됨), 통신 성공하면 역시 파기해도 무방
+                  Text('출발 정류장: ${start.isNotEmpty ? start : 'N/A'}'),
+                  Text('도착 정류장: ${arrive.isNotEmpty ? arrive : 'N/A'}'),
+                  Text('차량번호: ${busId.isNotEmpty ? busId : 'N/A'}'),
+                  Text('차량고유번호: ${vehId.isNotEmpty ? vehId : 'N/A'}'),
                 ],
               ),
           ],
