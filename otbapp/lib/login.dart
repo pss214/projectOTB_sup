@@ -232,14 +232,7 @@ class _LogInState extends State<LogIn> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10.0),
-                    SizedBox(
-                      width: double.infinity,
-                        child: const Text(
-                          '회원가입',
-                          style: TextStyle(color: Colors.white, fontSize: 18.0),
-                        ),
-                      ),
+
                   ],
                 ),
               ),
