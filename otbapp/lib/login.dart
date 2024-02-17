@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertest/app_menu.dart';
 import 'package:http/http.dart' as http;
@@ -172,7 +171,7 @@ class _LogInState extends State<LogIn> {
           const Padding(padding: EdgeInsets.only(top: 50)),
           const Center(
             child: Image(
-              image: AssetImage('image/otb.png'),
+              image: AssetImage('assets/otb.png'),
               width: 170.0,
             ),
           ),
@@ -236,25 +235,11 @@ class _LogInState extends State<LogIn> {
                     const SizedBox(height: 10.0),
                     SizedBox(
                       width: double.infinity,
-                      child: TextButton(
-                        onPressed: () {
-                          // 회원가입 버튼 눌렀을 때 수행할 작업 추가
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SignUp()),
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.orangeAccent),
-                        ),
                         child: const Text(
                           '회원가입',
                           style: TextStyle(color: Colors.white, fontSize: 18.0),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
