@@ -1,9 +1,11 @@
-import 'dart:convert';  // json.decode를 사용하기 위해 추가
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:chapter07/reserveBus.dart';
-import 'package:flutter/gestures.dart';
+import 'dart:convert'; // json.decode를 사용하기 위해 추가
+
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertest/data/model/UserResponse.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(const MyApp());
 
@@ -33,7 +35,7 @@ class MyProfilePage extends StatefulWidget {
 class _MyPageState extends State<MyProfilePage> {
   bool isEditing = false;
   bool showQrCode = false;
-  String memberName = '임시'; // 초기값
+  User? user;
 
   //버스 정보 받아오기
   String start = '';
@@ -41,17 +43,31 @@ class _MyPageState extends State<MyProfilePage> {
   String busId = '';
   String vehId = '';
 
+  //비밀번호 변경 텍스트 필드 컨트롤러
+  final newPasswordTextFieldController = TextEditingController();
+  final rePasswordTextFieldController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+
     // 페이지가 생성될 때 초기 회원 정보를 불러오는 메서드 호출
     loadMemberInfo();
+
     //요청 전에 초기화
     start = '';
     arrive = '';
     busId = '';
     vehId = '';
-    fetchInformation();//결제 정보 패치 받아오기
+    fetchInformation(); //결제 정보 패치 받아오기
+  }
+
+  @override
+  void dispose() {
+    newPasswordTextFieldController.dispose();
+    rePasswordTextFieldController.dispose();
+
+    super.dispose();
   }
 
   //QR
@@ -63,7 +79,8 @@ class _MyPageState extends State<MyProfilePage> {
       //HTTP 헤더 설정
       var headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
+        'Authorization':
+            'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
       };
 
       //요청 데이터
@@ -89,7 +106,8 @@ class _MyPageState extends State<MyProfilePage> {
     }
   }*/
       // HTTP POST 요청 보내기
-      var response = await http.post(url, body: json.encode(requestData), headers: headers);
+      var response = await http.post(url,
+          body: json.encode(requestData), headers: headers);
 
       // HTTP 상태 코드 확인
       if (response.statusCode == 201) {
@@ -106,36 +124,95 @@ class _MyPageState extends State<MyProfilePage> {
 
         print('Reservation successful!');
       } else {
-        print('Failed to make a reservation. Status code: ${response.statusCode}');
+        print(
+            'Failed to make a reservation. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error making a reservation: $e');
     }
   }
 
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jwtToken');
+  }
+
   // 회원 정보를 불러오는 메서드
   Future<void> loadMemberInfo() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
     try {
       var response = await http.get(
         Uri.parse('http://bak10172.asuscomm.com:10001/member'),
         headers: {
-          'Authorization': 'otb ',
+          'Authorization': 'otb $token',
         },
       );
 
       if (response.statusCode == 200) {
         // 성공적으로 응답을 받아왔을 때
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        setState(() {
-          memberName = responseData['member']; // 서버에서 받아온 회원 이름으로 업데이트
+        final userResponse = UserResponse.fromJson(json.decode(response.body));
+        debugPrint(userResponse.message);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            user = userResponse.data.firstOrNull;
+          });
         });
       } else {
         // 응답이 실패했을 때
         print('Failed to load member info: ${response.statusCode}');
       }
-    } catch (e) {
+    } catch (e, s) {
       // 예외 처리
       print('Error loading member info: $e');
+      debugPrintStack(stackTrace: s);
+    }
+  }
+
+  Future<void> updatePassword() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
+    final user = this.user;
+    if (user == null) return;
+
+    final newPassword = newPasswordTextFieldController.text.trim();
+    final rePassword = rePasswordTextFieldController.text.trim();
+
+    if (newPassword.isEmpty || rePassword.isEmpty) return;
+    if (newPassword != rePassword) {
+      Fluttertoast.showToast(
+        msg: '비밀번호가 다릅니다. 다시 입력해 주세요.',
+      );
+      return;
+    }
+
+    final json = {
+      'password': newPassword,
+    };
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'otb $token',
+    };
+
+    var url = Uri.parse('http://bak10172.asuscomm.com:10001/member');
+    var response =
+        await http.post(url, body: jsonEncode(json), headers: headers);
+
+    final userResponse = UserResponse.fromJson(jsonDecode(response.body));
+    Fluttertoast.showToast(
+      msg: userResponse.message,
+    );
+
+    if (userResponse.status == 201) {
+      setState(() {
+        isEditing = false;
+        newPasswordTextFieldController.clear();
+        rePasswordTextFieldController.clear();
+      });
     }
   }
 
@@ -173,12 +250,13 @@ class _MyPageState extends State<MyProfilePage> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: const EdgeInsets.all(16.0),
-              child: Column(  // const 키워드 제거
+              child: Column(
+                // const 키워드 제거
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         '회원 이름:',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -187,18 +265,18 @@ class _MyPageState extends State<MyProfilePage> {
                       ),
                       Expanded(
                         child: Text(
-                          memberName,
+                          user?.name ?? '',
                           textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 16.0),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         '이메일:',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -207,9 +285,9 @@ class _MyPageState extends State<MyProfilePage> {
                       ),
                       Expanded(
                         child: Text(
-                          '임시',
+                          user?.email ?? '',
                           textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 16.0),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     ],
@@ -225,7 +303,7 @@ class _MyPageState extends State<MyProfilePage> {
                   onPressed: () {
                     setState(() {
                       isEditing = !isEditing;
-                      showQrCode = false;//QR 코드 숨기기
+                      showQrCode = false; //QR 코드 숨기기
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -257,7 +335,8 @@ class _MyPageState extends State<MyProfilePage> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      showQrCode = !showQrCode; // Show QR code when this button is pressed
+                      showQrCode =
+                          !showQrCode; // Show QR code when this button is pressed
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -268,9 +347,10 @@ class _MyPageState extends State<MyProfilePage> {
                   ),
                   child: Text(
                     showQrCode ? 'QR 닫기' : 'QR 보기',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
+                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
-                ),//통신 성공하면 이 코드 파기 후 아래 코드 쓰면 됩니다. 주석 바꿔서 써보면서 어떤 동작하는지는 파악하세요.
+                ),
+                //통신 성공하면 이 코드 파기 후 아래 코드 쓰면 됩니다. 주석 바꿔서 써보면서 어떤 동작하는지는 파악하세요.
                 /*ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -331,31 +411,22 @@ class _MyPageState extends State<MyProfilePage> {
             if (isEditing)
               Column(
                 children: [
-                  const TextField(
-                    decoration: InputDecoration(
-                      hintText: '새로운 아이디',
-                    ),
-                  ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: newPasswordTextFieldController,
+                    decoration: const InputDecoration(
                       hintText: '새로운 비밀번호',
                     ),
                   ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: rePasswordTextFieldController,
+                    decoration: const InputDecoration(
                       hintText: '비밀번호 확인',
                     ),
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () async {
-                      // 저장 버튼 눌렀을 때 실행되는 기능 추가
-                      var response = await http.post(
-                        Uri.parse('http://bak10172.asuscomm.com/member'),
-                        headers: {
-                          'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMzpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNzgwNjczNiwiZXhwIjoxNzA3ODE3NTM2fQ.GLatMK44O4wza5Wp4QsAVDGQ9B_evsVt2o5SEVRzLrYazgK1AaNVlFMdy5ySvHnBtDawnxdaUjbzflhVwRvqCA',
-                        },
-                      );
+                      await updatePassword();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
@@ -377,7 +448,8 @@ class _MyPageState extends State<MyProfilePage> {
                     child: BarcodeWidget(
                       barcode: Barcode.qrCode(),
                       color: Colors.black,
-                      data: 'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
+                      data:
+                          'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
                       width: 200.0,
                       height: 200.0,
                     ),
