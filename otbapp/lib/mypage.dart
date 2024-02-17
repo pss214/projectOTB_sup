@@ -30,7 +30,7 @@ class MyProfilePage extends StatefulWidget {
   State<MyProfilePage> createState() => _MyPageState();
 }
 
-class _MyPageState extends State<MyPage> {
+class _MyPageState extends State<MyProfilePage> {
   bool isEditing = false;
   bool showQrCode = false;
   String memberName = '임시'; // 초기값
@@ -148,7 +148,7 @@ class _MyPageState extends State<MyPage> {
         backgroundColor: Colors.lightGreen,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.home),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
