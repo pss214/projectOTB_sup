@@ -1,5 +1,4 @@
-import 'dart:convert'; // json.decode를 사용하기 위해 추가
-
+import 'dart:convert';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertest/data/model/UserResponse.dart';
@@ -37,53 +36,41 @@ class _MyPageState extends State<MyProfilePage> {
   bool showQrCode = false;
   User? user;
 
-  //버스 정보 받아오기
   String start = '';
   String arrive = '';
   String busId = '';
   String vehId = '';
 
-  //비밀번호 변경 텍스트 필드 컨트롤러
   final newPasswordTextFieldController = TextEditingController();
   final rePasswordTextFieldController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    // 페이지가 생성될 때 초기 회원 정보를 불러오는 메서드 호출
     loadMemberInfo();
-
-    //요청 전에 초기화
     start = '';
     arrive = '';
     busId = '';
     vehId = '';
-    fetchInformation(); //결제 정보 패치 받아오기
+    fetchInformation();
   }
 
   @override
   void dispose() {
     newPasswordTextFieldController.dispose();
     rePasswordTextFieldController.dispose();
-
     super.dispose();
   }
 
-  //QR
   Future<void> fetchInformation() async {
     try {
-      //서버 URL
       var url = Uri.parse('http://bak10172.asuscomm.com:10001/reservation');
-
-      //HTTP 헤더 설정
       var headers = {
         'Content-Type': 'application/json',
         'Authorization':
-            'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
+        'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
       };
 
-      //요청 데이터
       var requestData = {
         "depart_station": start,
         "arrive_station": arrive,
@@ -91,37 +78,20 @@ class _MyPageState extends State<MyProfilePage> {
         "busnumberplate": vehId,
       };
 
-      /*// HTTP POST 요청 보내기
-      var response = await http.post(url, body: json.encode(requestData), headers: headers);
+      var response = await http.post(
+        url,
+        body: json.encode(requestData),
+        headers: headers,
+      );
 
-      // HTTP 상태 코드 확인
       if (response.statusCode == 201) {
-        // 성공적으로 데이터를 받았을 때, JSON 디코딩하여 변수에 할당 (여기서는 필요한 작업이 없을 것 같습니다)
-        print('Reservation successful!');
-      } else {
-        print('Failed to make a reservation. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error making a reservation: $e');
-    }
-  }*/
-      // HTTP POST 요청 보내기
-      var response = await http.post(url,
-          body: json.encode(requestData), headers: headers);
-
-      // HTTP 상태 코드 확인
-      if (response.statusCode == 201) {
-        // 성공적으로 데이터를 받았을 때, JSON 디코딩하여 변수에 할당
         final Map<String, dynamic> responseData = json.decode(response.body);
-
-        // Set the values for QR code data
         setState(() {
           start = responseData['depart_station'];
           arrive = responseData['arrive_station'];
           busId = responseData['busnumber'];
           vehId = responseData['busnumberplate'];
         });
-
         print('Reservation successful!');
       } else {
         print(
@@ -137,7 +107,6 @@ class _MyPageState extends State<MyProfilePage> {
     return prefs.getString('jwtToken');
   }
 
-  // 회원 정보를 불러오는 메서드
   Future<void> loadMemberInfo() async {
     final token = await getToken();
     if (token?.isNotEmpty != true) return;
@@ -151,21 +120,19 @@ class _MyPageState extends State<MyProfilePage> {
       );
 
       if (response.statusCode == 200) {
-        // 성공적으로 응답을 받아왔을 때
-        final userResponse = UserResponse.fromJson(json.decode(response.body));
+        final userResponse =
+        UserResponse.fromJson(json.decode(response.body));
         debugPrint(userResponse.message);
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
           setState(() {
             user = userResponse.data.firstOrNull;
           });
         });
       } else {
-        // 응답이 실패했을 때
         print('Failed to load member info: ${response.statusCode}');
       }
     } catch (e, s) {
-      // 예외 처리
       print('Error loading member info: $e');
       debugPrintStack(stackTrace: s);
     }
@@ -200,7 +167,7 @@ class _MyPageState extends State<MyProfilePage> {
 
     var url = Uri.parse('http://bak10172.asuscomm.com:10001/member');
     var response =
-        await http.post(url, body: jsonEncode(json), headers: headers);
+    await http.post(url, body: jsonEncode(json), headers: headers);
 
     final userResponse = UserResponse.fromJson(jsonDecode(response.body));
     Fluttertoast.showToast(
@@ -213,6 +180,38 @@ class _MyPageState extends State<MyProfilePage> {
         newPasswordTextFieldController.clear();
         rePasswordTextFieldController.clear();
       });
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
+    try {
+      var response = await http.delete(
+        Uri.parse('http://bak10172.asuscomm.com:10001/member'),
+        headers: {
+          'Authorization': 'otb $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final userResponse =
+        UserResponse.fromJson(json.decode(response.body));
+        Fluttertoast.showToast(
+          msg: userResponse.message,
+        );
+
+        if (userResponse.status == 200) {
+          // 회원 탈퇴 성공
+          // 로그인 페이지로 이동하거나 다른 작업을 수행할 수 있습니다.
+        }
+      } else {
+        print('Failed to delete account: ${response.statusCode}');
+      }
+    } catch (e, s) {
+      print('Error deleting account: $e');
+      debugPrintStack(stackTrace: s);
     }
   }
 
@@ -251,7 +250,6 @@ class _MyPageState extends State<MyProfilePage> {
               ),
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                // const 키워드 제거
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -303,7 +301,7 @@ class _MyPageState extends State<MyProfilePage> {
                   onPressed: () {
                     setState(() {
                       isEditing = !isEditing;
-                      showQrCode = false; //QR 코드 숨기기
+                      showQrCode = false;
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -319,7 +317,7 @@ class _MyPageState extends State<MyProfilePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // 회원 탈퇴 버튼 눌렀을 때 실행되는 기능 추가
+                    deleteAccount(); // 회원 탈퇴 버튼 눌렀을 때 호출
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
@@ -335,8 +333,7 @@ class _MyPageState extends State<MyProfilePage> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      showQrCode =
-                          !showQrCode; // Show QR code when this button is pressed
+                      showQrCode = !showQrCode;
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -350,61 +347,6 @@ class _MyPageState extends State<MyProfilePage> {
                     style: const TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
                 ),
-                //통신 성공하면 이 코드 파기 후 아래 코드 쓰면 됩니다. 주석 바꿔서 써보면서 어떤 동작하는지는 파악하세요.
-                /*ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (start.isNotEmpty && arrive.isNotEmpty && busId.isNotEmpty && vehId.isNotEmpty) {
-                        showQrCode = !showQrCode;
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                text: '결제 내역이 없습니다. 결제 후 확인해주세요.',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: '\n버스 결제하기',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BusReservePage(),
-                                          ),
-                                        );
-                                      },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            duration: Duration(seconds: 6),//메시지를 보여줄 시간
-                            backgroundColor: Colors.orangeAccent,
-                          ),
-                        );
-                      }
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                    ),
-                  ),
-                  child: Text(
-                    showQrCode ? 'QR 닫기' : 'QR 보기',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
-                  ),
-                ),*/
               ],
             ),
             const SizedBox(height: 20.0),
@@ -449,13 +391,12 @@ class _MyPageState extends State<MyProfilePage> {
                       barcode: Barcode.qrCode(),
                       color: Colors.black,
                       data:
-                          'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
+                      'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
                       width: 200.0,
                       height: 200.0,
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  //제대로 가져오는지 확인하기 위해 ('$변수명' 만 사용해도 됨), 통신 성공하면 역시 파기해도 무방
                   Text('출발 정류장: ${start.isNotEmpty ? start : 'N/A'}'),
                   Text('도착 정류장: ${arrive.isNotEmpty ? arrive : 'N/A'}'),
                   Text('차량번호: ${busId.isNotEmpty ? busId : 'N/A'}'),
