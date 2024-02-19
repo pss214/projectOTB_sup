@@ -15,7 +15,7 @@ class PayMenu extends StatelessWidget {
       Map<String, String> headers = {
         "Content-Type": "application/json",
         "Authorization":
-        "otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNzkzOTI2NywiZXhwIjoxNzA3OTUwMDY3fQ.6MYa8gSiE9CCj0xJqYsDMF3_JZyh9CDI_4fERwtDQfVPVbrFDka9PMGaM4SBQSWth4SH4hGR8R8R-yTCtCquuQ",
+        "otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwODMzODMwOCwiZXhwIjoxNzA4MzQ5MTA4fQ.jGY_XUbCwfLHZaKkpGV9VPTWHnuf8DP0kM_ceJLAPhEaiEZJEV2ihtmj4IdhcDoebOsEULyfrbw3AdzebcuN0A",
       };
 // 보내는 부분
       var url = Uri.parse("http://bak10172.asuscomm.com:10001/pay");
@@ -27,8 +27,7 @@ class PayMenu extends StatelessWidget {
 
 //next_redirect_mobile_url, next_redirect_app_url
         var nextRedirectAppUrl =
-        jsonDecode(utf8.decode(response.bodyBytes))['data'][0]
-        ['next_redirect_app_url'];
+        jsonDecode(utf8.decode(response.bodyBytes))['data'][0]['next_redirect_app_url'];
 
 //String nextRedirectAppUrl=data['next_redirect_app_url'];
         print("AppUrl : $nextRedirectAppUrl");

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertest/app_menu.dart';
 
 void main() => runApp(const MyApp());
 
@@ -39,7 +40,8 @@ class _MyPageState extends State<MyPage> {
         leading: IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            //Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AppMenu()));
           },
         ),
       ),

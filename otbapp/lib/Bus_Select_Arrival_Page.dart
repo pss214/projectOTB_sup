@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertest/pay.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Bus_Stop_Info.dart';
@@ -11,6 +12,7 @@ class SelectPage extends StatefulWidget {
   final String arrivalMsg1; // arrmsg1
   final String arrivalMsg2; // arrmsg2
   final String selectedStopNo;
+  final String selectedStopNm;
 
 
   const SelectPage({super.key, 
@@ -20,6 +22,7 @@ class SelectPage extends StatefulWidget {
     required this.arrivalMsg2,
     required this.busVehId,
     required this.selectedStopNo,
+    required this.selectedStopNm,
 
 
   });
@@ -30,6 +33,8 @@ class SelectPage extends StatefulWidget {
     busId: busId,
     busVehId: busVehId,
     selectedStopNo:selectedStopNo,
+    selectedStopNm:selectedStopNm,
+    selectedStop: '',
   );
 }
 
@@ -38,8 +43,12 @@ class _SelectPageState extends State<SelectPage> {
   final String busVehId;
   final String busNm;
   final String selectedStopNo;
+  final String selectedStopNm;
+
   _SelectPageState(
-      {required this.busNm, required this.busId, required this.busVehId, required this.selectedStopNo});
+      {
+        required this.busNm, required this.busId,
+        required this.busVehId, required this.selectedStopNo, required this.selectedStop, required this.selectedStopNm});
 
   List<BusStop> datas = [];
   String selectedStop = '';
@@ -47,7 +56,6 @@ class _SelectPageState extends State<SelectPage> {
   dynamic fetchBus() async {
     Map<String, String> headers = {
       "Content-Type": "application/json",
-      //"Authorization": "otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJjb2xhYmVhcjc1NCIsImlhdCI6MTcwNDQyNDE3MSwiZXhwIjoxNzA0NDM0OTcxfQ.UuXXamzlmHLP07whzkpGra3du0tZh24uTmRwesMXQefimbiVasqohFJmzE_vDzMbazt5l_ce6dd6T_BeNqHt7g",
     };
     var data = {"busrouteid": busId, "stationid": selectedStopNo}; //
     var url = Uri.parse('http://bak10172.asuscomm.com:10001/bus/route-name');
@@ -133,10 +141,13 @@ class _SelectPageState extends State<SelectPage> {
                                 MaterialPageRoute(
                                     builder: (context) => TotalPage(
                                       start: selectedStop,
+                                      startNm: selectedStopNm,
                                       arrive: pages[pageIndex][index].arsId,
+                                      arriveNm:pages[pageIndex][index].stationNm,
                                       vehId: busVehId,
                                       busId: busNm,
-                                    )));
+                                    ))
+                            );
                           },
                           title: Text(pages[pageIndex][index].stationNm),
                           subtitle: Column(
