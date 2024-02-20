@@ -226,7 +226,8 @@ class _MyPageState extends State<MyProfilePage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            //Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AppMenu()));
           },
         ),
       ),

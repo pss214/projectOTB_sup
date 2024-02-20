@@ -4,12 +4,14 @@ import 'dart:convert';
 import 'Bus_Arrival_Info.dart';
 import 'Bus_Select_Arrival_Page.dart';
 
-void main() => runApp(ReserveApp());
+void main() => runApp(const ReserveApp());
 
 class ReserveApp extends StatelessWidget {
+  const ReserveApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: MyReserveApp(selectedStopNo: '', selectedStopName: ''),
     );
   }
@@ -18,13 +20,16 @@ class MyReserveApp extends StatefulWidget {
   final String selectedStopNo;
   final String selectedStopName;
 
-  MyReserveApp({required this.selectedStopNo,required this.selectedStopName});
+  const MyReserveApp({super.key, required this.selectedStopNo,required this.selectedStopName});
+
   @override
-  _ReserveWidgetState createState() => _ReserveWidgetState();
+  _ReserveWidgetState createState() => _ReserveWidgetState(
+
+  );
 }
 
 class _ReserveWidgetState extends State<MyReserveApp> {
-  List<Info> _datas = [];
+  final List<Info> _datas = [];
 
   dynamic fetchPost() async {
     Map<String, String> headers = {
@@ -72,7 +77,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.selectedStopName}",style: TextStyle(fontSize: 20)),
+        title: Text(widget.selectedStopName,style: const TextStyle(fontSize: 20)),
       ),
       body: PageView.builder(
         itemCount: pages.length,
@@ -83,12 +88,12 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                 Padding(padding: EdgeInsets.only(top: 20)),
                 Text(
                   "도착 버스 목록 - 페이지 ${pageIndex + 1}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   "좌우로 넘겨 버스를 검색하세요.",
                   style: TextStyle(
                     fontSize: 10,
@@ -114,6 +119,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                                   arrivalMsg1: pages[pageIndex][index].arrmsg1,
                                   arrivalMsg2: pages[pageIndex][index].arrmsg2,
                                   selectedStopNo: widget.selectedStopNo,
+                                  selectedStopNm: widget.selectedStopName,
                                 ),
                               ),
                             );
@@ -139,7 +145,7 @@ class _ReserveWidgetState extends State<MyReserveApp> {
                     onPressed: () {
                       fetchPost();
                     },
-                    child: Text("통신상태확인용"),
+                    child: const Text("통신상태확인용"),
                   ),
                 ),
               ],

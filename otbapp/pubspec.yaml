@@ -52,8 +52,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.1.2
   carousel_slider: ^4.2.1
-
-  flutter_inappwebview: ^5.8.0
+  webview_flutter: ^4.7.0
+  dio: ^5.4.0
+#  receive_sharing_intent: ^1.6.7
   fluttertoast: ^8.2.4
 
 dev_dependencies:
