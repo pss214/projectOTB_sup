@@ -45,6 +45,7 @@ class _SignUpState extends State<SignUp> {
     if (response.statusCode == 201) {
       // 회원가입 성공 시 수행할 작업
       print("성공");
+      print(response.headers);
       print(utf8.decode(response.bodyBytes));
 
       // 회원가입 성공 알림창 표시
@@ -135,7 +136,7 @@ class _SignUpState extends State<SignUp> {
             const Padding(padding: EdgeInsets.only(top: 50)),
             const Center(
               child: Image(
-                image: AssetImage('image/otb.png'),
+                image: AssetImage('assets/otb.png'),
                 width: 170.0,
               ),
             ),

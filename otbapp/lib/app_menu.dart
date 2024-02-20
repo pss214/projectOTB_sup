@@ -10,7 +10,7 @@ import 'signup.dart' as SignUpPage;
 import 'Bus_Arrival_Page.dart';
 //TestPay
 import 'pay.dart';
-import 'my_profile_page.dart';
+import 'mypage.dart';
 
 class AppMenu extends StatefulWidget {
   const AppMenu({super.key});
@@ -46,7 +46,7 @@ class _AppMenuState extends State<AppMenu> {
                    crossAxisAlignment: CrossAxisAlignment.center,//세로 정렬을 중앙으로 설정
                   children: [
                     Image.asset(
-                      'assets/otblogogogo.png',
+                      'assets/otb.png',
                       width: 72,//이미지의 가로 크기
                       height: 72,//이미지의 세로 크기
                     ),
@@ -126,7 +126,7 @@ class _AppMenuState extends State<AppMenu> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => MyProfilePage()),
+                            MaterialPageRoute(builder: (context) =>  MyProfilePage()),
                           );
                         },
                         child:UserAccountsDrawerHeader(
@@ -209,13 +209,13 @@ class _AppMenuState extends State<AppMenu> {
   Widget _getPage() {
     switch (currentPage) {
       case 'navigation':
-        return const NavigationPage();
+        return  NavigationPage();
       case 'bus':
-        return const BusReservePage();
+        return  BusReservePage();
       case 'notice':
-        return const NoticePage();
+        return  NoticePage();
       case 'freeBoard':
-        return const FreeBoardPage();
+        return  FreeBoardPage();
         //TestBus
       case 'TestBus':
         return ReserveApp();
@@ -223,7 +223,7 @@ class _AppMenuState extends State<AppMenu> {
       case 'TestPay':
         return PayMenu();
       default:
-        return const MyHomePage();
+        return  MyHomePage();
     }
   }
 
