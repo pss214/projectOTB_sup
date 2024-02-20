@@ -4,19 +4,20 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'dart:math' as math;
+import 'package:location/location.dart' as location;
+
 
 Set<Marker> _markers = {};
 
 class NavigationPage extends StatelessWidget {
-  const NavigationPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('길찾기'),
+        title: Text('길찾기'),
       ),
-      body: const MyApp(),
+      body: MyApp(),
     );
   }
 }
@@ -30,35 +31,60 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(37.4739388, 127.03374); // 종열 어린이 공원
+  final LatLng _center = const LatLng(37.4739388, 127.03374);//종열 어린이 공원
 
   final Set<Polyline> _polylines = {};
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
 
-  final TextEditingController _startLocationController = TextEditingController();
-  final TextEditingController _destinationLocationController = TextEditingController();
+  TextEditingController _startLocationController = TextEditingController();
+  TextEditingController _destinationLocationController = TextEditingController();
 
-  String errorMessage = ''; //에러 메시지를 저장할 변수
+  String errorMessage = '';//에러 메시지를 저장할 변수
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+
   void showError(String message) {
     setState(() {
       errorMessage = message;
     });
     //에러 메시지를 일정 시간 후에 지우기 위해 타이머 추가
-    Timer(const Duration(seconds: 3), () {
+    Timer(Duration(seconds: 3), () {
       setState(() {
         errorMessage = '';
       });
     });
   }
 
-  Future<void> getPolylines() async {
+  // 내위치 가져오기
+  void _getCurrentLocation() async {
     try {
-      String apiKey = 'APIKEY';
+      var currentLocation = await location.Location().getLocation();
+      print('현재 내위치: $currentLocation');//현재 위치 출력
+
+      if (currentLocation != null) {
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(
+                currentLocation.latitude ?? 0.0,
+                currentLocation.longitude ?? 0.0,
+              ),
+              zoom: 15.0,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print("내 위치값을 가져오지 못했습니다.: $e");
+    }
+  }
+
+  Future<void> getPolylines(String mode) async {
+    try {
+      String apiKey = 'AIzaSyBB5JHZ3NPkacXLiZXqPq3XvD_FmodCphs';
 
       LatLng sourceLocation = await getLocationCoordinates(_startLocationController.text);
       LatLng destinationLocation = await getLocationCoordinates(_destinationLocationController.text);
@@ -75,22 +101,6 @@ class _MyAppState extends State<MyApp> {
         infoWindow: InfoWindow(title: '도착지'),
       );
 
-/*
-          polylineCoordinates = polylinePoints.decodePolyline(drivingPoints).cast<LatLng>();
-          List<LatLng> convertedDrivingCoordinates = [];
-
-          for (LatLng coordinate in polylineCoordinates) {
-            convertedDrivingCoordinates.add(LatLng(coordinate.latitude, coordinate.longitude));
-          }
-
-          setState(() {
-            Polyline drivingPolyline = Polyline(
-              polylineId: const PolylineId('drivingPoly'),
-              color: Colors.blue,
-              points: convertedDrivingCoordinates,
-              width: 3,
-            );
-            */
       setState(() {
         _markers.clear();
         _markers.add(sourceMarker);
@@ -161,9 +171,10 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+
   Future<LatLng> getLocationCoordinates(String address) async {
     try {
-      const apiKey = 'APIKEY';
+      final apiKey = 'AIzaSyBB5JHZ3NPkacXLiZXqPq3XvD_FmodCphs';
       final encodedAddress = Uri.encodeComponent(address);
 
       final apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedAddress&key=$apiKey';
@@ -171,7 +182,7 @@ class _MyAppState extends State<MyApp> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Geocoding response: $data'); //디버깅용 출력
+        print('Geocoding response: $data');//디버깅용 출력
 
         final results = data['results'];
 
@@ -188,9 +199,28 @@ class _MyAppState extends State<MyApp> {
         throw Exception('Failed to fetch location coordinates. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in getLocationCoordinates: $e'); //디버깅용 출력
-      rethrow; //에러를 상위로 전달
+      print('Error in getLocationCoordinates: $e');//디버깅용 출력
+      throw e;//에러를 상위로 전달
     }
+  }
+
+  LatLngBounds calculateBounds() {
+    double minLat = double.infinity;
+    double minLng = double.infinity;
+    double maxLat = double.negativeInfinity;
+    double maxLng = double.negativeInfinity;
+
+    for (LatLng point in polylineCoordinates) {
+      minLat = math.min(minLat, point.latitude);
+      minLng = math.min(minLng, point.longitude);
+      maxLat = math.max(maxLat, point.latitude);
+      maxLng = math.max(maxLng, point.longitude);
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
   }
 
   @override
@@ -198,6 +228,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     polylinePoints = PolylinePoints();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -220,11 +251,11 @@ class _MyAppState extends State<MyApp> {
               right: 16,
               child: errorMessage.isNotEmpty
                   ? Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 color: Colors.red,
                 child: Text(
                   errorMessage,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white),
                 ),
               )
                   : Container(),
@@ -235,11 +266,11 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   TextField(
                     controller: _startLocationController,
-                    decoration: const InputDecoration(labelText: '출발지'),
+                    decoration: InputDecoration(labelText: '출발지'),
                   ),
                   TextField(
                     controller: _destinationLocationController,
-                    decoration: const InputDecoration(labelText: '도착지'),
+                    decoration: InputDecoration(labelText: '도착지'),
                   ),
                   ElevatedButton(
                     onPressed: () => getPolylines('driving'),
@@ -248,6 +279,10 @@ class _MyAppState extends State<MyApp> {
                   ElevatedButton(
                     onPressed: () => getPolylines('transit'),
                     child: Text('대중교통 길찾기'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _getCurrentLocation,
+                    child: Text('내 위치로 이동하기'),
                   ),
                 ],
               ),

@@ -1,17 +1,22 @@
+import 'dart:convert';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertest/app_menu.dart';
+import 'package:fluttertest/data/model/UserResponse.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '마이 페이지',
-      home: const MyPage(),
+      home: const MyProfilePage(),
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
@@ -19,15 +24,196 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+class MyProfilePage extends StatefulWidget {
+  const MyProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<MyPage> createState() => _MyPageState();
+  State<MyProfilePage> createState() => _MyPageState();
 }
 
-class _MyPageState extends State<MyPage> {
+class _MyPageState extends State<MyProfilePage> {
   bool isEditing = false;
+  bool showQrCode = false;
+  User? user;
+
+  String start = '';
+  String arrive = '';
+  String busId = '';
+  String vehId = '';
+
+  final newPasswordTextFieldController = TextEditingController();
+  final rePasswordTextFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadMemberInfo();
+    start = '';
+    arrive = '';
+    busId = '';
+    vehId = '';
+    fetchInformation();
+  }
+
+  @override
+  void dispose() {
+    newPasswordTextFieldController.dispose();
+    rePasswordTextFieldController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchInformation() async {
+    try {
+      var url = Uri.parse('http://bak10172.asuscomm.com:10001/reservation');
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+        'otb eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiYWsxMDE3MjpST0xFX1VTRVIiLCJpc3MiOiJzc3A2OTU5NyIsImlhdCI6MTcwNDQzNzQ2NywiZXhwIjoxNzA0NDQ4MjY3fQ.31C9RQ-TaxIgPXCxgh_3RLUk7EeMXPSxpbYLDajNQ3Qmp46zYViCzKVMPYRPi2I5lLhgkkScFPlnsZPeyyhzdg',
+      };
+
+      var requestData = {
+        "depart_station": start,
+        "arrive_station": arrive,
+        "busnumber": busId,
+        "busnumberplate": vehId,
+      };
+
+      var response = await http.post(
+        url,
+        body: json.encode(requestData),
+        headers: headers,
+      );
+
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          start = responseData['depart_station'];
+          arrive = responseData['arrive_station'];
+          busId = responseData['busnumber'];
+          vehId = responseData['busnumberplate'];
+        });
+        print('Reservation successful!');
+      } else {
+        print(
+            'Failed to make a reservation. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error making a reservation: $e');
+    }
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jwtToken');
+  }
+
+  Future<void> loadMemberInfo() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
+    try {
+      var response = await http.get(
+        Uri.parse('http://bak10172.asuscomm.com:10001/member'),
+        headers: {
+          'Authorization': 'otb $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final userResponse =
+        UserResponse.fromJson(json.decode(response.body));
+        debugPrint(userResponse.message);
+
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          setState(() {
+            user = userResponse.data.firstOrNull;
+          });
+        });
+      } else {
+        print('Failed to load member info: ${response.statusCode}');
+      }
+    } catch (e, s) {
+      print('Error loading member info: $e');
+      debugPrintStack(stackTrace: s);
+    }
+  }
+
+  Future<void> updatePassword() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
+    final user = this.user;
+    if (user == null) return;
+
+    final newPassword = newPasswordTextFieldController.text.trim();
+    final rePassword = rePasswordTextFieldController.text.trim();
+
+    if (newPassword.isEmpty || rePassword.isEmpty) return;
+    if (newPassword != rePassword) {
+      Fluttertoast.showToast(
+        msg: '비밀번호가 다릅니다. 다시 입력해 주세요.',
+      );
+      return;
+    }
+
+    final json = {
+      'password': newPassword,
+    };
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'otb $token',
+    };
+
+    var url = Uri.parse('http://bak10172.asuscomm.com:10001/member');
+    var response =
+    await http.post(url, body: jsonEncode(json), headers: headers);
+
+    final userResponse = UserResponse.fromJson(jsonDecode(response.body));
+    Fluttertoast.showToast(
+      msg: userResponse.message,
+    );
+
+    if (userResponse.status == 201) {
+      setState(() {
+        isEditing = false;
+        newPasswordTextFieldController.clear();
+        rePasswordTextFieldController.clear();
+      });
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    final token = await getToken();
+    if (token?.isNotEmpty != true) return;
+
+    try {
+      var response = await http.delete(
+        Uri.parse('http://bak10172.asuscomm.com:10001/member'),
+        headers: {
+          'Authorization': 'otb $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final userResponse =
+        UserResponse.fromJson(json.decode(response.body));
+        Fluttertoast.showToast(
+          msg: userResponse.message,
+        );
+
+        if (userResponse.status == 200) {
+          // 회원 탈퇴 성공
+          // 로그인 페이지로 이동하거나 다른 작업을 수행할 수 있습니다.
+        }
+      } else {
+        print('Failed to delete account: ${response.statusCode}');
+      }
+    } catch (e, s) {
+      print('Error deleting account: $e');
+      debugPrintStack(stackTrace: s);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +224,7 @@ class _MyPageState extends State<MyPage> {
         backgroundColor: Colors.lightGreen,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.home),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             //Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.push(context, MaterialPageRoute(builder: (context)=>AppMenu()));
@@ -64,12 +250,12 @@ class _MyPageState extends State<MyPage> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: const EdgeInsets.all(16.0),
-              child: const Column(
+              child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         '회원 이름:',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -78,18 +264,18 @@ class _MyPageState extends State<MyPage> {
                       ),
                       Expanded(
                         child: Text(
-                          '임시',
+                          user?.name ?? '',
                           textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 16.0),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         '이메일:',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -98,9 +284,9 @@ class _MyPageState extends State<MyPage> {
                       ),
                       Expanded(
                         child: Text(
-                          '임시',
+                          user?.email ?? '',
                           textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 16.0),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     ],
@@ -116,6 +302,7 @@ class _MyPageState extends State<MyPage> {
                   onPressed: () {
                     setState(() {
                       isEditing = !isEditing;
+                      showQrCode = false;
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -131,7 +318,7 @@ class _MyPageState extends State<MyPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // 회원 탈퇴 버튼 눌렀을 때 실행되는 기능 추가
+                    deleteAccount(); // 회원 탈퇴 버튼 눌렀을 때 호출
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
@@ -146,7 +333,9 @@ class _MyPageState extends State<MyPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // QR 보기 버튼 눌렀을 때 실행되는 기능 추가
+                    setState(() {
+                      showQrCode = !showQrCode;
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
@@ -154,9 +343,9 @@ class _MyPageState extends State<MyPage> {
                       borderRadius: BorderRadius.circular(18.0),
                     ),
                   ),
-                  child: const Text(
-                    'QR 보기',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white),
+                  child: Text(
+                    showQrCode ? 'QR 닫기' : 'QR 보기',
+                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
                 ),
               ],
@@ -165,25 +354,22 @@ class _MyPageState extends State<MyPage> {
             if (isEditing)
               Column(
                 children: [
-                  const TextField(
-                    decoration: InputDecoration(
-                      hintText: '새로운 아이디',
-                    ),
-                  ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: newPasswordTextFieldController,
+                    decoration: const InputDecoration(
                       hintText: '새로운 비밀번호',
                     ),
                   ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: rePasswordTextFieldController,
+                    decoration: const InputDecoration(
                       hintText: '비밀번호 확인',
                     ),
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-                    onPressed: () {
-                      // 저장 버튼 눌렀을 때 실행되는 기능 추가
+                    onPressed: () async {
+                      await updatePassword();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
@@ -196,6 +382,26 @@ class _MyPageState extends State<MyPage> {
                       style: TextStyle(fontSize: 16.0, color: Colors.white),
                     ),
                   ),
+                ],
+              ),
+            if (showQrCode)
+              Column(
+                children: [
+                  Center(
+                    child: BarcodeWidget(
+                      barcode: Barcode.qrCode(),
+                      color: Colors.black,
+                      data:
+                      'Start: $start\nArrive: $arrive\nBus ID: $busId\nVehicle ID: $vehId',
+                      width: 200.0,
+                      height: 200.0,
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Text('출발 정류장: ${start.isNotEmpty ? start : 'N/A'}'),
+                  Text('도착 정류장: ${arrive.isNotEmpty ? arrive : 'N/A'}'),
+                  Text('차량번호: ${busId.isNotEmpty ? busId : 'N/A'}'),
+                  Text('차량고유번호: ${vehId.isNotEmpty ? vehId : 'N/A'}'),
                 ],
               ),
           ],

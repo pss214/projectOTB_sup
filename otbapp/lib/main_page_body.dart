@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'notice.dart';
 import 'free_board.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+
 
 final dummyItems = [
   'https://cdn.pixabay.com/photo/2018/11/12/18/44/thanksgiving-3811492_1280.jpg',
@@ -12,24 +13,10 @@ final dummyItems = [
   'https://cdn.pixabay.com/photo/2019/11/25/16/15/safari-4652364_1280.jpg',
 ];
 
-class mainPageBody extends StatelessWidget {
-  const mainPageBody({super.key});
-
+class mainPageBody extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main Page'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          _buildNews(),
-          _buildNoticeOfficial(context),
-          _buildNoticeFree(context),
-        ],
-      ),
-    );
-  }
+  _MainPageBodyState createState() => _MainPageBodyState();
+}
 
 class _MainPageBodyState extends State<mainPageBody> {
   final List<Map<String, String>> categories = [
@@ -65,7 +52,7 @@ class _MainPageBodyState extends State<mainPageBody> {
           builder: (BuildContext context) {
             return Container(
               width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
@@ -85,7 +72,7 @@ class _MainPageBodyState extends State<mainPageBody> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const NoticePage()), // Replace NoticePage with your actual notice page class
+          MaterialPageRoute(builder: (context) => NoticePage()),
         );
       },
       child: _buildNoticeListTile('[공지 사항] n번 버스 운행 중 고장으로 x정류장에서 차고지 행'),
@@ -97,7 +84,7 @@ class _MainPageBodyState extends State<mainPageBody> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FreeBoardPage()), // Replace FreeBoardPage with your actual free board page class
+          MaterialPageRoute(builder: (context) => FreeBoardPage()),
         );
       },
       child: _buildFreeBoardTile('[자유 게시판] x대로 사고 발행 1차선 통제 중'),
@@ -106,11 +93,11 @@ class _MainPageBodyState extends State<mainPageBody> {
 
   Widget _buildNoticeListTile(String title) {
     return ListTile(
-      leading: const Icon(Icons.notifications_none),
+      leading: Icon(Icons.notifications_none),
       title: Text(title),
     );
   }
-  
+
   Widget _buildFreeBoardTile(String title) {
     return ListTile(
       leading: Icon(Icons.edit),

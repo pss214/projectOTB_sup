@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'main_page_body.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _index = 0;
-  final _pages = [
-    const mainPageBody(),
+  var _index = 0;
+  var _pages = [
+    mainPageBody(),
   ];
 
   @override
@@ -22,7 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.black,
             ),
