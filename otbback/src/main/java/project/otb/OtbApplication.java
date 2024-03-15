@@ -3,12 +3,9 @@ package project.otb;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import project.otb.entity.Admin;
-import project.otb.repositiry.AdminRepository;
-
-import java.util.List;
+import project.otb.repository.AdminRepository;
 
 @SpringBootApplication
 public class OtbApplication implements CommandLineRunner {

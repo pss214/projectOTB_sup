@@ -3,12 +3,11 @@ package project.otb.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import project.otb.DTO.LoginDto;
-import project.otb.DTO.UserDTO;
+import project.otb.dto.LoginDto;
+import project.otb.dto.UserDTO;
 import project.otb.entity.User;
-import project.otb.repositiry.BusRepository;
-import project.otb.security.TokenProvider;
-import project.otb.repositiry.UserRepository;
+import project.otb.repository.BusRepository;
+import project.otb.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

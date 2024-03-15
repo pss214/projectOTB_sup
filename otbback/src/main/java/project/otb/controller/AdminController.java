@@ -6,9 +6,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import project.otb.DTO.LoginDto;
-import project.otb.DTO.ResponseDTO;
-import project.otb.api.BusApiService;
+import project.otb.dto.LoginDto;
+import project.otb.dto.ResponseDTO;
+import project.otb.service.BusApiService;
 import project.otb.service.AdminService;
 
 import java.net.URI;
@@ -37,13 +37,13 @@ public class AdminController {
     @GetMapping("/getbusroute")
     public ResponseEntity<?> getBusRouteApi(){
         return ResponseEntity.created(URI.create("/admin/busroute")).body(ResponseDTO.builder()
-                .status(HttpStatus.CREATED.value()).message(adminService.getBusRouteApi()).build());
+                .status(HttpStatus.CREATED.value()).message(busApiService.GetBusRouteApi()).build());
 
     }
     @GetMapping("/getbusstation")
     public ResponseEntity<?> getBusStationApi(@AuthenticationPrincipal User user){
         return ResponseEntity.created(URI.create("/admin/getbusstation")).body(ResponseDTO.builder()
-                .status(HttpStatus.CREATED.value()).message(adminService.getBusStationApi()).build());
+                .status(HttpStatus.CREATED.value()).message(busApiService.GetBusStationAPI()).build());
     }
     @GetMapping("/userlist")
     public ResponseEntity<?> getUserList(@AuthenticationPrincipal User user){
