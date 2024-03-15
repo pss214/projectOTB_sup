@@ -1,0 +1,51 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "backend" ]
+  pull_request:
+    branches: [ "backend" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./otbback
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy secret
+        env:
+          OCCUPY_SECRET: ${{ secrets.DB_FILE }}
+        run: |
+          echo $OCCUPY_SECRET | base64 -d > src/main/resources/application-db.properties
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.1.1
+          build-root-directory: ./otbback
+          arguments: clean bootJar
+
+      - name: docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_EMAIL }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: docker image build
+        run: |
+          docker build --platform linux/arm64 -t pss214/otb_back_spring .
+      - name: docker Hub push
+        run:
+          docker push pss214/otb_back_spring

@@ -10,17 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.otb.DTO.BusDTO;
-import project.otb.DTO.LoginDto;
-import project.otb.DTO.ResponseDTO;
-import project.otb.DTO.UserDTO;
-import project.otb.entity.Bus;
-import project.otb.entity.User;
+import project.otb.dto.BusDTO;
+import project.otb.dto.LoginDto;
+import project.otb.dto.ResponseDTO;
+import project.otb.dto.UserDTO;
 import project.otb.service.BusService;
 import project.otb.service.UserService;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
